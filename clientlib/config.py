@@ -79,3 +79,23 @@ def load_config():
     validate_config_file(json_config)
 
     return json_config
+
+
+def get_user(config, user):
+    """Get the user from either the function parameter or the config."""
+    user = user
+    if (user is None and
+        "user" in config and
+        "default_user" in config["user"]):
+        user = config["user"]["default_user"]
+    return user
+
+
+def get_group(config, group):
+    """Get the group from either the function parameter or the config."""
+    group = group
+    if (group is None and
+        "user" in config and
+        "default_group" in config["user"]):
+        group = config["user"]["default_group"]
+    return group

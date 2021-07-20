@@ -1,0 +1,5 @@
+/home/nrmassey/archive/file1.nc
+/home/nrmassey/archive/file2.nc
+/home/nrmassey/archive/file3.nc
+/home/nrmassey/archive/file4.nc
+/home/nrmassey/archive/file5.nc

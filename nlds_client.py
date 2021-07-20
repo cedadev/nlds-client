@@ -1,20 +1,23 @@
 #! /usr/bin/env python
 import click
-from clientlib.transactions import get_file
+from clientlib.transactions import get_file, get_file_list, \
+                                   put_file, put_file_list
 from clientlib.exceptions import ConnectionError, RequestError, \
                                  AuthenticationError
 
-@click.command()
+@click.group()
+def nlds_client():
+    pass
+
+"""Put files command"""
 @click.option("--user", default=None, type=str)
 @click.option("--group", default=None, type=str)
-@click.argument("filepath")
-# def testclient(filepath, user, group):
-#     pass
-#
-# @testclient.command()
-def get(filepath, user, group):
+@click.argument("filepath", type=str)
+@nlds_client.command()
+def put(filepath, user, group):
     try:
-        get_file(filepath, user, group)
+        response = put_file(filepath, user, group)
+        print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -22,11 +25,73 @@ def get(filepath, user, group):
     except RequestError as re:
         raise click.UsageError(re)
 
-# @testclient.command()
-# def put():
-#     pass
-    # transaction_id = uuid.uuid4()
-    # click.echo("PUT command")
+
+"""Get files command"""
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.argument("filepath", type=str)
+@nlds_client.command()
+def get(filepath, user, group):
+    try:
+        response = get_file(filepath, user, group)
+        print(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
+
+"""Put filelist command"""
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.argument("filelist", type=str)
+@nlds_client.command()
+def putlist(filelist, user, group):
+    # read the filelist from the file
+    try:
+        fh = open(filelist)
+        files = fh.readlines()
+        fh.close()
+    except FileNotFoundError as fe:
+        raise click.UsageError(fe)
+
+    try:
+        response = put_file_list(files, user, group)
+        print(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
+
+"""Get filelist command"""
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.argument("filelist", type=str)
+@nlds_client.command()
+def getlist(filelist, user, group):
+    # read the filelist from the file
+    try:
+        fh = open(filelist)
+        files = fh.readlines()
+        fh.close()
+    except FileNotFoundError as fe:
+        raise click.UsageError(fe)
+
+    try:
+        response = get_file_list(files, user, group)
+        print(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
 
 if __name__ == "__main__":
-    get()
+    nlds_client()

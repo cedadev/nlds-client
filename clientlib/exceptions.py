@@ -8,3 +8,6 @@ class RequestError(Exception):
 
 class AuthenticationError(Exception):
     pass
+
+class ServerError(Exception):
+    pass
