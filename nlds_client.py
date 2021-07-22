@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import click
-from clientlib.transactions import get_file, get_file_list, \
-                                   put_file, put_file_list
+from clientlib.transactions import get_file, get_filelist, \
+                                   put_file, put_filelist
 from clientlib.exceptions import ConnectionError, RequestError, \
                                  AuthenticationError
 
@@ -58,7 +58,7 @@ def putlist(filelist, user, group):
         raise click.UsageError(fe)
 
     try:
-        response = put_file_list(files, user, group)
+        response = put_filelist(files, user, group)
         print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -83,7 +83,7 @@ def getlist(filelist, user, group):
         raise click.UsageError(fe)
 
     try:
-        response = get_file_list(files, user, group)
+        response = get_filelist(files, user, group)
         print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)

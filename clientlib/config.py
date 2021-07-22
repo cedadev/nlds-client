@@ -1,7 +1,7 @@
 import json
 import os.path
-import click
 from .setup import CONFIG_FILE_LOCATION
+from clientlib.exceptions import ConfigError
 
 def validate_config_file(json_config):
     """Validate the JSON config file to match the schema in load_config_file."""
@@ -9,7 +9,7 @@ def validate_config_file(json_config):
     try:
         server_section = json_config["server"]
     except KeyError:
-        raise click.UsageError(
+        raise ConfigError(
             f"The config file at {CONFIG_FILE_LOCATION} does not contain a "
              "['server'] section."
         )
@@ -18,7 +18,7 @@ def validate_config_file(json_config):
         try:
             value = server_section[key]
         except KeyError:
-            raise click.UsageError(
+            raise ConfigError(
                 f"The config file at {CONFIG_FILE_LOCATION} does not contain "
                 f"{key} in ['server_section'] section."
             )
@@ -27,7 +27,7 @@ def validate_config_file(json_config):
     try:
         auth_section = json_config["authentication"]
     except KeyError:
-        raise click.UsageError(
+        raise ConfigError(
             f"The config file at {CONFIG_FILE_LOCATION} does not contain an "
              "['authentication'] section."
         )
@@ -40,7 +40,7 @@ def validate_config_file(json_config):
         try:
             value = auth_section[key]
         except KeyError:
-            raise click.UsageError(
+            raise ConfigError(
                 f"The config file at {CONFIG_FILE_LOCATION} does not contain "
                 f"{key} in ['authentication'] section."
             )
@@ -60,16 +60,15 @@ def load_config():
     try:
         fh = open(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"))
     except FileNotFoundError:
-        raise click.FileError(
-            f"{CONFIG_FILE_LOCATION}",
-            "The config file cannot be found"
+        raise FileNotFoundError(
+            f"The config file cannot be found {CONFIG_FILE_LOCATION}"
         )
 
     # Load the JSON file, ensuring it is correctly formatted
     try:
         json_config = json.load(fh)
     except json.JSONDecodeError as je:
-        raise click.UsageError(
+        raise ConfigError(
             f"The config file at {CONFIG_FILE_LOCATION} has an error at "
             f"character {je.pos}: {je.msg}."
         )
