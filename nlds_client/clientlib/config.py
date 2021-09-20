@@ -1,7 +1,7 @@
 import json
 import os.path
-from .setup import CONFIG_FILE_LOCATION
-from clientlib.exceptions import ConfigError
+from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
+from nlds_client.clientlib.exceptions import ConfigError
 
 def validate_config_file(json_config):
     """Validate the JSON config file to match the schema in load_config_file."""

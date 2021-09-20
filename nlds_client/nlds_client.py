@@ -1,9 +1,9 @@
 #! /usr/bin/env python
 import click
-from clientlib.transactions import get_file, get_filelist, \
-                                   put_file, put_filelist
-from clientlib.exceptions import ConnectionError, RequestError, \
-                                 AuthenticationError
+from nlds_client.clientlib.transactions import get_file, get_filelist, \
+                                               put_file, put_filelist
+from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
+                                             AuthenticationError
 
 @click.group()
 def nlds_client():
@@ -92,6 +92,8 @@ def getlist(filelist, user, group):
     except RequestError as re:
         raise click.UsageError(re)
 
+def main():
+    nlds_client()
 
 if __name__ == "__main__":
     nlds_client()

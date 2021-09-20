@@ -6,13 +6,14 @@ import os
 
 from typing import List, Dict
 
-from clientlib.config import load_config, get_user, get_group
-from clientlib.authentication import load_token, get_username_password,\
+from nlds_client.clientlib.config import load_config, get_user, get_group
+from nlds_client.clientlib.authentication import load_token,\
+                                     get_username_password,\
                                      fetch_oauth2_token,\
                                      fetch_oauth2_token_from_refresh
-from clientlib.exceptions import *
+from nlds_client.clientlib.exceptions import *
 
-from .setup import CONFIG_FILE_LOCATION
+from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 
 def construct_server_url(config: Dict):

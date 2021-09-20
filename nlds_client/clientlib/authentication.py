@@ -3,7 +3,7 @@ from requests_oauthlib import OAuth2Session
 import json
 import os.path
 import getpass
-from clientlib.exceptions import *
+from nlds_client.clientlib.exceptions import *
 
 def get_username_password(config):
     """Get the username and password interactively from the user.
