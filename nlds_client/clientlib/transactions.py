@@ -1,8 +1,10 @@
+from json.decoder import JSONDecodeError
 import requests
 import json
 import uuid
 import urllib.parse
 import os
+import traceback
 
 from typing import List, Dict
 
@@ -28,7 +30,7 @@ def construct_server_url(config: Dict):
     url = urllib.parse.urljoin(config["server"]["url"],
                                "/".join([config["server"]["api"],
                                "files"])
-                              )
+                              ) + "/"
     return url
 
 
@@ -246,7 +248,7 @@ def get_filelist(filelist: List[str]=[],
     user = get_user(config, user)
     group = get_group(config, group)
     transaction_id = uuid.uuid4()
-    url = construct_server_url(config) + "/getlist"
+    url = construct_server_url(config) + "getlist"
     MAX_LOOPS = 2
 
     while c_try < MAX_LOOPS:
