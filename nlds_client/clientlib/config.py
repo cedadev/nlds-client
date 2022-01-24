@@ -1,5 +1,7 @@
 import json
 import os.path
+
+from click import option
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 from nlds_client.clientlib.exceptions import ConfigError
 
@@ -44,7 +46,6 @@ def validate_config_file(json_config):
                 f"The config file at {CONFIG_FILE_LOCATION} does not contain "
                 f"{key} in ['authentication'] section."
             )
-
 
 def load_config():
     """Config file for the client contains:
@@ -98,3 +99,20 @@ def get_group(config, group):
         "default_group" in config["user"]):
         group = config["user"]["default_group"]
     return group
+
+_DEFAULT_OPTIONS = {
+    "verify_certificates": True
+}
+def get_option(config, option_name, section_name='option'):
+    """Get an option from either the config or the DEFAULT_OPTIONS dict."""
+    if (section_name in config and
+        # Get value from config if option section and option present
+        option_name in config[section_name]):
+        option_value = config[section_name][option_name]
+    elif option_name in _DEFAULT_OPTIONS:
+        # Otherwise get the default value 
+        option_value = _DEFAULT_OPTIONS[option_name]
+    else:
+        # Silently fail if option not specified in _DEFUALT_OPTIONS
+        option_value = None
+    return option_value

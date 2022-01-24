@@ -1,14 +1,13 @@
-from json.decoder import JSONDecodeError
 import requests
 import json
 import uuid
 import urllib.parse
 import os
-import traceback
 
 from typing import List, Dict
 
-from nlds_client.clientlib.config import load_config, get_user, get_group
+from nlds_client.clientlib.config import load_config, get_user, get_group, \
+                                         get_option
 from nlds_client.clientlib.authentication import load_token,\
                                      get_username_password,\
                                      fetch_oauth2_token,\
@@ -179,7 +178,8 @@ def get_file(filepath: str, user: str=None, group: str=None):
             response = requests.get(
                 url,
                 headers = token_headers,
-                params = input_params
+                params = input_params,
+                verify = get_option(config, 'verify_certificates')
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
@@ -288,7 +288,8 @@ def get_filelist(filelist: List[str]=[],
                 url,
                 headers = token_headers,
                 params = input_params,
-                json = body_params
+                json = body_params,
+                verify = get_option(config, 'verify_certificates')
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
@@ -394,6 +395,7 @@ def put_file(filepath: str, user: str=None, group: str=None):
                 url,
                 headers = token_headers,
                 params = input_params,
+                verify = get_option(config, 'verify_certificates')
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
@@ -499,7 +501,8 @@ def put_filelist(filelist: List[str]=[],
                 url,
                 headers = token_headers,
                 params = input_params,
-                json = body_params
+                json = body_params,
+                verify = get_option(config, 'verify_certificates')
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
