@@ -3,6 +3,7 @@ import json
 import uuid
 import urllib.parse
 import os
+import pathlib
 
 from typing import List, Dict
 
@@ -143,6 +144,11 @@ def get_file(filepath: str, user: str=None, group: str=None):
     url = construct_server_url(config)
     MAX_LOOPS = 2
 
+    # Resolve path to file (i.e. make absolute) if configured so
+    if get_option(config, "resolve_filenames"):
+        # Convert to a pathlib.Path and then back to a string
+        filepath = str(pathlib.Path(filepath).resolve())
+
     while c_try < MAX_LOOPS:
 
         # get an OAuth token if we fail then the file doesn't exist.
@@ -251,6 +257,11 @@ def get_filelist(filelist: List[str]=[],
     url = construct_server_url(config) + "getlist"
     MAX_LOOPS = 2
 
+    # Resolve path to file (i.e. make absolute) if configured so
+    if get_option(config, "resolve_filenames"):
+        # Convert to a pathlib.Path and then back to a string
+        filelist = [str(pathlib.Path(fp).resolve()) for fp in filelist]
+
     while c_try < MAX_LOOPS:
 
         # get an OAuth token if we fail then the file doesn't exist.
@@ -329,7 +340,7 @@ def get_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def put_file(filepath: str, user: str=None, group: str=None):
+def put_file(filepath: str, user: str=None, group: str=None, ignore_certificates: bool=None):
     """Make a request to put a single file into the NLDS.
 
     :param filepath: the path of the file to put into the storage
@@ -355,6 +366,11 @@ def put_file(filepath: str, user: str=None, group: str=None):
     group = get_group(config, group)
     transaction_id = uuid.uuid4()
     url = construct_server_url(config)
+
+    # Resolve path to file (i.e. make absolute) if configured so
+    if get_option(config, "resolve_filenames"):
+        # Convert to a pathlib.Path and then back to a string
+        filepath = str(pathlib.Path(filepath).resolve())
 
     MAX_LOOPS = 2
     while c_try < MAX_LOOPS:
@@ -462,6 +478,11 @@ def put_filelist(filelist: List[str]=[],
     transaction_id = uuid.uuid4()
     url = construct_server_url(config)
     MAX_LOOPS = 2
+    
+    # Resolve path to file (i.e. make absolute) if configured so
+    if get_option(config, "resolve_filenames"):
+        # Convert to a pathlib.Path and then back to a string
+        filelist = [str(pathlib.Path(fp).resolve()) for fp in filelist]
 
     while c_try < MAX_LOOPS:
 
