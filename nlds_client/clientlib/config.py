@@ -18,7 +18,7 @@ def validate_config_file(json_config):
 
     for key in ["url", "api"]:
         try:
-            value = server_section[key]
+            _ = server_section[key]
         except KeyError:
             raise ConfigError(
                 f"The config file at {CONFIG_FILE_LOCATION} does not contain "
@@ -40,20 +40,73 @@ def validate_config_file(json_config):
                 "oauth_scopes",
                 "oauth_token_file_location"]:
         try:
-            value = auth_section[key]
+            _ = auth_section[key]
         except KeyError:
             raise ConfigError(
                 f"The config file at {CONFIG_FILE_LOCATION} does not contain "
                 f"{key} in ['authentication'] section."
             )
 
+    # user section
+    try:
+        user_section = json_config["user"]
+    except KeyError:
+        raise ConfigError(
+            f"The config file at {CONFIG_FILE_LOCATION} does not contain an "
+             "['user'] section."
+        )
+
+    for key in ["default_user",
+                "default_group"]:
+        try:
+            _ = user_section[key]
+        except KeyError:
+            raise ConfigError(
+                f"The config file at {CONFIG_FILE_LOCATION} does not contain "
+                f"{key} in ['user'] section."
+            )               
+    
+    # object_storage section
+    try:
+        os_section = json_config["object_storage"]
+    except KeyError:
+        raise ConfigError(
+            f"The config file at {CONFIG_FILE_LOCATION} does not contain an "
+             "['object_storage'] section."
+        )
+
+    for key in ["access_key",       # "tenancy" is optional and will default
+                "secret_key"]:      # on the server
+        try:
+            _ = os_section[key]
+        except KeyError:
+            raise ConfigError(
+                f"The config file at {CONFIG_FILE_LOCATION} does not contain "
+                f"{key} in ['object_storage'] section."
+            )    
+
 def load_config():
     """Config file for the client contains:
+        server : {
+            url : <server>,
+            api : <version>
+        },
+        user : {
+            default_user : <user>,
+            default_group : <group>
+        },
         authentication : {
-            oauth_client_id : <client id>,
-            oauth_client_secret : <client secret>,
-            oauth_token_url : <token url>,
-            oauth_token_introspect_url : <token introspect url>
+            oauth_client_id : <client_id>,
+            oauth_client_secret : <client_secret>,
+            oauth_token_url : <token_url>,
+            oauth_scopes : <scopes>,
+            oauth_token_file_location : <token_location>
+        },
+        object_storage : {
+            tenancy : <os_tenancy> (optional),
+            access_key : <os_access_key>,
+            secret_key : <os_secret_key>
+
         }
     """
     # Location of config file is {CONFIG_FILE_LOCATION}.  Open it, checking
@@ -100,6 +153,7 @@ def get_group(config, group):
         group = config["user"]["default_group"]
     return group
 
+
 _DEFAULT_OPTIONS = {
     "verify_certificates": True,
     "resolve_filenames": True
@@ -114,6 +168,33 @@ def get_option(config, option_name, section_name='option'):
         # Otherwise get the default value 
         option_value = _DEFAULT_OPTIONS[option_name]
     else:
-        # Silently fail if option not specified in _DEFUALT_OPTIONS
+        # Silently fail if option not specified in _DEFAULT_OPTIONS
         option_value = None
     return option_value
+
+
+def get_tenancy(config):
+    """Get the object storage tenancy from the config file.  This is optional
+    so could be None."""
+    tenancy = None
+    if ("object_storage" in config and
+        "tenancy" in config["object_storage"]):
+        tenancy = config["object_storage"]["tenancy"]
+    return tenancy
+    
+
+def get_access_key(config):
+    """Get the object storage access key from the config file. """
+    access_key = ""
+    if ("object_storage" in config and
+        "access_key" in config["object_storage"]):
+        access_key = config["object_storage"]["access_key"]
+    return access_key
+
+def get_secret_key(config):
+    """Get the object storage secret key from the config file. """
+    secret_key = ""
+    if ("object_storage" in config and
+        "secret_key" in config["object_storage"]):
+        secret_key = config["object_storage"]["secret_key"]
+    return secret_key

@@ -8,7 +8,8 @@ import pathlib
 from typing import List, Dict
 
 from nlds_client.clientlib.config import load_config, get_user, get_group, \
-                                         get_option
+                            get_option, \
+                            get_tenancy, get_access_key, get_secret_key
 from nlds_client.clientlib.authentication import load_token,\
                                      get_username_password,\
                                      fetch_oauth2_token,\
@@ -140,6 +141,9 @@ def get_file(filepath: str, user: str=None, group: str=None):
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
     url = construct_server_url(config)
     MAX_LOOPS = 2
@@ -174,9 +178,15 @@ def get_file(filepath: str, user: str=None, group: str=None):
         #    transaction_id: UUID
         #    user: str
         #    group: str
+        #    access_key : str
+        #    secret_key : str
+        #    tenancy    : str (optional)
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
+                        "access_key" : access_key,
+                        "secret_key" : secret_key,
+                        "tenancy" : tenancy,
                         "filepath" : filepath}
 
         # make the request
@@ -225,7 +235,7 @@ def get_file(filepath: str, user: str=None, group: str=None):
     return response_dict
 
 def get_filelist(filelist: List[str]=[],
-                  user: str=None, group: str=None):
+                 user: str=None, group: str=None):
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -253,6 +263,9 @@ def get_filelist(filelist: List[str]=[],
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
     url = construct_server_url(config) + "getlist"
     MAX_LOOPS = 2
@@ -287,10 +300,17 @@ def get_filelist(filelist: List[str]=[],
         #    transaction_id: UUID
         #    user: str
         #    group: str
+        #    access_key : str
+        #    secret_key : str
+        #    tenancy    : str (optional)
         # and the filelist in the body
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
-                        "group" : group}
+                        "group" : group,
+                        "access_key" : access_key,
+                        "secret_key" : secret_key,
+                        "tenancy" : tenancy
+                    }
         body_params = {"filelist" : filelist}
 
         # make the request
@@ -340,7 +360,8 @@ def get_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def put_file(filepath: str, user: str=None, group: str=None, ignore_certificates: bool=None):
+def put_file(filepath: str, user: str=None, group: str=None,
+             ignore_certificates: bool=None):
     """Make a request to put a single file into the NLDS.
 
     :param filepath: the path of the file to put into the storage
@@ -364,6 +385,9 @@ def put_file(filepath: str, user: str=None, group: str=None, ignore_certificates
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
     url = construct_server_url(config)
 
@@ -394,15 +418,20 @@ def put_file(filepath: str, user: str=None, group: str=None, ignore_certificates
             "Authorization" : f"Bearer {auth_token['access_token']}"
         }
 
-
         # build the parameters.  files/put requires:
         #    transaction_id: UUID
-        #    user: str
-        #    group: str
-        #    filepath : str (optional)
+        #    user       : str
+        #    group      : str
+        #    access_key : str
+        #    secret_key : str
+        #    tenancy    : str (optional)
+        #    filepath   : str (optional)
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
+                        "access_key" : access_key,
+                        "secret_key" : secret_key,
+                        "tenancy" : tenancy,
                         "filepath" : filepath}
 
         # make the request
@@ -475,6 +504,9 @@ def put_filelist(filelist: List[str]=[],
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
     url = construct_server_url(config)
     MAX_LOOPS = 2
@@ -505,16 +537,22 @@ def put_filelist(filelist: List[str]=[],
             "Authorization" : f"Bearer {auth_token['access_token']}"
         }
 
-
         # build the parameters.  files/put requires (for a filelist):
         #    transaction_id: UUID
         #    user: str
         #    group: str
+        #    access_key: str
+        #    secret_key: str
+        #    tenancy: str (optional)
         # and the filelist in the body
 
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
-                        "group" : group}
+                        "group" : group,
+                        "access_key" : access_key,
+                        "secret_key" : secret_key,
+                        "tenancy" : tenancy
+                    }
         body_params = {"filelist" : filelist}
         # make the request
         try:

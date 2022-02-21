@@ -1,11 +1,11 @@
 {
     "server" : {
-        "url" : "http://127.0.0.1:8000",
+        "url" : "{{ nlds_server }}",
         "api" : "api/0.1"
     },
     "user" : {
-        "default_user" : "nrmassey",
-        "default_group" : "cedaproc"
+        "default_user" : "{{ user }}",
+        "default_group" : "{{ group }}"
     },
     "authentication" : {
         "oauth_client_id" : "{{ oauth_client_id }}",
@@ -13,6 +13,12 @@
         "oauth_token_url" : "{{ oauth_token_url }}",
         "oauth_scopes" : "{{ oauth_scopes }}",
         "oauth_token_file_location" : "~/.nlds-token"
+    },
+    "object_storage" : {
+        "tenancy" : "{{ os_tenancy }}",
+        "access_key" : "{{ os_access_key }}",
+        "secret_key" : "{{ os_secret_key }}"
+
     }
     "options" : {
         "verify_certificates": true
