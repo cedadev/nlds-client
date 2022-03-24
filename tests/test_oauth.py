@@ -83,7 +83,7 @@ def test_fetch_oauth_token(functional_config, test_value):
 
 @pytest.mark.parametrize("test_value", EDGE_VALUES)
 def test_fetch_oauth_config(monkeypatch, functional_config, test_value):
-    monkeypatch.setattr('save_token', None)
+    monkeypatch.setattr(clau, 'save_token', None)
 
     modified_config = copy.deepcopy(functional_config)
     modified_config['authentication']['oauth_client_id'] = test_value
