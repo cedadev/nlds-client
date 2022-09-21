@@ -115,7 +115,8 @@ def process_transaction_response(response: requests.models.Response, url: str,
         )
 
 
-def get_file(filepath: str, user: str=None, group: str=None):
+def get_file(filepath: str, user: str=None, group: str=None, 
+             target: str = None, source_transact: str = None):
     """Make a request to get a single file from the NLDS.
     :param filepath: the path of the file to get from the storage
     :type filepath: string
@@ -148,10 +149,19 @@ def get_file(filepath: str, user: str=None, group: str=None):
     url = construct_server_url(config)
     MAX_LOOPS = 2
 
+    # If no target given then default to current working directory
+    if not target:
+        target = os.getcwd()
+    target_p = pathlib.Path(target)
     # Resolve path to file (i.e. make absolute) if configured so
     if get_option(config, "resolve_filenames"):
         # Convert to a pathlib.Path and then back to a string
-        filepath = str(pathlib.Path(filepath).resolve())
+        # NB: No need to resolve the filepath as it should be verbatim what was
+        # in the original transaction?
+        target = str(target_p.resolve())
+    # Recursively create the target path if it doesn't exist
+    if not target_p.exists():
+        os.makedirs(target)
 
     while c_try < MAX_LOOPS:
 
@@ -175,18 +185,22 @@ def get_file(filepath: str, user: str=None, group: str=None):
         }
 
         # build the parameters.  files/get requires:
-        #    transaction_id: UUID
-        #    user: str
-        #    group: str
-        #    access_key : str
-        #    secret_key : str
-        #    tenancy    : str (optional)
+        #    transaction_id     : UUID
+        #    user               : str
+        #    group              : str
+        #    access_key         : str
+        #    secret_key         : str
+        #    tenancy            : str (optional)
+        #    target             : str (optional - defaults to cwd)
+        #    source_transact    : str (optional)
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
                         "access_key" : access_key,
                         "secret_key" : secret_key,
                         "tenancy" : tenancy,
+                        "target": target,
+                        "source_transaction": source_transact,
                         "filepath" : filepath}
 
         # make the request
@@ -235,7 +249,8 @@ def get_file(filepath: str, user: str=None, group: str=None):
     return response_dict
 
 def get_filelist(filelist: List[str]=[],
-                 user: str=None, group: str=None):
+                 user: str=None, group: str=None, 
+                 target: str = None, source_transact: str = None) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -270,13 +285,20 @@ def get_filelist(filelist: List[str]=[],
     url = construct_server_url(config) + "getlist"
     MAX_LOOPS = 2
 
+    if not target: 
+        target = os.getcwd()
+    target_p = pathlib.Path(target)
     # Resolve path to file (i.e. make absolute) if configured so
     if get_option(config, "resolve_filenames"):
         # Convert to a pathlib.Path and then back to a string
-        filelist = [str(pathlib.Path(fp).resolve()) for fp in filelist]
+        # NB: No need to resolve the filepath as it should be verbatim what was
+        # in the original transaction?
+        target = str(target_p.resolve())
+    # Recursively create the target path if it doesn't exist
+    if not target_p.exists():
+        os.makedirs(target)
 
     while c_try < MAX_LOOPS:
-
         # get an OAuth token if we fail then the file doesn't exist.
         # we then fetch an Oauth2 token and try again
         c_try += 1
@@ -297,19 +319,23 @@ def get_filelist(filelist: List[str]=[],
         }
 
         # build the parameters.  files/getlist/put requires:
-        #    transaction_id: UUID
-        #    user: str
-        #    group: str
-        #    access_key : str
-        #    secret_key : str
-        #    tenancy    : str (optional)
+        #    transaction_id     : UUID
+        #    user               : str
+        #    group              : str
+        #    access_key         : str
+        #    secret_key         : str
+        #    tenancy            : str (optional)
+        #    target             : str (optional - defaults to cwd)
+        #    source_transact    : str (optional)
         # and the filelist in the body
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
                         "access_key" : access_key,
                         "secret_key" : secret_key,
-                        "tenancy" : tenancy
+                        "tenancy" : tenancy,
+                        "target": target,
+                        "source_transaction": source_transact
                     }
         body_params = {"filelist" : filelist}
 
