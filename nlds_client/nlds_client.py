@@ -30,12 +30,12 @@ def put(filepath, user, group):
 @click.option("--user", default=None, type=str)
 @click.option("--group", default=None, type=str)
 @click.option("--target", default=None, type=click.Path())
-@click.option("--source_transact", default=None, type=str)
+@click.option("--holding_transaction_id", default=None, type=str)
 @click.argument("filepath", type=str)
 @nlds_client.command()
-def get(filepath, user, group, target, source_transact):
+def get(filepath, user, group, target, holding_transaction_id):
     try:
-        response = get_file(filepath, user, group, target, source_transact)
+        response = get_file(filepath, user, group, target, holding_transaction_id)
         print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)

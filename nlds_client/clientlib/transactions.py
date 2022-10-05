@@ -116,7 +116,7 @@ def process_transaction_response(response: requests.models.Response, url: str,
 
 
 def get_file(filepath: str, user: str=None, group: str=None, 
-             target: str = None, source_transact: str = None):
+             target: str = None, holding_transaction_id: str = None):
     """Make a request to get a single file from the NLDS.
     :param filepath: the path of the file to get from the storage
     :type filepath: string
@@ -124,6 +124,9 @@ def get_file(filepath: str, user: str=None, group: str=None,
     :type user: string, optional
     :param group: the group to get the file
     :type group: string
+    :param holding_transaction_id: the transaction id pertaining to the holding
+    containing the files
+    :type holding_transaction_id: string
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -185,14 +188,14 @@ def get_file(filepath: str, user: str=None, group: str=None,
         }
 
         # build the parameters.  files/get requires:
-        #    transaction_id     : UUID
-        #    user               : str
-        #    group              : str
-        #    access_key         : str
-        #    secret_key         : str
-        #    tenancy            : str (optional)
-        #    target             : str (optional - defaults to cwd)
-        #    source_transact    : str (optional)
+        #    transaction_id         : UUID
+        #    user                   : str
+        #    group                  : str
+        #    access_key             : str
+        #    secret_key             : str
+        #    tenancy                : str (optional)
+        #    target                 : str (optional - defaults to cwd)
+        #    holding_transaction_id : str (optional)
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
@@ -200,7 +203,7 @@ def get_file(filepath: str, user: str=None, group: str=None,
                         "secret_key" : secret_key,
                         "tenancy" : tenancy,
                         "target": target,
-                        "source_transaction": source_transact,
+                        "holding_transaction_id": holding_transaction_id,
                         "filepath" : filepath}
 
         # make the request
