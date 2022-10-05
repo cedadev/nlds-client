@@ -30,12 +30,12 @@ def put(filepath, user, group):
 @click.option("--user", default=None, type=str)
 @click.option("--group", default=None, type=str)
 @click.option("--target", default=None, type=click.Path())
-@click.option("--source_transact", default=None, type=str)
+@click.option("--holding_transact", default=None, type=str)
 @click.argument("filepath", type=str)
 @nlds_client.command()
-def get(filepath, user, group, target, source_transact):
+def get(filepath, user, group, target, holding_transact):
     try:
-        response = get_file(filepath, user, group, target, source_transact)
+        response = get_file(filepath, user, group, target, holding_transact)
         print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -74,10 +74,10 @@ def putlist(filelist, user, group):
 @click.option("--user", default=None, type=str)
 @click.option("--group", default=None, type=str)
 @click.option("--target", default=None, type=click.Path(exists=True))
-@click.option("--source_transact", default=None, type=str)
+@click.option("--holding_transact", default=None, type=str)
 @click.argument("filelist", type=str)
 @nlds_client.command()
-def getlist(filelist, user, group, target, source_transact):
+def getlist(filelist, user, group, target, holding_transact):
     # read the filelist from the file
     try:
         fh = open(filelist)
@@ -87,7 +87,7 @@ def getlist(filelist, user, group, target, source_transact):
         raise click.UsageError(fe)
 
     try:
-        response = get_filelist(files, user, group, target, source_transact)
+        response = get_filelist(files, user, group, target, holding_transact)
         print(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)

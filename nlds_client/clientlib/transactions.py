@@ -3,7 +3,7 @@ import json
 import uuid
 import urllib.parse
 import os
-import pathlib
+from pathlib import Path
 
 from typing import List, Dict
 
@@ -116,7 +116,7 @@ def process_transaction_response(response: requests.models.Response, url: str,
 
 
 def get_file(filepath: str, user: str=None, group: str=None, 
-             target: str = None, source_transact: str = None):
+             target: str = None, holding_transact: str = None):
     """Make a request to get a single file from the NLDS.
     :param filepath: the path of the file to get from the storage
     :type filepath: string
@@ -149,19 +149,26 @@ def get_file(filepath: str, user: str=None, group: str=None,
     url = construct_server_url(config)
     MAX_LOOPS = 2
 
-    # If no target given then default to current working directory
-    if not target:
-        target = os.getcwd()
-    target_p = pathlib.Path(target)
-    # Resolve path to file (i.e. make absolute) if configured so
-    if get_option(config, "resolve_filenames"):
-        # Convert to a pathlib.Path and then back to a string
-        # NB: No need to resolve the filepath as it should be verbatim what was
-        # in the original transaction?
-        target = str(target_p.resolve())
-    # Recursively create the target path if it doesn't exist
-    if not target_p.exists():
-        os.makedirs(target)
+    # If target given then we're operating in "mode 2" where we're downloading 
+    # the file to a new location
+    if target:
+        target_p = Path(target)
+        # Resolve path to target (i.e. make absolute) if configured so
+        if get_option(config, "resolve_filenames"):
+            # Convert to a pathlib.Path to resolve and then back to a string
+            target = str(target_p.resolve())
+        # Recursively create the target path if it doesn't exist
+        # NOTE: what permissions should be on this? Should _we_ be creating it
+        # here? or should we just error at this point?
+        if not target_p.exists():
+            os.makedirs(target)
+    # If no target given then we are operating in "mode 1", i.e. we're 
+    # downloading files back to their original locations.
+    else:
+        # Resolve path to file (i.e. make absolute) if configured so
+        if get_option(config, "resolve_filenames"):
+            # Convert to a pathlib.Path to resolve, and then back to a string
+            filepath = str(Path(filepath).resolve())
 
     while c_try < MAX_LOOPS:
 
@@ -192,7 +199,7 @@ def get_file(filepath: str, user: str=None, group: str=None,
         #    secret_key         : str
         #    tenancy            : str (optional)
         #    target             : str (optional - defaults to cwd)
-        #    source_transact    : str (optional)
+        #    holding_transact    : str (optional)
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
                         "group" : group,
@@ -200,7 +207,7 @@ def get_file(filepath: str, user: str=None, group: str=None,
                         "secret_key" : secret_key,
                         "tenancy" : tenancy,
                         "target": target,
-                        "source_transaction": source_transact,
+                        "holding_transaction": holding_transact,
                         "filepath" : filepath}
 
         # make the request
@@ -250,7 +257,7 @@ def get_file(filepath: str, user: str=None, group: str=None,
 
 def get_filelist(filelist: List[str]=[],
                  user: str=None, group: str=None, 
-                 target: str = None, source_transact: str = None) -> Dict:
+                 target: str = None, holding_transact: str = None) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -285,18 +292,26 @@ def get_filelist(filelist: List[str]=[],
     url = construct_server_url(config) + "getlist"
     MAX_LOOPS = 2
 
-    if not target: 
-        target = os.getcwd()
-    target_p = pathlib.Path(target)
-    # Resolve path to file (i.e. make absolute) if configured so
-    if get_option(config, "resolve_filenames"):
-        # Convert to a pathlib.Path and then back to a string
-        # NB: No need to resolve the filepath as it should be verbatim what was
-        # in the original transaction?
-        target = str(target_p.resolve())
-    # Recursively create the target path if it doesn't exist
-    if not target_p.exists():
-        os.makedirs(target)
+    # If target given then we're operating in "mode 2" where we're downloading 
+    # the file to a new location
+    if target:
+        target_p = Path(target)
+        # Resolve path to target (i.e. make absolute) if configured so
+        if get_option(config, "resolve_filenames"):
+            # Convert to a pathlib.Path to resolve and then back to a string
+            target = str(target_p.resolve())
+        # Recursively create the target path if it doesn't exist
+        # NOTE: what permissions should be on this? Should _we_ be creating it
+        # here? or should we just error at this point?
+        if not target_p.exists():
+            os.makedirs(target)
+    # If no target given then we are operating in "mode 1", i.e. we're 
+    # downloading files back to their original locations.
+    else:
+        # Resolve path to file (i.e. make absolute) if configured so
+        if get_option(config, "resolve_filenames"):
+            # Convert to a pathlib.Path to resolve, and then back to a string
+            filelist = [str(Path(fp).resolve()) for fp in filelist]
 
     while c_try < MAX_LOOPS:
         # get an OAuth token if we fail then the file doesn't exist.
@@ -326,7 +341,7 @@ def get_filelist(filelist: List[str]=[],
         #    secret_key         : str
         #    tenancy            : str (optional)
         #    target             : str (optional - defaults to cwd)
-        #    source_transact    : str (optional)
+        #    holding_transact    : str (optional)
         # and the filelist in the body
         input_params = {"transaction_id" : transaction_id,
                         "user" : user,
@@ -335,7 +350,7 @@ def get_filelist(filelist: List[str]=[],
                         "secret_key" : secret_key,
                         "tenancy" : tenancy,
                         "target": target,
-                        "source_transaction": source_transact
+                        "holding_transaction": holding_transact
                     }
         body_params = {"filelist" : filelist}
 
@@ -420,7 +435,7 @@ def put_file(filepath: str, user: str=None, group: str=None,
     # Resolve path to file (i.e. make absolute) if configured so
     if get_option(config, "resolve_filenames"):
         # Convert to a pathlib.Path and then back to a string
-        filepath = str(pathlib.Path(filepath).resolve())
+        filepath = str(Path(filepath).resolve())
 
     MAX_LOOPS = 2
     while c_try < MAX_LOOPS:
@@ -540,7 +555,7 @@ def put_filelist(filelist: List[str]=[],
     # Resolve path to file (i.e. make absolute) if configured so
     if get_option(config, "resolve_filenames"):
         # Convert to a pathlib.Path and then back to a string
-        filelist = [str(pathlib.Path(fp).resolve()) for fp in filelist]
+        filelist = [str(Path(fp).resolve()) for fp in filelist]
 
     while c_try < MAX_LOOPS:
 
