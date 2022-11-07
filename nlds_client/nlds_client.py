@@ -1,6 +1,7 @@
 #! /usr/bin/env python
 import click
-from nlds_client.clientlib.transactions import get_filelist, put_filelist
+from nlds_client.clientlib.transactions import get_filelist, put_filelist,\
+                                               list_holding
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
 
@@ -131,6 +132,27 @@ def getlist(filelist, user, group, target, label, holding_id, tag):
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+
+
+"""List (holdings) command"""
+@nlds_client.command("list")
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.option("--label", default=None, type=str)
+@click.option("--holding_id", default=None, type=int)
+@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
+def list(user, group, label, holding_id, tag):
+    # 
+    try:
+        response = list_holding(user, group, label, holding_id, tag)
+        print(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
 
 def main():
     nlds_client(prog_name="nlds")

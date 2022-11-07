@@ -19,18 +19,21 @@ from nlds_client.clientlib.exceptions import *
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 
-def construct_server_url(config: Dict):
+def construct_server_url(config: Dict, method=""):
     """Construct the url from the details in the config file.
     :param config: dictionary of key:value pairs returned from the load_config
     function.
     :type config: Dict
+
+    :param method: API method to call, currently either "files" or "holdings"
+    :type method: string
 
     :return: a fully qualified url to the server hosting the REST API for NLDS.
     :rtype: string
     """
     url = urllib.parse.urljoin(config["server"]["url"],
                                "/".join([config["server"]["api"],
-                               "files"])
+                               method])
                               ) + "/"
     return url
 
@@ -163,7 +166,7 @@ def get_filelist(filelist: List[str]=[],
     access_key = get_access_key(config)
     secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
-    url = construct_server_url(config) + "getlist"
+    url = construct_server_url(config, "files") + "getlist"
     MAX_LOOPS = 2
 
     # If target given then we're operating in "mode 2" where we're downloading 
@@ -317,7 +320,7 @@ def put_filelist(filelist: List[str]=[],
     access_key = get_access_key(config)
     secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
-    url = construct_server_url(config)
+    url = construct_server_url(config, "files")
     MAX_LOOPS = 2
     
     # Resolve path to file (i.e. make absolute) if configured so
@@ -372,8 +375,6 @@ def put_filelist(filelist: List[str]=[],
             body_params["holding_id"] = holding_id
         # make the request
         try:
-            print(input_params)
-            print(body_params)
             response = requests.put(
                 url,
                 headers = token_headers,
@@ -388,6 +389,118 @@ def put_filelist(filelist: List[str]=[],
                 f"the {CONFIG_FILE_LOCATION} file."
             )
 
+        # process the returned response
+        try:
+            process_transaction_response(response, url, config)
+        except AuthenticationError:
+            # try to get a new token via the refresh method
+            try:
+                auth_token = fetch_oauth2_token_from_refresh(config)
+                continue
+            except (AuthenticationError, RequestError) as ae:
+                # delete the token file ready to try again!
+                if (ae.status_code == requests.codes.unauthorized or
+                    ae.status_code == requests.codes.bad_request):
+                    os.remove(os.path.expanduser(
+                        config['authentication']['oauth_token_file_location']
+                    ))
+                    continue
+                else:
+                    raise ae
+
+        response_dict = json.loads(response.json())
+        response_dict['success'] = True
+        return response_dict
+
+    # If we get to this point then the transaction could not be processed
+    response_dict = {'uuid' : str(transaction_id),
+                     'msg'  : f'PUT transaction with id {transaction_id} failed',
+                     'success' : False
+                    }
+    return response_dict
+
+
+def list_holding(user, group, label, holding_id, tag):
+    """Make a request to list the holdings in the NLDS for a user
+    :param user: the username to get the holding(s) for
+    :type user: string
+
+    :param group: the group to get the holding(s) for
+    :type group: string
+
+    :param label: the label of an existing holding to get the details of
+    :type label: str, optional
+
+    :param holding_id: the integer id of an existing holding to get the details of
+    :type holding_id: int, optional
+
+    :param tag: a dictionary of key:value pairs to search holdings for - return holdings with these tags
+    :type tag: dict, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+
+    c_try = 0
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
+    transaction_id = uuid.uuid4()
+    url = construct_server_url(config, "holdings")
+    MAX_LOOPS = 2
+    
+    while c_try < MAX_LOOPS:
+        c_try += 1
+        try:
+            auth_token = load_token(config)
+        except FileNotFoundError:
+            # we need the username and password to get the OAuth2 token in
+            # the password flow
+            username, password = get_username_password(config)
+            auth_token = fetch_oauth2_token(config, username, password)
+            # we don't want to do the rest of the loop!
+            continue
+
+        token_headers = {
+            "Content-Type"  : "application/json",
+            "cache-control" : "no-cache",
+            "Authorization" : f"Bearer {auth_token['access_token']}"
+        }
+
+        # build the parameters.  holdings->get requires
+        #    user: str
+        #    group: str
+        input_params = {"user" : user,
+                        "group" : group}
+
+        # add additional / optional components to input params
+        if label is not None:
+            input_params["label"] = label
+        if tag is not None:
+            input_params["tag"] = tag
+        if holding_id is not None:
+            input_params["holding_id"] = holding_id
+        # make the request
+        try:
+            response = requests.get(
+                url,
+                headers = token_headers,
+                params = input_params,
+                verify = get_option(config, 'verify_certificates')
+            )
+        except requests.exceptions.ConnectionError:
+            raise ConnectionError(
+                f"Could not connect to the URL: {url}\n"
+                "Check the ['server']['url'] and ['server']['api'] setting in "
+                f"the {CONFIG_FILE_LOCATION} file."
+            )
         # process the returned response
         try:
             process_transaction_response(response, url, config)
