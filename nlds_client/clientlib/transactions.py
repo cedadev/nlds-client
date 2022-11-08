@@ -420,7 +420,8 @@ def put_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def list_holding(user, group, label, holding_id, tag):
+def list_holding(user: str, group: str, 
+                 label: str, holding_id: int, tag: dict):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
     :type user: string
@@ -428,13 +429,15 @@ def list_holding(user, group, label, holding_id, tag):
     :param group: the group to get the holding(s) for
     :type group: string
 
-    :param label: the label of an existing holding to get the details of
+    :param label: the label of an existing holding to get the details for
     :type label: str, optional
 
-    :param holding_id: the integer id of an existing holding to get the details of
+    :param holding_id: the integer id of an existing holding to get the details
     :type holding_id: int, optional
 
-    :param tag: a dictionary of key:value pairs to search holdings for - return holdings with these tags
+    :param tag: a list of key:value pairs to search holdings for - return
+        holdings with these tags.  This will be converted to dictionary before 
+        calling the remote method.
     :type tag: dict, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
@@ -484,9 +487,14 @@ def list_holding(user, group, label, holding_id, tag):
         if label is not None:
             input_params["label"] = label
         if tag is not None:
-            input_params["tag"] = tag
+            # convert dict to string
+            tag_str = ""
+            for key in tag:
+                tag_str += key+":"+tag[key]+","
+            input_params["tag"] = str(tag).replace("'","")
         if holding_id is not None:
             input_params["holding_id"] = holding_id
+
         # make the request
         try:
             response = requests.get(
