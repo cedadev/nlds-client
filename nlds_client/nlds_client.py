@@ -4,6 +4,7 @@ from nlds_client.clientlib.transactions import get_filelist, put_filelist,\
                                                list_holding
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
+from nlds_client.clientlib.config import get_user, get_group, load_config
 
 @click.group()
 def nlds_client():
@@ -133,6 +134,31 @@ def getlist(filelist, user, group, target, label, holding_id, tag):
     except RequestError as re:
         raise click.UsageError(re)
 
+def format_request_details(user, group, label, holding_id, tag):
+    config = load_config()
+    out = ""
+    user = get_user(config, user)
+    out += f"user: {user}, "
+    
+    group = get_group(config, group)
+    out += f"group: {group}, "
+
+    if label:
+        out += f"label: {label}, "
+    if holding_id:
+        out += f"holding_id: {holding_id}, "
+    if tag:
+        out += f"tag: {tag}, "
+    return out[:-2]
+
+def print_list(response: dict, req_details):
+    """Print out the response from the list command"""
+    list_string = "Listing holding(s) for: "
+    list_string += req_details
+    print(list_string)
+    for h in response['data']['holdings']:
+        print(h)
+
 
 """List (holdings) command"""
 @nlds_client.command("list")
@@ -145,7 +171,16 @@ def list(user, group, label, holding_id, tag):
     # 
     try:
         response = list_holding(user, group, label, holding_id, tag)
-        print(response)
+        req_details = format_request_details(
+                user, group, label, holding_id, tag
+            )
+        if response['success'] and len(response['data']['holdings']) > 0:
+            print_list(response, req_details)
+        else:
+            fail_string = "Failed to list holding with "
+            fail_string += req_details
+            raise click.UsageError(fail_string)
+
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
