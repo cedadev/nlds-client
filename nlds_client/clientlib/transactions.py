@@ -538,3 +538,121 @@ def list_holding(user: str, group: str,
                      'success' : False
                     }
     return response_dict
+
+
+def monitor_transactions(user, group, transaction_id, sub_id, state, 
+                         retry_count):
+    """Make a request to the monitoring database for a status update of ongoing 
+    or finished transactions in the NLDS for, a user/group
+
+    :param user: the username to get the transaction state(s) for
+    :type user: string
+
+    :param group: the group to get the transaction state(s) for
+    :type group: string
+
+    :param transaction_id: a specific transaction_id to get the status of 
+    :type transaction_id: string, optional
+    
+    :param sub_id: a specific sub_id (of a sub_record) to get the status of 
+    :type sub_id: string, optional
+
+    :param state: applies a state-specific filter to the status request, only 
+        sub_records at the given state will be returned.
+    :type state: string or int, optional
+
+    :param retry_count: returns sub_records at the given retry_count value
+    :type retry_count: int, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+
+    c_try = 0
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "status")
+    MAX_LOOPS = 2
+    
+    while c_try < MAX_LOOPS:
+        c_try += 1
+        try:
+            auth_token = load_token(config)
+        except FileNotFoundError:
+            # we need the username and password to get the OAuth2 token in
+            # the password flow
+            username, password = get_username_password(config)
+            auth_token = fetch_oauth2_token(config, username, password)
+            # we don't want to do the rest of the loop!
+            continue
+
+        token_headers = {
+            "Content-Type"  : "application/json",
+            "cache-control" : "no-cache",
+            "Authorization" : f"Bearer {auth_token['access_token']}"
+        }
+
+        # build the parameters.  monitoring->get requires
+        #    user: str
+        #    group: str
+        input_params = {"user" : user,
+                        "group" : group}
+
+        # add additional / optional components to input params
+        if transaction_id is not None:
+            input_params["transaction_id"] = transaction_id
+        if sub_id is not None:
+            input_params["sub_id"] = sub_id
+        if state is not None:
+            input_params["state"] = state
+        if retry_count is not None:
+            input_params["retry_count"] = retry_count
+
+        # make the request
+        try:
+            response = requests.get(
+                url,
+                headers = token_headers,
+                params = input_params,
+                verify = get_option(config, 'verify_certificates')
+            )
+        except requests.exceptions.ConnectionError:
+            raise ConnectionError(
+                f"Could not connect to the URL: {url}\n"
+                "Check the ['server']['url'] and ['server']['api'] setting in "
+                f"the {CONFIG_FILE_LOCATION} file."
+            )
+        # process the returned response
+        try:
+            process_transaction_response(response, url, config)
+        except AuthenticationError:
+            # try to get a new token via the refresh method
+            try:
+                auth_token = fetch_oauth2_token_from_refresh(config)
+                continue
+            except (AuthenticationError, RequestError) as ae:
+                # delete the token file ready to try again!
+                if (ae.status_code == requests.codes.unauthorized or
+                    ae.status_code == requests.codes.bad_request):
+                    os.remove(os.path.expanduser(
+                        config['authentication']['oauth_token_file_location']
+                    ))
+                    continue
+                else:
+                    raise ae
+
+        response_dict = json.loads(response.json())
+        response_dict['success'] = True
+        return response_dict
+
+    # If we get to this point then the transaction could not be processed
+    response_dict = {
+        "msg": f"GET transaction for user {user} and group {group} failed",
+        "success": False
+    }
+    return response_dict

@@ -1,7 +1,8 @@
 #! /usr/bin/env python
 import click
-from nlds_client.clientlib.transactions import get_filelist, put_filelist,\
-                                               list_holding
+from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
+                                                list_holding, 
+                                                monitor_transactions)
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
 from nlds_client.clientlib.config import get_user, get_group, load_config
@@ -188,6 +189,25 @@ def list(user, group, label, holding_id, tag):
     except RequestError as re:
         raise click.UsageError(re)
 
+"""Stat (monitoring) command"""
+@nlds_client.command("stat")
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.option("--transaction_id", default=None, type=str)
+@click.option("--sub_id", default=None, type=str)
+@click.option("--state", default=None, type=(str, int))
+@click.option("--retry_count", default=None, type=int)
+def stat(user, group, transaction_id, sub_id, state, retry_count):
+    try:
+        response = monitor_transactions(user, group, transaction_id, sub_id, state, 
+                                        retry_count)
+        print(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
 
 def main():
     nlds_client(prog_name="nlds")
