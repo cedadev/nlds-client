@@ -63,7 +63,6 @@ def process_transaction_response(response: requests.models.Response, url: str,
     triggered.
     :rtype: requests.models.Response object
     """
-    print(response.status_code)
     #    possible responses: 202, 400, 403, 404, 422.
     try:
         if (response.status_code == requests.codes.ok or
@@ -93,7 +92,6 @@ def process_transaction_response(response: requests.models.Response, url: str,
                 response.status_code
             )
         elif (response.status_code == requests.codes.not_found):   # 404
-            print(response.content)
             response_msg = response.json()['detail']
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
