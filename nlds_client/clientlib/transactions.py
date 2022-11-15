@@ -19,18 +19,21 @@ from nlds_client.clientlib.exceptions import *
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 
-def construct_server_url(config: Dict):
+def construct_server_url(config: Dict, method=""):
     """Construct the url from the details in the config file.
     :param config: dictionary of key:value pairs returned from the load_config
     function.
     :type config: Dict
+
+    :param method: API method to call, currently either "files" or "holdings"
+    :type method: string
 
     :return: a fully qualified url to the server hosting the REST API for NLDS.
     :rtype: string
     """
     url = urllib.parse.urljoin(config["server"]["url"],
                                "/".join([config["server"]["api"],
-                               "files"])
+                               method])
                               ) + "/"
     return url
 
@@ -60,6 +63,7 @@ def process_transaction_response(response: requests.models.Response, url: str,
     triggered.
     :rtype: requests.models.Response object
     """
+    print(response.status_code)
     #    possible responses: 202, 400, 403, 404, 422.
     try:
         if (response.status_code == requests.codes.ok or
@@ -89,17 +93,18 @@ def process_transaction_response(response: requests.models.Response, url: str,
                 response.status_code
             )
         elif (response.status_code == requests.codes.not_found):   # 404
-            response_json = json.loads(response.json()['detail'])
+            print(response.content)
+            response_msg = response.json()['detail']
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
-                f"{response_json['msg']} (HTTP_{response.status_code})",
+                f"{response_msg} (HTTP_{response.status_code})",
                 response.status_code
             )
         elif (response.status_code == requests.codes.unprocessable): # 422
-            response_json = response.json()['detail'][0]
+            response_msg = response.json()['detail']
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
-                f"{response_json['msg']} (HTTP_{response.status_code})",
+                f"{response_msg} (HTTP_{response.status_code})",
                 response.status_code
             )
         else:
@@ -115,68 +120,32 @@ def process_transaction_response(response: requests.models.Response, url: str,
         )
 
 
-def get_file(filepath: str, user: str=None, group: str=None, 
-             target: str = None, holding_transaction_id: str = None):
-    """Make a request to get a single file from the NLDS.
-    :param filepath: the path of the file to get from the storage
-    :type filepath: string
-    :param user: the username to get the file
-    :type user: string, optional
-    :param group: the group to get the file
-    :type group: string
-    :param holding_transaction_id: the transaction id pertaining to the holding
-    containing the files
-    :type holding_transaction_id: string
+def main_loop(url: str, 
+              input_params: dict={}, 
+              body_params: dict={},
+              method=requests.get):
+    """Generalised main loop to make requests to the NLDS server
+    :param url: the API URL to contact
+    :type user: string
+
+    :param input_params: the input parameters for the API request (or {})
+    :type input_params: dict
+
+    :param body_params: the body parameters for the API request (or {})
+    :type body_params: dict
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
 
-    :return: A Dictionary of the response
+    :return: A Dictionary of the response or None
     :rtype: Dict
     """
 
-    # try 3 times:
-    #   1. With token loaded from file at config["oauth_token_file_location"]
-    #   2. With a refresh token
-    #   3. Delete the token file
-
+    config = load_config()    
     c_try = 0
-    # get the config, user and group
-    config = load_config()
-    user = get_user(config, user)
-    group = get_group(config, group)
-    tenancy = get_tenancy(config)
-    access_key = get_access_key(config)
-    secret_key = get_secret_key(config)
-    transaction_id = uuid.uuid4()
-    url = construct_server_url(config)
     MAX_LOOPS = 2
-
-    # If target given then we're operating in "mode 2" where we're downloading 
-    # the file to a new location
-    if target:
-        target_p = Path(target)
-        # Resolve path to target (i.e. make absolute) if configured so
-        if get_option(config, "resolve_filenames"):
-            # Convert to a pathlib.Path to resolve and then back to a string
-            target = str(target_p.resolve())
-        # Recursively create the target path if it doesn't exist
-        # NOTE: what permissions should be on this? Should _we_ be creating it
-        # here? or should we just error at this point?
-        if not target_p.exists():
-            os.makedirs(target)
-    # If no target given then we are operating in "mode 1", i.e. we're 
-    # downloading files back to their original locations.
-    else:
-        # Resolve path to file (i.e. make absolute) if configured so
-        if get_option(config, "resolve_filenames"):
-            # Convert to a pathlib.Path to resolve, and then back to a string
-            filepath = str(Path(filepath).resolve())
-
+    
     while c_try < MAX_LOOPS:
-
-        # get an OAuth token if we fail then the file doesn't exist.
-        # we then fetch an Oauth2 token and try again
         c_try += 1
         try:
             auth_token = load_token(config)
@@ -194,31 +163,13 @@ def get_file(filepath: str, user: str=None, group: str=None,
             "Authorization" : f"Bearer {auth_token['access_token']}"
         }
 
-        # build the parameters.  files/get requires:
-        #    transaction_id         : UUID
-        #    user                   : str
-        #    group                  : str
-        #    access_key             : str
-        #    secret_key             : str
-        #    tenancy                : str (optional)
-        #    target                 : str (optional - defaults to cwd)
-        #    holding_transaction_id : str (optional)
-        input_params = {"transaction_id" : transaction_id,
-                        "user" : user,
-                        "group" : group,
-                        "access_key" : access_key,
-                        "secret_key" : secret_key,
-                        "tenancy" : tenancy,
-                        "target": target,
-                        "holding_transaction_id": holding_transaction_id,
-                        "filepath" : filepath}
-
         # make the request
         try:
-            response = requests.get(
+            response = method(
                 url,
                 headers = token_headers,
                 params = input_params,
+                json = body_params,
                 verify = get_option(config, 'verify_certificates')
             )
         except requests.exceptions.ConnectionError:
@@ -227,7 +178,6 @@ def get_file(filepath: str, user: str=None, group: str=None,
                 "Check the ['server']['url'] and ['server']['api'] setting in "
                 f"the {CONFIG_FILE_LOCATION} file."
             )
-
         # process the returned response
         try:
             process_transaction_response(response, url, config)
@@ -252,15 +202,98 @@ def get_file(filepath: str, user: str=None, group: str=None,
         return response_dict
 
     # If we get to this point then the transaction could not be processed
-    response_dict = {'uuid' : str(transaction_id),
-                     'msg'  : f'GET transaction with id {transaction_id} failed',
-                     'success' : False
-                    }
+    return None
+
+
+def put_filelist(filelist: List[str]=[],
+                 user: str=None, group: str=None,
+                 label: str=None, holding_id: int=None, tag: dict=None):
+    """Make a request to put a list of files into the NLDS.
+    :param filelist: the list of filepaths to put into storage
+    :type filelist: List[string]
+
+    :param user: the username to put the files
+    :type user: string
+
+    :param group: the group to put the files
+    :type group: string
+
+    :param label: the label of an existing holding that files are to be added to
+    :type label: str, optional
+
+    :param holding_id: the integer id of an existing holding that files are to be added to
+    :type holding_id: int, optional
+
+    :param tag: a dictionary of key:value pairs to add as tags to the holding upon creation
+    :type tag: dict, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "files")
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
+    transaction_id = uuid.uuid4()
+
+    # Resolve path to file (i.e. make absolute) if configured so
+    if get_option(config, "resolve_filenames"):
+        # Convert to a pathlib.Path and then back to a string
+        filelist = [str(Path(fp).resolve()) for fp in filelist]
+
+    # build the parameters.  files/put requires (for a filelist):
+    #    transaction_id: UUID
+    #    user: str
+    #    group: str
+    #    access_key: str
+    #    secret_key: str
+    #    tenancy: str (optional)
+    # and the filelist in the body
+
+    input_params = {"transaction_id" : transaction_id,
+                    "user" : user,
+                    "group" : group,
+                    "access_key" : access_key,
+                    "secret_key" : secret_key,
+                    "tenancy" : tenancy
+                }
+
+    body_params = {"filelist" : filelist}
+    # add optional components to body: label, tags, holding_id
+    if label is not None:
+        body_params["label"] = label
+    if tag is not None:
+        body_params["tag"] = tag
+    if holding_id is not None:
+        body_params["holding_id"] = holding_id
+    # make the request
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        body_params=body_params,
+        method=requests.put
+    )
+
+    if not response_dict:
+        # If we get to this point then the transaction could not be processed
+        response_dict = {'uuid' : str(transaction_id),
+                         'msg'  : f'PUT transaction with id {transaction_id} failed',
+                        'success' : False
+                        }
     return response_dict
 
+
 def get_filelist(filelist: List[str]=[],
-                 user: str=None, group: str=None, 
-                 target: str = None, holding_transact: str = None) -> Dict:
+                 user: str=None, group: str=None, target: str = None,
+                 label: str=None, holding_id: int=None, tag: dict=None) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -271,19 +304,27 @@ def get_filelist(filelist: List[str]=[],
     :param group: the group to get the files
     :type group: string, optional
 
-    :raises requests.exceptions.ConnectionError: if the server cannot be
-    reached
+    :param target: the location to write the retrieved files to
+    :type target: string, optional
+
+    :param label: the label of an existing holding that files are to be 
+    retrieved from
+    :type label: str, optional
+
+    :param holding_id: the integer id of a holding that files are to be 
+    retrieved from
+    :type holding_id: int, optional
+
+    :param tag: a dictionary of key:value pairs to search for in a holding that 
+    files are to be retrieved from
+    :type tag: dict, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be reached
 
     :return: A Dictionary of the response
     :rtype: Dict
     """
 
-    # try 3 times:
-    #   1. With token loaded from file at config["oauth_token_file_location"]
-    #   2. With a refresh token
-    #   3. Delete the token file
-
-    c_try = 0
     # get the config, user and group
     config = load_config()
     user = get_user(config, user)
@@ -292,8 +333,7 @@ def get_filelist(filelist: List[str]=[],
     access_key = get_access_key(config)
     secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
-    url = construct_server_url(config) + "getlist"
-    MAX_LOOPS = 2
+    url = construct_server_url(config, "files") + "getlist"
 
     # If target given then we're operating in "mode 2" where we're downloading 
     # the file to a new location
@@ -316,225 +356,68 @@ def get_filelist(filelist: List[str]=[],
             # Convert to a pathlib.Path to resolve, and then back to a string
             filelist = [str(Path(fp).resolve()) for fp in filelist]
 
-    while c_try < MAX_LOOPS:
-        # get an OAuth token if we fail then the file doesn't exist.
-        # we then fetch an Oauth2 token and try again
-        c_try += 1
-        try:
-            auth_token = load_token(config)
-        except FileNotFoundError:
-            # we need the username and password to get the OAuth2 token in
-            # the password flow
-            username, password = get_username_password(config)
-            auth_token = fetch_oauth2_token(config, username, password)
-            # we don't want to do the rest of the loop!
-            continue
+    # build the parameters.  files/getlist/put requires:
+    #    transaction_id     : UUID
+    #    user               : str
+    #    group              : str
+    #    access_key         : str
+    #    secret_key         : str
+    #    tenancy            : str (optional)
+    #    target             : str (optional - defaults to cwd)
+    # and the filelist in the body
+    input_params = {"transaction_id" : transaction_id,
+                    "user" : user,
+                    "group" : group,
+                    "access_key" : access_key,
+                    "secret_key" : secret_key,
+                    "tenancy" : tenancy,
+                    "target": target,
+                }
+    body_params = {"filelist" : filelist}
+    # add optional components to body: label, tags, holding_id
+    if label is not None:
+        body_params["label"] = label
+    if tag is not None:
+        body_params["tag"] = tag
+    if holding_id is not None:
+        body_params["holding_id"] = holding_id
+    # make the request
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        body_params=body_params,
+        method=requests.put
+    )
 
-        token_headers = {
-            "Content-Type"  : "application/json",
-            "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
+    if not response_dict:
+        # If we get to this point then the transaction could not be processed
+        response_dict = {
+            "uuid" : str(transaction_id),
+            "msg"  : f"GET transaction with id {transaction_id} failed",
+            "success" : False
         }
-
-        # build the parameters.  files/getlist/put requires:
-        #    transaction_id     : UUID
-        #    user               : str
-        #    group              : str
-        #    access_key         : str
-        #    secret_key         : str
-        #    tenancy            : str (optional)
-        #    target             : str (optional - defaults to cwd)
-        #    holding_transact    : str (optional)
-        # and the filelist in the body
-        input_params = {"transaction_id" : transaction_id,
-                        "user" : user,
-                        "group" : group,
-                        "access_key" : access_key,
-                        "secret_key" : secret_key,
-                        "tenancy" : tenancy,
-                        "target": target,
-                        "holding_transaction": holding_transact
-                    }
-        body_params = {"filelist" : filelist}
-
-        # make the request
-        try:
-            response = requests.put(
-                url,
-                headers = token_headers,
-                params = input_params,
-                json = body_params,
-                verify = get_option(config, 'verify_certificates')
-            )
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(
-                f"Could not connect to the URL: {url}\n"
-                "Check the ['server']['url'] and ['server']['api'] setting in "
-                f"the {CONFIG_FILE_LOCATION} file."
-            )
-
-        # process the returned response
-        try:
-            process_transaction_response(response, url, config)
-        except AuthenticationError:
-            # try to get a new token via the refresh method
-            try:
-                auth_token = fetch_oauth2_token_from_refresh(config)
-                continue
-            except (AuthenticationError, RequestError) as ae:
-                # delete the token file ready to try again!
-                if (ae.status_code == requests.codes.unauthorized or
-                    ae.status_code == requests.codes.bad_request):
-                    os.remove(os.path.expanduser(
-                        config['authentication']['oauth_token_file_location']
-                    ))
-                    continue
-                else:
-                    raise ae
-
-        response_dict = json.loads(response.json())
-        response_dict['success'] = True
-        return response_dict
-
-    # If we get to this point then the transaction could not be processed
-    response_dict = {'uuid' : str(transaction_id),
-                     'msg'  : f'GETLIST transaction with id {transaction_id} failed',
-                     'success' : False
-                    }
     return response_dict
 
 
-def put_file(filepath: str, user: str=None, group: str=None,
-             ignore_certificates: bool=None):
-    """Make a request to put a single file into the NLDS.
-
-    :param filepath: the path of the file to put into the storage
-    :type filepath: string
-
-    :param user: the username to put the file
-    :type user: string, optional
-
-    :param group: the group to put the file
-    :type group: string, optional
-
-    :raises requests.exceptions.ConnectionError: if the server cannot be
-    reached
-
-    :return: A Dictionary of the response
-    :rtype: Dict
-    """
-
-    c_try = 0
-    # get the config, user and group
-    config = load_config()
-    user = get_user(config, user)
-    group = get_group(config, group)
-    tenancy = get_tenancy(config)
-    access_key = get_access_key(config)
-    secret_key = get_secret_key(config)
-    transaction_id = uuid.uuid4()
-    url = construct_server_url(config)
-
-    # Resolve path to file (i.e. make absolute) if configured so
-    if get_option(config, "resolve_filenames"):
-        # Convert to a pathlib.Path and then back to a string
-        filepath = str(Path(filepath).resolve())
-
-    MAX_LOOPS = 2
-    while c_try < MAX_LOOPS:
-
-        # get an OAuth token if we fail then the file doesn't exist.
-        # we then fetch an Oauth2 token and try again
-        c_try += 1
-        try:
-            auth_token = load_token(config)
-        except FileNotFoundError:
-            # we need the username and password to get the OAuth2 token in
-            # the password flow
-            username, password = get_username_password(config)
-            auth_token = fetch_oauth2_token(config, username, password)
-            # we don't want to do the rest of the loop!
-            continue
-
-        token_headers = {
-            "Content-Type"  : "application/json",
-            "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
-        }
-
-        # build the parameters.  files/put requires:
-        #    transaction_id: UUID
-        #    user       : str
-        #    group      : str
-        #    access_key : str
-        #    secret_key : str
-        #    tenancy    : str (optional)
-        #    filepath   : str (optional)
-        input_params = {"transaction_id" : transaction_id,
-                        "user" : user,
-                        "group" : group,
-                        "access_key" : access_key,
-                        "secret_key" : secret_key,
-                        "tenancy" : tenancy,
-                        "filepath" : filepath}
-
-        # make the request
-        try:
-            response = requests.put(
-                url,
-                headers = token_headers,
-                params = input_params,
-                verify = get_option(config, 'verify_certificates')
-            )
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(
-                f"Could not connect to the URL: {url}\n"
-                "Check the ['server']['url'] and ['server']['api'] setting in "
-                f"the {CONFIG_FILE_LOCATION} file."
-            )
-
-        # process the returned response
-        try:
-            process_transaction_response(response, url, config)
-        except AuthenticationError:
-            # try to get a new token via the refresh method
-            try:
-                auth_token = fetch_oauth2_token_from_refresh(config)
-                continue
-            except (AuthenticationError, RequestError) as ae:
-                # delete the token file ready to try again!
-                if (ae.status_code == requests.codes.unauthorized or
-                    ae.status_code == requests.codes.bad_request):
-                    os.remove(os.path.expanduser(
-                        config['authentication']['oauth_token_file_location']
-                    ))
-                    continue
-                else:
-                    raise ae
-
-        response_dict = json.loads(response.json())
-        response_dict['success'] = True
-        return response_dict
-
-    # If we get to this point then the transaction could not be processed
-    response_dict = {'uuid' : str(transaction_id),
-                     'msg'  : f'PUT transaction with id {transaction_id} failed',
-                     'success' : False
-                    }
-    return response_dict
-
-
-def put_filelist(filelist: List[str]=[],
-                  user: str=None, group: str=None):
-    """Make a request to put a list of files into the NLDS.
-    :param filelist: the list of filepaths to put into storage
-    :type filelist: List[string]
-
-    :param user: the username to put the files
+def list_holding(user: str, group: str, 
+                 label: str, holding_id: int, tag: dict):
+    """Make a request to list the holdings in the NLDS for a user
+    :param user: the username to get the holding(s) for
     :type user: string
 
-    :param group: the group to put the files
+    :param group: the group to get the holding(s) for
     :type group: string
+
+    :param label: the label of an existing holding to get the details for
+    :type label: str, optional
+
+    :param holding_id: the integer id of an existing holding to get the details
+    :type holding_id: int, optional
+
+    :param tag: a list of key:value pairs to search holdings for - return
+        holdings with these tags.  This will be converted to dictionary before 
+        calling the remote method.
+    :type tag: dict, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -543,103 +426,112 @@ def put_filelist(filelist: List[str]=[],
     :rtype: Dict
     """
 
-    c_try = 0
     # get the config, user and group
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
-    tenancy = get_tenancy(config)
-    access_key = get_access_key(config)
-    secret_key = get_secret_key(config)
-    transaction_id = uuid.uuid4()
-    url = construct_server_url(config)
-    MAX_LOOPS = 2
-    
-    # Resolve path to file (i.e. make absolute) if configured so
-    if get_option(config, "resolve_filenames"):
-        # Convert to a pathlib.Path and then back to a string
-        filelist = [str(Path(fp).resolve()) for fp in filelist]
+    url = construct_server_url(config, "holdings")
 
-    while c_try < MAX_LOOPS:
+    # build the parameters.  holdings->get requires
+    #    user: str
+    #    group: str
+    input_params = {"user" : user,
+                    "group" : group}
 
-        # get an OAuth token if we fail then the file doesn't exist.
-        # we then fetch an Oauth2 token and try again
-        c_try += 1
-        try:
-            auth_token = load_token(config)
-        except FileNotFoundError:
-            # we need the username and password to get the OAuth2 token in
-            # the password flow
-            username, password = get_username_password(config)
-            auth_token = fetch_oauth2_token(config, username, password)
-            # we don't want to do the rest of the loop!
-            continue
+    # add additional / optional components to input params
+    if label is not None:
+        input_params["label"] = label
+    if tag is not None:
+        # convert dict to string
+        tag_str = ""
+        for key in tag:
+            tag_str += key+":"+tag[key]+","
+        input_params["tag"] = str(tag).replace("'","")
+    if holding_id is not None:
+        input_params["holding_id"] = holding_id
 
-        token_headers = {
-            "Content-Type"  : "application/json",
-            "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
+    response_dict = main_loop(
+        url=url, 
+        input_params=input_params,
+        method=requests.get
+    )
+
+    if not response_dict:
+        response_dict = {
+            "msg"  : f"LIST holdings for user {user} and group {group} failed",
+            "success" : False
         }
+    return response_dict
 
-        # build the parameters.  files/put requires (for a filelist):
-        #    transaction_id: UUID
-        #    user: str
-        #    group: str
-        #    access_key: str
-        #    secret_key: str
-        #    tenancy: str (optional)
-        # and the filelist in the body
 
-        input_params = {"transaction_id" : transaction_id,
-                        "user" : user,
-                        "group" : group,
-                        "access_key" : access_key,
-                        "secret_key" : secret_key,
-                        "tenancy" : tenancy
-                    }
-        body_params = {"filelist" : filelist}
-        # make the request
-        try:
-            response = requests.put(
-                url,
-                headers = token_headers,
-                params = input_params,
-                json = body_params,
-                verify = get_option(config, 'verify_certificates')
-            )
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(
-                f"Could not connect to the URL: {url}\n"
-                "Check the ['server']['url'] and ['server']['api'] setting in "
-                f"the {CONFIG_FILE_LOCATION} file."
-            )
+def find_file():
+    pass
 
-        # process the returned response
-        try:
-            process_transaction_response(response, url, config)
-        except AuthenticationError:
-            # try to get a new token via the refresh method
-            try:
-                auth_token = fetch_oauth2_token_from_refresh(config)
-                continue
-            except (AuthenticationError, RequestError) as ae:
-                # delete the token file ready to try again!
-                if (ae.status_code == requests.codes.unauthorized or
-                    ae.status_code == requests.codes.bad_request):
-                    os.remove(os.path.expanduser(
-                        config['authentication']['oauth_token_file_location']
-                    ))
-                    continue
-                else:
-                    raise ae
 
-        response_dict = json.loads(response.json())
-        response_dict['success'] = True
-        return response_dict
+def monitor_transactions(user, group, transaction_id, sub_id, state, 
+                         retry_count):
+    """Make a request to the monitoring database for a status update of ongoing 
+    or finished transactions in the NLDS for, a user/group
+
+    :param user: the username to get the transaction state(s) for
+    :type user: string
+
+    :param group: the group to get the transaction state(s) for
+    :type group: string
+
+    :param transaction_id: a specific transaction_id to get the status of 
+    :type transaction_id: string, optional
+    
+    :param sub_id: a specific sub_id (of a sub_record) to get the status of 
+    :type sub_id: string, optional
+
+    :param state: applies a state-specific filter to the status request, only 
+        sub_records at the given state will be returned.
+    :type state: string or int, optional
+
+    :param retry_count: returns sub_records at the given retry_count value
+    :type retry_count: int, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "status")
+    MAX_LOOPS = 2
+
+    # build the parameters.  monitoring->get requires
+    #    user: str
+    #    group: str
+    input_params = {"user" : user,
+                    "group" : group}
+
+    # add additional / optional components to input params
+    if transaction_id is not None:
+        input_params["transaction_id"] = transaction_id
+    if sub_id is not None:
+        input_params["sub_id"] = sub_id
+    if state is not None:
+        input_params["state"] = state
+    if retry_count is not None:
+        input_params["retry_count"] = retry_count
+
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        method=requests.get
+    )
 
     # If we get to this point then the transaction could not be processed
-    response_dict = {'uuid' : str(transaction_id),
-                     'msg'  : f'PUT transaction with id {transaction_id} failed',
-                     'success' : False
-                    }
+    if not response_dict:
+        response_dict = {
+            "msg": f"STAT transaction for user {user} and group {group} failed",
+            "success": False
+        }
     return response_dict
