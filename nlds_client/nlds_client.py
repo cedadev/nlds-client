@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import click
 from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
-                                                list_holding, 
+                                                list_holding, find_file,
                                                 monitor_transactions)
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
@@ -135,7 +135,9 @@ def getlist(filelist, user, group, target, label, holding_id, tag):
     except RequestError as re:
         raise click.UsageError(re)
 
-def format_request_details(user, group, label, holding_id, tag):
+def format_request_details(user, group, label=None, holding_id=None, 
+                           tag=None, transaction_id=None, sub_id=None,
+                           state=None, retry_count=None):
     config = load_config()
     out = ""
     user = get_user(config, user)
@@ -150,6 +152,14 @@ def format_request_details(user, group, label, holding_id, tag):
         out += f"holding_id: {holding_id}, "
     if tag:
         out += f"tag: {tag}, "
+    if transaction_id:
+        out += f"transaction_id: {transaction_id}"
+    if sub_id:
+        out += f"sub_id: {sub_id}"
+    if state:
+        out += f"state: {state}"
+    if retry_count:
+        out += f"retry_count: {retry_count}"
     return out[:-2]
 
 def print_list(response: dict, req_details):
@@ -159,6 +169,14 @@ def print_list(response: dict, req_details):
     print(list_string)
     for h in response['data']['holdings']:
         print(h)
+
+def print_stat(response: dict, req_details):
+    """Print out the response from the list command"""
+    stat_string = "State of transactions(s) for: "
+    stat_string += req_details
+    print(stat_string)
+    for r in response['data']['records']:
+        print(r)
 
 def print_find(response:dict, req_details):
     """Print out the response from the find command"""
@@ -175,7 +193,7 @@ def list(user, group, label, holding_id, tag):
     try:
         response = list_holding(user, group, label, holding_id, tag)
         req_details = format_request_details(
-                user, group, label, holding_id, tag
+                user, group, label=label, holding_id=holding_id, tag=tag
             )
         if response['success'] and len(response['data']['holdings']) > 0:
             print_list(response, req_details)
@@ -201,9 +219,13 @@ def list(user, group, label, holding_id, tag):
 @click.option("--retry_count", default=None, type=int)
 def stat(user, group, transaction_id, sub_id, state, retry_count):
     try:
-        response = monitor_transactions(user, group, transaction_id, sub_id, state, 
-                                        retry_count)
-        print(response)
+        response = monitor_transactions(user, group, transaction_id, sub_id,
+                                        state, retry_count)
+        req_details = format_request_details(
+                user, group, transaction_id=transaction_id, sub_id=sub_id, 
+                state=state, retry_count=retry_count
+            )
+        print_stat(response, req_details)
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:

@@ -63,6 +63,7 @@ def process_transaction_response(response: requests.models.Response, url: str,
     triggered.
     :rtype: requests.models.Response object
     """
+    print(response.status_code)
     #    possible responses: 202, 400, 403, 404, 422.
     try:
         if (response.status_code == requests.codes.ok or
@@ -92,17 +93,18 @@ def process_transaction_response(response: requests.models.Response, url: str,
                 response.status_code
             )
         elif (response.status_code == requests.codes.not_found):   # 404
-            response_json = json.loads(response.json()['detail'])
+            print(response.content)
+            response_msg = response.json()['detail']
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
-                f"{response_json['msg']} (HTTP_{response.status_code})",
+                f"{response_msg} (HTTP_{response.status_code})",
                 response.status_code
             )
         elif (response.status_code == requests.codes.unprocessable): # 422
-            response_json = response.json()['detail'][0]
+            response_msg = response.json()['detail']
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
-                f"{response_json['msg']} (HTTP_{response.status_code})",
+                f"{response_msg} (HTTP_{response.status_code})",
                 response.status_code
             )
         else:
@@ -389,10 +391,11 @@ def get_filelist(filelist: List[str]=[],
 
     if not response_dict:
         # If we get to this point then the transaction could not be processed
-        response_dict = {'uuid' : str(transaction_id),
-                         'msg'  : f'GET transaction with id {transaction_id} failed',
-                        'success' : False
-                        }
+        response_dict = {
+            "uuid" : str(transaction_id),
+            "msg"  : f"GET transaction with id {transaction_id} failed",
+            "success" : False
+        }
     return response_dict
 
 
@@ -428,7 +431,6 @@ def list_holding(user: str, group: str,
     user = get_user(config, user)
     group = get_group(config, group)
     url = construct_server_url(config, "holdings")
-    transaction_id = uuid.uuid4()
 
     # build the parameters.  holdings->get requires
     #    user: str
@@ -456,9 +458,8 @@ def list_holding(user: str, group: str,
 
     if not response_dict:
         response_dict = {
-            'uuid' : str(transaction_id),
-            'msg'  : f'LIST holdings with id {transaction_id} failed',
-                      'success' : False
+            "msg"  : f"LIST holdings for user {user} and group {group} failed",
+            "success" : False
         }
     return response_dict
 
@@ -498,88 +499,39 @@ def monitor_transactions(user, group, transaction_id, sub_id, state,
     :rtype: Dict
     """
 
-    c_try = 0
     # get the config, user and group
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
     url = construct_server_url(config, "status")
     MAX_LOOPS = 2
-    
-    while c_try < MAX_LOOPS:
-        c_try += 1
-        try:
-            auth_token = load_token(config)
-        except FileNotFoundError:
-            # we need the username and password to get the OAuth2 token in
-            # the password flow
-            username, password = get_username_password(config)
-            auth_token = fetch_oauth2_token(config, username, password)
-            # we don't want to do the rest of the loop!
-            continue
 
-        token_headers = {
-            "Content-Type"  : "application/json",
-            "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
-        }
+    # build the parameters.  monitoring->get requires
+    #    user: str
+    #    group: str
+    input_params = {"user" : user,
+                    "group" : group}
 
-        # build the parameters.  monitoring->get requires
-        #    user: str
-        #    group: str
-        input_params = {"user" : user,
-                        "group" : group}
+    # add additional / optional components to input params
+    if transaction_id is not None:
+        input_params["transaction_id"] = transaction_id
+    if sub_id is not None:
+        input_params["sub_id"] = sub_id
+    if state is not None:
+        input_params["state"] = state
+    if retry_count is not None:
+        input_params["retry_count"] = retry_count
 
-        # add additional / optional components to input params
-        if transaction_id is not None:
-            input_params["transaction_id"] = transaction_id
-        if sub_id is not None:
-            input_params["sub_id"] = sub_id
-        if state is not None:
-            input_params["state"] = state
-        if retry_count is not None:
-            input_params["retry_count"] = retry_count
-
-        # make the request
-        try:
-            response = requests.get(
-                url,
-                headers = token_headers,
-                params = input_params,
-                verify = get_option(config, 'verify_certificates')
-            )
-        except requests.exceptions.ConnectionError:
-            raise ConnectionError(
-                f"Could not connect to the URL: {url}\n"
-                "Check the ['server']['url'] and ['server']['api'] setting in "
-                f"the {CONFIG_FILE_LOCATION} file."
-            )
-        # process the returned response
-        try:
-            process_transaction_response(response, url, config)
-        except AuthenticationError:
-            # try to get a new token via the refresh method
-            try:
-                auth_token = fetch_oauth2_token_from_refresh(config)
-                continue
-            except (AuthenticationError, RequestError) as ae:
-                # delete the token file ready to try again!
-                if (ae.status_code == requests.codes.unauthorized or
-                    ae.status_code == requests.codes.bad_request):
-                    os.remove(os.path.expanduser(
-                        config['authentication']['oauth_token_file_location']
-                    ))
-                    continue
-                else:
-                    raise ae
-
-        response_dict = json.loads(response.json())
-        response_dict['success'] = True
-        return response_dict
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        method=requests.get
+    )
 
     # If we get to this point then the transaction could not be processed
-    response_dict = {
-        "msg": f"GET transaction for user {user} and group {group} failed",
-        "success": False
-    }
+    if not response_dict:
+        response_dict = {
+            "msg": f"STAT transaction for user {user} and group {group} failed",
+            "success": False
+        }
     return response_dict
