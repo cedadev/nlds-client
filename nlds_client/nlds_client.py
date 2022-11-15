@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import click
 from nlds_client.clientlib.transactions import get_filelist, put_filelist,\
-                                               list_holding
+                                               list_holding, find_file
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
 from nlds_client.clientlib.config import get_user, get_group, load_config
@@ -159,6 +159,8 @@ def print_list(response: dict, req_details):
     for h in response['data']['holdings']:
         print(h)
 
+def print_find(response:dict, req_details):
+    """Print out the response from the find command"""
 
 """List (holdings) command"""
 @nlds_client.command("list")
@@ -178,6 +180,36 @@ def list(user, group, label, holding_id, tag):
             print_list(response, req_details)
         else:
             fail_string = "Failed to list holding with "
+            fail_string += req_details
+            raise click.UsageError(fail_string)
+
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
+
+"""Find (files) command"""
+@nlds_client.command("find")
+@click.option("--user", default=None, type=str)
+@click.option("--group", default=None, type=str)
+@click.option("--label", default=None, type=str)
+@click.option("--holding_id", default=None, type=int)
+@click.option("--path", default=None, type=str)
+@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
+def list(user, group, label, holding_id, tag):
+    # 
+    try:
+        response = find_file(user, group, label, holding_id, path, tag)
+        req_details = format_request_details(
+                user, group, label, holding_id, tag
+            )
+        if response['success'] and len(response['data']['holdings']) > 0:
+            print_find(response, req_details)
+        else:
+            fail_string = "Failed to list files with "
             fail_string += req_details
             raise click.UsageError(fail_string)
 
