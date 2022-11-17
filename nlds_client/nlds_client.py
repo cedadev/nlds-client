@@ -153,13 +153,13 @@ def format_request_details(user, group, label=None, holding_id=None,
     if tag:
         out += f"tag: {tag}, "
     if transaction_id:
-        out += f"transaction_id: {transaction_id}"
+        out += f"transaction_id: {transaction_id}, "
     if sub_id:
-        out += f"sub_id: {sub_id}"
+        out += f"sub_id: {sub_id}, "
     if state:
-        out += f"state: {state}"
+        out += f"state: {state}, "
     if retry_count:
-        out += f"retry_count: {retry_count}"
+        out += f"retry_count: {retry_count}, "
     return out[:-2]
 
 def print_list(response: dict, req_details):
@@ -172,7 +172,7 @@ def print_list(response: dict, req_details):
 
 def print_stat(response: dict, req_details):
     """Print out the response from the list command"""
-    stat_string = "State of transactions(s) for: "
+    stat_string = "State of transaction(s) for: "
     stat_string += req_details
     print(stat_string)
     for r in response['data']['records']:
@@ -217,7 +217,7 @@ def list(user, group, label, holding_id, tag):
 @click.option("--group", default=None, type=str)
 @click.option("--transaction_id", default=None, type=str)
 @click.option("--sub_id", default=None, type=str)
-@click.option("--state", default=None, type=(str, int))
+@click.option("--state", default=None, type=str)
 @click.option("--retry_count", default=None, type=int)
 def stat(user, group, transaction_id, sub_id, state, retry_count):
     try:

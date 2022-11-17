@@ -570,7 +570,7 @@ def monitor_transactions(user: str,
 
     :param state: applies a state-specific filter to the status request, only 
         sub_records at the given state will be returned.
-    :type state: string or int, optional
+    :type state: string, optional
 
     :param retry_count: returns sub_records at the given retry_count value
     :type retry_count: int, optional
