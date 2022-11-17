@@ -200,6 +200,8 @@ def list(user, group, label, holding_id, tag):
         else:
             fail_string = "Failed to list holding with "
             fail_string += req_details
+            if 'failure' in response['details']:
+                fail_string += "\nReason: " + response['details']['failure']
             raise click.UsageError(fail_string)
 
     except ConnectionError as ce:
@@ -241,18 +243,20 @@ def stat(user, group, transaction_id, sub_id, state, retry_count):
 @click.option("--holding_id", default=None, type=int)
 @click.option("--path", default=None, type=str)
 @click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-def list(user, group, label, holding_id, tag):
+def find(user, group, label, holding_id, path, tag):
     # 
     try:
         response = find_file(user, group, label, holding_id, path, tag)
         req_details = format_request_details(
                 user, group, label, holding_id, tag
             )
-        if response['success'] and len(response['data']['holdings']) > 0:
+        if response['success'] and len(response['data']['files']) > 0:
             print_find(response, req_details)
         else:
             fail_string = "Failed to list files with "
             fail_string += req_details
+            if response['details']['failure']:
+                fail_string += "\n" + response['details']['failure']
             raise click.UsageError(fail_string)
 
     except ConnectionError as ce:

@@ -38,7 +38,8 @@ def construct_server_url(config: Dict, method=""):
     return url
 
 
-def process_transaction_response(response: requests.models.Response, url: str,
+def process_transaction_response(response: requests.models.Response, 
+                                 url: str,
                                  config: Dict):
     """Process the response to raise exceptions for errors or return the
     response result.
@@ -204,8 +205,11 @@ def main_loop(url: str,
 
 
 def put_filelist(filelist: List[str]=[],
-                 user: str=None, group: str=None,
-                 label: str=None, holding_id: int=None, tag: dict=None):
+                 user: str=None, 
+                 group: str=None,
+                 label: str=None, 
+                 holding_id: int=None, 
+                 tag: dict=None):
     """Make a request to put a list of files into the NLDS.
     :param filelist: the list of filepaths to put into storage
     :type filelist: List[string]
@@ -290,8 +294,12 @@ def put_filelist(filelist: List[str]=[],
 
 
 def get_filelist(filelist: List[str]=[],
-                 user: str=None, group: str=None, target: str = None,
-                 label: str=None, holding_id: int=None, tag: dict=None) -> Dict:
+                 user: str=None, 
+                 group: str=None, 
+                 target: str = None,
+                 label: str=None, 
+                 holding_id: int=None, 
+                 tag: dict=None) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -397,8 +405,11 @@ def get_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def list_holding(user: str, group: str, 
-                 label: str, holding_id: int, tag: dict):
+def list_holding(user: str, 
+                 group: str, 
+                 label: str=None, 
+                 holding_id: int=None, 
+                 tag: dict=None):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
     :type user: string
@@ -428,7 +439,7 @@ def list_holding(user: str, group: str,
     config = load_config()
     user = get_user(config, user)
     group = get_group(config, group)
-    url = construct_server_url(config, "holdings")
+    url = construct_server_url(config, "catalog/list")
 
     # build the parameters.  holdings->get requires
     #    user: str
@@ -462,12 +473,86 @@ def list_holding(user: str, group: str,
     return response_dict
 
 
-def find_file():
-    pass
+def find_file(user: str, 
+              group: str, 
+              label: str=None, 
+              holding_id: int=None,
+              path: str=None,
+              tag: dict=None):
+    """Make a request to find files in the NLDS for a user
+    :param user: the username to get the holding(s) for
+    :type user: string
+
+    :param group: the group to get the holding(s) for
+    :type group: string
+
+    :param label: the label of an existing holding to get the details for
+    :type label: str, optional
+
+    :param holding_id: the integer id of an existing holding to get the details
+    :type holding_id: int, optional
+
+    :param tag: a list of key:value pairs to search holdings for - return
+        holdings with these tags.  This will be converted to dictionary before 
+        calling the remote method.
+    :type tag: dict, optional
+
+    :param path: path to search for, can be a substring, regex or wildcard
+    :type path: str, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "catalog/find")
+
+    # build the parameters.  holdings->get requires
+    #    user: str
+    #    group: str
+    input_params = {"user" : user,
+                    "group" : group}
+
+    # add additional / optional components to input params
+    if label is not None:
+        input_params["label"] = label
+    if tag is not None:
+        # convert dict to string
+        tag_str = ""
+        for key in tag:
+            tag_str += key+":"+tag[key]+","
+        input_params["tag"] = str(tag).replace("'","")
+    if holding_id is not None:
+        input_params["holding_id"] = holding_id
+    if path is not None:
+        input_params["path"] = path
+
+    print(url, input_params)
+    response_dict = main_loop(
+        url=url, 
+        input_params=input_params,
+        method=requests.get
+    )
+
+    if not response_dict:
+        response_dict = {
+            "msg"  : f"FIND files for user {user} and group {group} failed",
+            "success" : False
+        }
+    return response_dict    
 
 
-def monitor_transactions(user, group, transaction_id, sub_id, state, 
-                         retry_count):
+def monitor_transactions(user: str, 
+                         group: str, 
+                         transaction_id: str=None, 
+                         sub_id: str=None, 
+                         state: str=None, 
+                         retry_count: int=None):
     """Make a request to the monitoring database for a status update of ongoing 
     or finished transactions in the NLDS for, a user/group
 
