@@ -119,6 +119,17 @@ def process_transaction_response(response: requests.models.Response,
         )
 
 
+def tag_to_string(tag: dict):
+    """Convert a dictionary of tags into comma delimited string of key:value 
+    pairs."""
+    # convert dict to string
+    tag_str = ""
+    for key in tag:
+        tag_str += key+":"+tag[key]+","
+    tag_str = tag_str.replace("'","")
+    return tag_str
+    
+
 def main_loop(url: str, 
               input_params: dict={}, 
               body_params: dict={},
@@ -273,7 +284,7 @@ def put_filelist(filelist: List[str]=[],
     if label is not None:
         body_params["label"] = label
     if tag is not None:
-        body_params["tag"] = tag
+        body_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         body_params["holding_id"] = holding_id
     # make the request
@@ -384,7 +395,7 @@ def get_filelist(filelist: List[str]=[],
     if label is not None:
         body_params["label"] = label
     if tag is not None:
-        body_params["tag"] = tag
+        body_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         body_params["holding_id"] = holding_id
     # make the request
@@ -451,11 +462,7 @@ def list_holding(user: str,
     if label is not None:
         input_params["label"] = label
     if tag is not None:
-        # convert dict to string
-        tag_str = ""
-        for key in tag:
-            tag_str += key+":"+tag[key]+","
-        input_params["tag"] = str(tag).replace("'","")
+        input_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         input_params["holding_id"] = holding_id
 
@@ -522,17 +529,12 @@ def find_file(user: str,
     if label is not None:
         input_params["label"] = label
     if tag is not None:
-        # convert dict to string
-        tag_str = ""
-        for key in tag:
-            tag_str += key+":"+tag[key]+","
-        input_params["tag"] = str(tag).replace("'","")
+        input_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         input_params["holding_id"] = holding_id
     if path is not None:
         input_params["path"] = path
 
-    print(url, input_params)
     response_dict = main_loop(
         url=url, 
         input_params=input_params,
@@ -618,3 +620,80 @@ def monitor_transactions(user: str,
             "success": False
         }
     return response_dict
+
+
+def change_metadata(user: str, 
+                    group: str, 
+                    label: str=None, 
+                    holding_id: int=None,
+                    tag: dict=None,
+                    new_label: str=None,
+                    new_tag: dict=None):
+    """Make a request to change the metadata for a NLDS holding for a user
+    :param user: the username to change the holding(s) for
+    :type user: string
+
+    :param group: the group to change the holding(s) for
+    :type group: string
+
+    :param label: the label of an existing holding to change the details for
+    :type label: str, optional
+
+    :param holding_id: the integer id of an existing holding to change the details
+    :type holding_id: int, optional
+
+    :param tag: a list of key:value pairs to search holdings for - return
+        holdings with these tags.  This will be converted to dictionary before 
+        calling the remote method.
+    :type tag: dict, optional
+
+    :param new_label: the new label to change the label to for the holding
+    :type new_label: str, optional
+
+    :param new_tag: the tag to add / change for the holding
+    :type new_tag: dict, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be
+    reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "catalog/meta")
+
+    # build the parameters.  holdings->get requires
+    #    user: str
+    #    group: str
+    input_params = {"user" : user,
+                    "group" : group}
+    body_params = {}
+    # add additional / optional components to input params
+    if label is not None:
+        input_params["label"] = label
+    if tag is not None:
+        input_params["tag"] = tag_to_string(tag)
+    if holding_id is not None:
+        input_params["holding_id"] = holding_id
+    # new metadata to amend / overwrite / add
+    if new_label is not None:
+        body_params["new_label"] = new_label
+    if new_tag is not None:
+        body_params["new_tag"] = new_tag
+
+    response_dict = main_loop(
+        url=url, 
+        input_params=input_params,
+        body_params=body_params,
+        method=requests.post        # post method as we are changing a resource
+    )
+
+    if not response_dict:
+        response_dict = {
+            "msg"  : f"FIND files for user {user} and group {group} failed",
+            "success" : False
+        }
+    return response_dict   
