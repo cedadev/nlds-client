@@ -355,13 +355,13 @@ def list(user, group, label, holding_id, tag, json):
 
 """Stat (monitoring) command"""
 @nlds_client.command("stat")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--transaction_id", default=None, type=str)
-@click.option("--sub_id", default=None, type=str)
-@click.option("--state", default=None, type=str)
-@click.option("--retry_count", default=None, type=int)
-@click.option("--json", default=False, type=bool, is_flag=True)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-t", "--transaction_id", default=None, type=str)
+@click.option("-s", "--sub_id", default=None, type=str)
+@click.option("-S", "--state", default=None, type=str)
+@click.option("-r", "--retry_count", default=None, type=int)
+@click.option("-j", "--json", default=False, type=bool, is_flag=True)
 def stat(user, group, transaction_id, sub_id, state, retry_count, json):
     try:
         response = monitor_transactions(user, group, transaction_id, sub_id,
