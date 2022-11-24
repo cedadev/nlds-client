@@ -297,10 +297,15 @@ def put_filelist(filelist: List[str]=[],
 
     if not response_dict:
         # If we get to this point then the transaction could not be processed
-        response_dict = {'uuid' : str(transaction_id),
-                         'msg'  : f'PUT transaction with id {transaction_id} failed',
-                        'success' : False
-                        }
+        response_dict = {
+            'uuid' : str(transaction_id),
+            'msg'  : f'PUT transaction with id {transaction_id} failed',
+            'success' : False
+        }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
     return response_dict
 
 
@@ -413,6 +418,10 @@ def get_filelist(filelist: List[str]=[],
             "msg"  : f"GET transaction with id {transaction_id} failed",
             "success" : False
         }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
     return response_dict
 
 
@@ -477,6 +486,10 @@ def list_holding(user: str,
             "msg"  : f"LIST holdings for user {user} and group {group} failed",
             "success" : False
         }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
     return response_dict
 
 
@@ -546,6 +559,10 @@ def find_file(user: str,
             "msg"  : f"FIND files for user {user} and group {group} failed",
             "success" : False
         }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
     return response_dict    
 
 
@@ -619,6 +636,10 @@ def monitor_transactions(user: str,
             "msg": f"STAT transaction for user {user} and group {group} failed",
             "success": False
         }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
     return response_dict
 
 
@@ -696,4 +717,7 @@ def change_metadata(user: str,
             "msg"  : f"FIND files for user {user} and group {group} failed",
             "success" : False
         }
+    # mark as failed in RPC call
+    elif "failure" in response_dict["details"]:
+        response_dict["success"] = False
     return response_dict   
