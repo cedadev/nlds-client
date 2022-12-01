@@ -3,6 +3,7 @@ import click
 from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
                                                 list_holding, find_file,
                                                 monitor_transactions,
+                                                process_monitor_transactions,
                                                 change_metadata)
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
@@ -118,6 +119,7 @@ def print_list(response: dict, req_details):
             click.echo(
                 f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
             )
+
 
 
 def print_stat(response: dict, req_details):

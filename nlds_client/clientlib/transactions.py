@@ -303,7 +303,7 @@ def put_filelist(filelist: List[str]=[],
             'success' : False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
     return response_dict
@@ -410,7 +410,6 @@ def get_filelist(filelist: List[str]=[],
         body_params=body_params,
         method=requests.put
     )
-
     if not response_dict:
         # If we get to this point then the transaction could not be processed
         response_dict = {
@@ -419,7 +418,7 @@ def get_filelist(filelist: List[str]=[],
             "success" : False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
     return response_dict
@@ -487,7 +486,7 @@ def list_holding(user: str,
             "success" : False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
     return response_dict
@@ -560,7 +559,7 @@ def find_file(user: str,
             "success" : False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
     return response_dict    
@@ -637,11 +636,23 @@ def monitor_transactions(user: str,
             "success": False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
     return response_dict
 
+
+def process_monitor_transactions(transactions: dict):
+    """Process the transactions into a more convienent form by processing the
+    sub-transactions and determining if the overall transaction is complete.
+    Should we move this code to the server?
+    Transaction dictionary looks like this:
+    {
+        'transaction_record': 
+        {
+            'id': 4, 
+            'transaction_id': '4028fd97-7cbb-49a8-9dc2-9e241fe60ece', 'user': 'nrmassey', 'group': 'cedaproc', 'api_action': 'getlist', 'creation_time': '2022-11-28T15:51:18'}, 'sub_record': {'id': 4, 'sub_id': '9ef906fd-f187-4ebd-86ee-71869fd7d752', 'state': 'COMPLETE', 'retry_count': 0, 'last_updated': '2022-11-28T15:51:19'}, 'failed_files': []}
+    """
 
 def change_metadata(user: str, 
                     group: str, 
@@ -718,6 +729,6 @@ def change_metadata(user: str,
             "success" : False
         }
     # mark as failed in RPC call
-    elif "failure" in response_dict["details"]:
+    elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
     return response_dict   
