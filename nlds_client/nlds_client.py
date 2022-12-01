@@ -72,7 +72,7 @@ def pretty_size(size):
 
 def format_request_details(user, group, label=None, holding_id=None, 
                            tag=None, transaction_id=None, sub_id=None,
-                           state=None, retry_count=None):
+                           state=None, retry_count=None, api_action=None):
     config = load_config()
     out = ""
     user = get_user(config, user)
@@ -95,6 +95,8 @@ def format_request_details(user, group, label=None, holding_id=None,
         out += f"state:{state}, "
     if retry_count:
         out += f"retry_count:{retry_count}, "
+    if api_action:
+        out += f"api-action:{api_action}, "
     return out[:-2]
 
 
@@ -360,17 +362,19 @@ def list(user, group, label, holding_id, tag, json):
 @click.option("-u", "--user", default=None, type=str)
 @click.option("-g", "--group", default=None, type=str)
 @click.option("-t", "--transaction_id", default=None, type=str)
+@click.option("-a", "--api_action", default=None, type=str)
 @click.option("-s", "--sub_id", default=None, type=str)
 @click.option("-S", "--state", default=None, type=str)
 @click.option("-r", "--retry_count", default=None, type=int)
 @click.option("-j", "--json", default=False, type=bool, is_flag=True)
-def stat(user, group, transaction_id, sub_id, state, retry_count, json):
+def stat(user, group, transaction_id, api_action, sub_id, state, retry_count, 
+         json):
     try:
-        response = monitor_transactions(user, group, transaction_id, sub_id,
-                                        state, retry_count)
+        response = monitor_transactions(user, group, transaction_id, api_action, 
+                                        sub_id, state, retry_count)
         req_details = format_request_details(
                 user, group, transaction_id=transaction_id, sub_id=sub_id, 
-                state=state, retry_count=retry_count
+                state=state, retry_count=retry_count, api_action=api_action,
             )
         if response['success']:
             if json:

@@ -568,6 +568,7 @@ def find_file(user: str,
 def monitor_transactions(user: str, 
                          group: str, 
                          transaction_id: str=None, 
+                         api_action: str=None,
                          sub_id: str=None, 
                          state: str=None, 
                          retry_count: int=None):
@@ -582,6 +583,11 @@ def monitor_transactions(user: str,
 
     :param transaction_id: a specific transaction_id to get the status of 
     :type transaction_id: string, optional
+
+    :param api_action: applies an api-action-specific filter to the status 
+        request, only transaction_records of the given api_action will be 
+        returned. 
+    :type api_action: string, optional
     
     :param sub_id: a specific sub_id (of a sub_record) to get the status of 
     :type sub_id: string, optional
@@ -616,6 +622,8 @@ def monitor_transactions(user: str,
     # add additional / optional components to input params
     if transaction_id is not None:
         input_params["transaction_id"] = transaction_id
+    if api_action is not None:
+        input_params["api_action"] = api_action
     if sub_id is not None:
         input_params["sub_id"] = sub_id
     if state is not None:
