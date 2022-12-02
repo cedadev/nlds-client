@@ -1,12 +1,14 @@
 import os
-import pytest
-import requests
 import json
+import dotenv
+import copy
+import requests
+
+import pytest
+
 import nlds_client.clientlib.authentication as clau
 import nlds_client.clientlib.config as clcnf
 import nlds_client.clientlib.exceptions as exc
-import dotenv
-import copy
 
 # Load environment files from .env file
 dotenv.load_dotenv()
