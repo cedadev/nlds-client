@@ -3,7 +3,7 @@ import click
 from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
                                                 list_holding, find_file,
                                                 monitor_transactions,
-                                                process_monitor_transactions,
+                                                get_transaction_state,
                                                 change_metadata)
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
@@ -113,24 +113,29 @@ def print_list(response: dict, req_details):
         h = response['data']['holdings'][0]
         click.echo(f"{'':<4}{'id':<16}: {h['id']}")
         click.echo(f"{'':<4}{'label':<16}: {h['label']}")
-        click.echo(f"{'':<4}{'user':<16}: {h['user']}")
-        click.echo(f"{'':<4}{'group':<16}: {h['group']}")
+        # click.echo(f"{'':<4}{'user':<16}: {h['user']}")
+        # click.echo(f"{'':<4}{'group':<16}: {h['group']}")
     else:
-        click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
+        # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
+        click.echo(f"{'':<4}{'id':<6}{'label':<16}")
         for h in response['data']['holdings']:
             click.echo(
-                f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
+                # f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
+                f"{'':<4}{h['id']:<6}{h['label']:<16}"
             )
-
 
 
 def print_stat(response: dict, req_details):
     """Print out the response from the list command"""
     stat_string = "State of transaction(s) for: "
     stat_string += req_details
-    print(stat_string)
-    for r in response['data']['records']:
-        print(r)
+    click.echo(stat_string)
+    # print format heading
+    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<48}{'state':<12}{'last update':<20}")
+    for tr in response['data']['records']:
+        state, time = get_transaction_state(tr)
+        time = time.isoformat().replace("T"," ")
+        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}{tr['transaction_id']:<48}{state:<12}{time:<20}")
 
 
 def __count_files(response:dict):
@@ -190,6 +195,7 @@ def print_multi_file(response):
                            f"{f['original_path']:<64}{size:<8}"
                            f"{time:<12}")
 
+
 def print_find(response:dict, req_details):
     """Print out the response from the find command"""
     n_holdings = len(response['data']['holdings'])
@@ -227,6 +233,8 @@ def put(filepath, user, group, label, holding_id, tag, json):
                                 label, holding_id, tag)
         if json:
             print(response)
+        else:
+            print(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -251,6 +259,8 @@ def get(filepath, user, group, target, label, holding_id, tag, json):
                                 label, holding_id, tag)
         if json:
             print(response)
+        else:
+            print(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -282,6 +292,8 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
                                 label, holding_id, tag)
         if json:
             print(response)
+        else:
+            print(response['msg'].strip('\n'))
 
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -315,6 +327,8 @@ def getlist(filelist, user, group, target, label, holding_id, tag, json):
                                 target, label, holding_id, tag)
         if json:
             print(response)
+        else:
+            print(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:

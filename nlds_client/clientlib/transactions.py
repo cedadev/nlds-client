@@ -4,6 +4,7 @@ import uuid
 import urllib.parse
 import os
 from pathlib import Path
+from datetime import datetime
 
 from typing import List, Dict
 
@@ -650,17 +651,80 @@ def monitor_transactions(user: str,
     return response_dict
 
 
-def process_monitor_transactions(transactions: dict):
-    """Process the transactions into a more convienent form by processing the
-    sub-transactions and determining if the overall transaction is complete.
-    Should we move this code to the server?
+def get_transaction_state(transaction: dict):
+    """Get the overall state of a transaction in a more convienent form by 
+    querying the sub-transactions and determining if the overall transaction 
+    is complete.
     Transaction dictionary looks like this:
     {
-        'transaction_record': 
-        {
-            'id': 4, 
-            'transaction_id': '4028fd97-7cbb-49a8-9dc2-9e241fe60ece', 'user': 'nrmassey', 'group': 'cedaproc', 'api_action': 'getlist', 'creation_time': '2022-11-28T15:51:18'}, 'sub_record': {'id': 4, 'sub_id': '9ef906fd-f187-4ebd-86ee-71869fd7d752', 'state': 'COMPLETE', 'retry_count': 0, 'last_updated': '2022-11-28T15:51:19'}, 'failed_files': []}
+        'id': 2, 
+        'transaction_id': 'a06ec7b3-e83c-4ac7-97d8-2545a0b8d317', 
+        'user': 'nrmassey', 
+        'group': 'cedaproc', 
+        'api_action': 'getlist', 
+        'creation_time': '2022-12-06T15:45:43', 
+        'sub_records': [
+            {
+                'id': 2, 
+                'sub_id': '007075b2-8c79-4cfa-a1e5-0aaa65892454', 
+                'state': 'COMPLETE', 
+                'retry_count': 0, 
+                'last_updated': '2022-12-06T15:45:44', 
+                'failed_files': []
+            }
+        ]
+    }
+
+    possible values of state are: 
+        INITIALISING = -1
+        ROUTING = 0
+        SPLITTING = 1
+        INDEXING = 2
+        TRANSFER_PUTTING = 3
+        CATALOG_PUTTING = 4
+        CATALOG_GETTING = 5
+        TRANSFER_GETTING = 6
+        COMPLETE = 8
+        FAILED = 9
+    The overall state is the minimum of these
     """
+    state_mapping = {
+        "INITIALISING" : -1,
+        "ROUTING" : 0,
+        "SPLITTING" : 1,
+        "INDEXING" : 2,
+        "TRANSFER_PUTTING" : 3,
+        "CATALOG_PUTTING" : 4,
+        "CATALOG_GETTING" : 5,
+        "TRANSFER_GETTING" : 6,
+        "COMPLETE" : 8,
+        "FAILED" : 9,
+    }
+    state_mapping_reverse = {
+        -1 : "INITIALISING",
+        0 : "ROUTING",
+        1 : "SPLITTING",
+        2 : "INDEXING",
+        3 : "TRANSFER_PUTTING" ,
+        4 : "CATALOG_PUTTING",
+        5 : "CATALOG_GETTING",
+        6 : "TRANSFER_GETTING",
+        8 : "COMPLETE",
+        9 : "FAILED",
+    }
+
+    min_state = 100
+    min_time = datetime(1970,1,1)
+    for sr in transaction["sub_records"]:
+        sr_state = sr["state"]
+        d = datetime.fromisoformat(sr["last_updated"])
+        if(d > min_time):
+            min_time = d
+        if state_mapping[sr_state] < min_state:
+            min_state = state_mapping[sr_state]
+
+    return state_mapping_reverse[min_state], min_time
+
 
 def change_metadata(user: str, 
                     group: str, 
