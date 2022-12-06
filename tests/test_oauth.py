@@ -1,6 +1,5 @@
 import os
 import json
-import dotenv
 import copy
 import requests
 
@@ -10,14 +9,25 @@ import nlds_client.clientlib.authentication as clau
 import nlds_client.clientlib.config as clcnf
 import nlds_client.clientlib.exceptions as exc
 
-# Load environment files from .env file
-dotenv.load_dotenv()
-
-TEST_USERNAME = os.environ['USERNAME']
-TEST_PASSWORD = os.environ['PASSWORD']
-TEST_TOKEN_TEXT = os.environ['TOKEN_TEXT']
-TEST_CONFIG_FILE = os.environ.get('CONFIG_FILE')
 EDGE_VALUES = ['', None, ' ',]
+
+@pytest.fixture
+def login_details():
+    dotenv = pytest.importorskip(
+        "dotenv", 
+        reason="This is an integration unit test that requires a local "
+               "configuration environment file.",
+    )
+    # Load environment files from .env file
+    dotenv.load_dotenv()
+
+    return {
+        'username': os.environ['USERNAME'],
+        'password': os.environ['PASSWORD'],
+        'token_text': os.environ['TOKEN_TEXT'],
+        'config_file': os.environ.get('CONFIG_FILE')
+    }
+
 
 @pytest.fixture
 def basic_config():
@@ -27,7 +37,8 @@ def basic_config():
     return json.load(fh)
 
 @pytest.fixture
-def functional_config():
+def functional_config(login_details):
+    TEST_CONFIG_FILE = login_details['config_file']
     # Read the users actual config file so test calls can be made to the API
     if TEST_CONFIG_FILE is None:
         return clcnf.load_config()
@@ -37,11 +48,14 @@ def functional_config():
 
 class MockResponse:
     # A mock response object for checking error handling capabilities
-    def __init__(self, status_code=200, text=TEST_TOKEN_TEXT):
+    def __init__(self, status_code=200, text='TEST_TOKEN_TEXT'):
         self.status_code = status_code
         self.text = text
 
 def test_get_username_password(monkeypatch, basic_config):
+    TEST_USERNAME = 'test'
+    TEST_PASSWORD = 'test_pwd'
+
     # Mock the username and password getting by overriding the input and getpass functions
     monkeypatch.setattr('builtins.input', lambda _: TEST_USERNAME)
     monkeypatch.setattr('getpass.getpass', lambda _: TEST_PASSWORD)
@@ -66,7 +80,10 @@ def test_process_fetch_oauth2_token_response(basic_config, status_code):
         
     
 @pytest.mark.parametrize("test_value", EDGE_VALUES)
-def test_fetch_oauth_token(functional_config, test_value):
+def test_fetch_oauth_token(functional_config, test_value, login_details):
+    TEST_USERNAME = login_details['username']
+    TEST_PASSWORD = login_details['password']
+
     # Test correct username and password
     token = clau.fetch_oauth2_token(functional_config, TEST_USERNAME, TEST_PASSWORD)
     assert isinstance(token, dict)
@@ -84,7 +101,10 @@ def test_fetch_oauth_token(functional_config, test_value):
         clau.fetch_oauth2_token(functional_config, test_value, test_value)
 
 @pytest.mark.parametrize("test_value", EDGE_VALUES)
-def test_fetch_oauth_config(monkeypatch, functional_config, test_value):
+def test_fetch_oauth_config(monkeypatch, functional_config, test_value, 
+                            login_details):
+    TEST_USERNAME = login_details['username']
+    TEST_PASSWORD = login_details['password']
     monkeypatch.setattr(clau, 'save_token', None)
 
     modified_config = copy.deepcopy(functional_config)
