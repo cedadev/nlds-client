@@ -71,7 +71,7 @@ def pretty_size(size):
 
 
 def format_request_details(user, group, label=None, holding_id=None, 
-                           tag=None, transaction_id=None, sub_id=None,
+                           tag=None, id=None, transaction_id=None, sub_id=None,
                            state=None, retry_count=None, api_action=None):
     config = load_config()
     out = ""
@@ -83,6 +83,8 @@ def format_request_details(user, group, label=None, holding_id=None,
 
     if label:
         out += f"label:{label}, "
+    if id:
+        out += f"id:{id}, "
     if holding_id:
         out += f"holding_id:{holding_id}, "
     if tag:
@@ -106,7 +108,7 @@ def print_list(response: dict, req_details):
     list_string = "Listing holding" 
     if n_holdings > 1:
         list_string += "s"
-    list_string += " for: "
+    list_string += " for "
     list_string += req_details
     click.echo(list_string)
     if n_holdings == 1:
@@ -124,18 +126,63 @@ def print_list(response: dict, req_details):
                 f"{'':<4}{h['id']:<6}{h['label']:<16}"
             )
 
+def print_single_stat(response: dict, req_details):
+    """Print a single status in more detail, with a list of failed files if
+    necessary"""
+    stat_string = "State of transaction: "
+    click.echo(stat_string)
+    # still looping over the keys, just in case more than one state returned
+    for tr in response['data']['records']:
+        state, _ = get_transaction_state(tr)
+        if state == None:
+            continue
+        click.echo(f"{'':<4}{'id':<15}: {tr['id']}")
+        click.echo(f"{'':<4}{'user':<15}: {tr['user']}")
+        click.echo(f"{'':<4}{'group':<15}: {tr['group']}")
+        click.echo(f"{'':<4}{'action':<15}: {tr['api_action']}")
+        click.echo(f"{'':<4}{'transaction id':<15}: {tr['transaction_id']}")
+        click.echo(f"{'':<4}{'creation time':<15}: {(tr['creation_time']).replace('T',' ')}")
+        click.echo(f"{'':<4}{'state':<15}: {state}")
+        click.echo(f"{'':<4}{'sub records':<15}->")
+        for sr in tr['sub_records']:
+            click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
+            click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
+            click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
+            click.echo(f"{'':<9}{'retries':<13}: {sr['retry_count']}")
+            click.echo(f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')}")
+        
+            if len(sr['failed_files']) > 0:
+                click.echo(f"{'':<9}{'failed files':<13}->")
+                for ff in sr['failed_files']:
+                    click.echo(f"{'':<9}{'+':<4} {'filepath':<8} : {ff['filepath']}")
+                    click.echo(f"{'':<9}{'':>4} {'reason':<8} : {ff['reason']}")
+
+
+def print_multi_stat(response: dict, req_details):
+    """Print a multi-line set of status"""
+    stat_string = "State of transactions for "
+    stat_string += req_details
+    click.echo(stat_string)
+    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<48}"
+                f"{'state':<12}{'last update':<20}")
+    for tr in response['data']['records']:
+        state, time = get_transaction_state(tr)
+        if state == None:
+            continue
+        time = time.isoformat().replace("T"," ")
+        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
+                   f"{tr['transaction_id']:<48}{state:<12}{time:<20}")
+
 
 def print_stat(response: dict, req_details):
     """Print out the response from the list command"""
-    stat_string = "State of transaction(s) for: "
-    stat_string += req_details
-    click.echo(stat_string)
-    # print format heading
-    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<48}{'state':<12}{'last update':<20}")
-    for tr in response['data']['records']:
-        state, time = get_transaction_state(tr)
-        time = time.isoformat().replace("T"," ")
-        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}{tr['transaction_id']:<48}{state:<12}{time:<20}")
+    L = len(response['data']['records'])
+    if L == 0:
+        click.echo("No transactions found")
+    elif L == 1:
+        print_single_stat(response, req_details)
+    else:
+        print_multi_stat(response, req_details)
 
 
 def __count_files(response:dict):
@@ -202,7 +249,7 @@ def print_find(response:dict, req_details):
     list_string = "Listing files for holding"
     if n_holdings > 1:
         list_string += "s"
-    list_string += " for: "
+    list_string += " for "
     list_string += req_details
     click.echo(list_string)
     # get total number of files
@@ -215,26 +262,35 @@ def print_find(response:dict, req_details):
 
 def print_meta(response:dict, req_details):
     """Print out the response from the meta command"""
-    print(response)
+    meta_string = "Changing metadata for holding for "
+    meta_string += req_details
+    click.echo(meta_string)
+    for h in response['data']['holdings']:
+        click.echo("Old metadata: ")
+        click.echo(f"{'':<4}{'Label:':<8}{h['old_meta']['label']}")
+        click.echo(f"{'':<4}{'Tags:':<8}{h['old_meta']['tags']}")
+        click.echo("New metadata: ")
+        click.echo(f"{'':<4}{'Label:':<8}{h['new_meta']['label']}")
+        click.echo(f"{'':<4}{'Tags:':<8}{h['new_meta']['tags']}")
 
 
 """Put files command"""
 @nlds_client.command("put")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool)
 @click.argument("filepath", type=str)
 def put(filepath, user, group, label, holding_id, tag, json):
     try:
         response = put_filelist([filepath], user, group, 
                                 label, holding_id, tag)
         if json:
-            print(response)
+            click.echo(response)
         else:
-            print(response['msg'].strip('\n'))
+            click.echo(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -245,22 +301,22 @@ def put(filepath, user, group, label, holding_id, tag, json):
 
 """Get files command"""
 @nlds_client.command("get")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--target", default=None, type=click.Path())
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-t", "--target", default=None, type=click.Path())
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool)
 @click.argument("filepath", type=str)
 def get(filepath, user, group, target, label, holding_id, tag, json):
     try:
         response = get_filelist([filepath], user, group, target, 
                                 label, holding_id, tag)
         if json:
-            print(response)
+            click.echo(response)
         else:
-            print(response['msg'].strip('\n'))
+            click.echo(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -272,12 +328,12 @@ def get(filepath, user, group, target, label, holding_id, tag, json):
 """Put filelist command"""
 @nlds_client.command("putlist")
 @click.argument("filelist", type=str)
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool)
 def putlist(filelist, user, group, label, holding_id, tag, json):
     # read the filelist from the file
     try:
@@ -291,9 +347,9 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
         response = put_filelist(files, user, group, 
                                 label, holding_id, tag)
         if json:
-            print(response)
+            click.echo(response)
         else:
-            print(response['msg'].strip('\n'))
+            click.echo(response['msg'].strip('\n'))
 
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -305,13 +361,13 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
 
 """Get filelist command"""
 @nlds_client.command("getlist")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--target", default=None, type=click.Path(exists=True))
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-t", "--target", default=None, type=click.Path(exists=True))
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool)
 @click.argument("filelist", type=str)
 def getlist(filelist, user, group, target, label, holding_id, tag, json):
     # read the filelist from the file
@@ -326,9 +382,9 @@ def getlist(filelist, user, group, target, label, holding_id, tag, json):
         response = get_filelist(files, user, group, 
                                 target, label, holding_id, tag)
         if json:
-            print(response)
+            click.echo(response)
         else:
-            print(response['msg'].strip('\n'))
+            click.echo(response['msg'].strip('\n'))
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -339,22 +395,24 @@ def getlist(filelist, user, group, target, label, holding_id, tag, json):
 
 """List (holdings) command"""
 @nlds_client.command("list")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, is_flag=True)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, is_flag=True)
 def list(user, group, label, holding_id, tag, json):
     # 
     try:
-        response = list_holding(user, group, label, holding_id, tag)
+        response = list_holding(
+            user, group, label, holding_id, tag
+        )
         req_details = format_request_details(
-                user, group, label=label, holding_id=holding_id, tag=tag
-            )
+            user, group, label=label, holding_id=holding_id, tag=tag
+        )
         if response['success']:
             if json:
-                print(response)
+                click.echo(response)
             else:
                 print_list(response, req_details)
         else:
@@ -371,28 +429,28 @@ def list(user, group, label, holding_id, tag, json):
     except RequestError as re:
         raise click.UsageError(re)
 
+
 """Stat (monitoring) command"""
 @nlds_client.command("stat")
 @click.option("-u", "--user", default=None, type=str)
 @click.option("-g", "--group", default=None, type=str)
-@click.option("-t", "--transaction_id", default=None, type=str)
+@click.option("-i", "--id", default=None, type=int)
+@click.option("-T", "--transaction_id", default=None, type=str)
 @click.option("-a", "--api_action", default=None, type=str)
-@click.option("-s", "--sub_id", default=None, type=str)
-@click.option("-S", "--state", default=None, type=str)
-@click.option("-r", "--retry_count", default=None, type=int)
+@click.option("-s", "--state", default=None, type=str)
 @click.option("-j", "--json", default=False, type=bool, is_flag=True)
-def stat(user, group, transaction_id, api_action, sub_id, state, retry_count, 
-         json):
+def stat(user, group, id, transaction_id, api_action, state, json):
     try:
-        response = monitor_transactions(user, group, transaction_id, api_action, 
-                                        sub_id, state, retry_count)
+        response = monitor_transactions(
+            user, group, id, transaction_id, api_action, state,
+        )
         req_details = format_request_details(
-                user, group, transaction_id=transaction_id, sub_id=sub_id, 
-                state=state, retry_count=retry_count, api_action=api_action,
+                user, group, id=id, transaction_id=transaction_id, state=state, 
+                api_action=api_action,
             )
         if response['success']:
             if json:
-                print(response)
+                click.echo(response)
             else:
                 print_stat(response, req_details)
         else:
@@ -408,15 +466,16 @@ def stat(user, group, transaction_id, api_action, sub_id, state, retry_count,
     except RequestError as re:
         raise click.UsageError(re)
 
+
 """Find (files) command"""
 @nlds_client.command("find")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--path", default=None, type=str)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool, is_flag=True)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-p", "--path", default=None, type=str)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool, is_flag=True)
 def find(user, group, label, holding_id, path, tag, json):
     # 
     try:
@@ -426,7 +485,7 @@ def find(user, group, label, holding_id, path, tag, json):
             )
         if response['success']:
             if json:
-                print(response)
+                click.echo(response)
             else:
                 print_find(response, req_details)
         else:
@@ -445,14 +504,14 @@ def find(user, group, label, holding_id, path, tag, json):
 
 """Meta command"""
 @nlds_client.command("meta")
-@click.option("--user", default=None, type=str)
-@click.option("--group", default=None, type=str)
-@click.option("--label", default=None, type=str)
-@click.option("--holding_id", default=None, type=int)
-@click.option("--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--new_label", default=None, type=str)
-@click.option("--new_tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("--json", default=False, type=bool, is_flag=True)
+@click.option("-u", "--user", default=None, type=str)
+@click.option("-g", "--group", default=None, type=str)
+@click.option("-l", "--label", default=None, type=str)
+@click.option("-i", "--holding_id", default=None, type=int)
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-L", "--new_label", default=None, type=str)
+@click.option("-T", "--new_tag", default=None, type=TAG_PARAM_TYPE)
+@click.option("-j", "--json", default=False, type=bool, is_flag=True)
 def meta(user, group, label, holding_id, tag, new_label, new_tag, json):
     # 
     try:
@@ -463,11 +522,11 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, json):
             )
         if response['success'] > 0:
             if json:
-                print_meta(response, req_details)
+                click.echo(response)
             else:
-                print(response)
+                print_meta(response, req_details)
         else:
-            fail_string = "Failed to list files with "
+            fail_string = "Failed to change metadata on holding with "
             fail_string += req_details
             if response['details']['failure']:
                 fail_string += "\n" + response['details']['failure']

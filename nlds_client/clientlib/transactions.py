@@ -568,10 +568,11 @@ def find_file(user: str,
 
 def monitor_transactions(user: str, 
                          group: str, 
+                         idd: int=None,
                          transaction_id: str=None, 
                          api_action: str=None,
-                         sub_id: str=None, 
                          state: str=None, 
+                         sub_id: str=None,
                          retry_count: int=None):
     """Make a request to the monitoring database for a status update of ongoing 
     or finished transactions in the NLDS for, a user/group
@@ -581,6 +582,9 @@ def monitor_transactions(user: str,
 
     :param group: the group to get the transaction state(s) for
     :type group: string
+
+    :param idd: the numeric id (primary key) of the transaction
+    :type idd: int
 
     :param transaction_id: a specific transaction_id to get the status of 
     :type transaction_id: string, optional
@@ -621,6 +625,8 @@ def monitor_transactions(user: str,
                     "group" : group}
 
     # add additional / optional components to input params
+    if idd is not None:
+        input_params["id"] = idd
     if transaction_id is not None:
         input_params["transaction_id"] = transaction_id
     if api_action is not None:
@@ -722,6 +728,9 @@ def get_transaction_state(transaction: dict):
             min_time = d
         if state_mapping[sr_state] < min_state:
             min_state = state_mapping[sr_state]
+
+    if min_state == 100:
+        return None, None
 
     return state_mapping_reverse[min_state], min_time
 

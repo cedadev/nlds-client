@@ -23,3 +23,6 @@ class UsageError(Exception):
 
 class ConfigError(Exception):
     pass
+
+class StateError(Exception):
+    pass
