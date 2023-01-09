@@ -115,15 +115,16 @@ def print_list(response: dict, req_details):
         h = response['data']['holdings'][0]
         click.echo(f"{'':<4}{'id':<16}: {h['id']}")
         click.echo(f"{'':<4}{'label':<16}: {h['label']}")
+        click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')}")
         # click.echo(f"{'':<4}{'user':<16}: {h['user']}")
         # click.echo(f"{'':<4}{'group':<16}: {h['group']}")
     else:
         # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
-        click.echo(f"{'':<4}{'id':<6}{'label':<16}")
+        click.echo(f"{'':<4}{'id':<6}{'label':<16}{'ingest time':<32}")
         for h in response['data']['holdings']:
             click.echo(
                 # f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
-                f"{'':<4}{h['id']:<6}{h['label']:<16}"
+                f"{'':<4}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' '):<32}"
             )
 
 def print_single_stat(response: dict, req_details):
@@ -163,15 +164,15 @@ def print_multi_stat(response: dict, req_details):
     stat_string = "State of transactions for "
     stat_string += req_details
     click.echo(stat_string)
-    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<48}"
-                f"{'state':<12}{'last update':<20}")
+    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<40}"
+                f"{'state':<18}{'last update':<20}")
     for tr in response['data']['records']:
         state, time = get_transaction_state(tr)
         if state == None:
             continue
         time = time.isoformat().replace("T"," ")
         click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
-                   f"{tr['transaction_id']:<48}{state:<12}{time:<20}")
+                   f"{tr['transaction_id']:<40}{state:<18}{time:<20}")
 
 
 def print_stat(response: dict, req_details):
@@ -275,7 +276,29 @@ def print_meta(response:dict, req_details):
 
 
 """Put files command"""
-@nlds_client.command("put")
+@nlds_client.command("put", help="Put a single file.")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to put the file for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to put the file for.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to put the file into.  If the "
+              "holding already exists then the file will be added to it.  If the "
+              "holding does not exist then it will be created with the label. "
+              "If this option is omitted then a new holding with a random label "
+              "will be created.")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of an existing holding to put the file into.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tags of a holding to put the file into.  If a holding "
+              "with the tags already exists then the file will the added to "
+              "that holding.  If the holding does not exist then it will be "
+              "created with the tags and either a random label or a named label,"
+              "if the label parameter is also supplied.  The set of tags must "
+              "guarantee uniqueness of the holding.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
+
 @click.option("-u", "--user", default=None, type=str)
 @click.option("-g", "--group", default=None, type=str)
 @click.option("-l", "--label", default=None, type=str)
@@ -299,15 +322,30 @@ def put(filepath, user, group, label, holding_id, tag, json):
         raise click.UsageError(re)
 
 
+user_help_text = (" If no user or group is given then these values will "
+                  "default to the user:default_user and user:default values "
+                  "in the ~/.nlds-config file.")
+
 """Get files command"""
-@nlds_client.command("get")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-t", "--target", default=None, type=click.Path())
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool)
+@nlds_client.command("get", 
+                     help=f"Get a single file.{user_help_text}")
+
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to get a file for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to get a file for.")
+@click.option("-t", "--target", default=None, type=click.Path(exists=True),
+              help="The target path for the retrieved file.  Default is to "
+              "retrieve the file to its original path.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to retrieve the file from.  This "
+              "can be a regular expression (regex).")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The id of the holding to retrieve the file from.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tag(s) of the holding to retrieve the file from.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
 @click.argument("filepath", type=str)
 def get(filepath, user, group, target, label, holding_id, tag, json):
     try:
@@ -326,14 +364,30 @@ def get(filepath, user, group, target, label, holding_id, tag, json):
 
 
 """Put filelist command"""
-@nlds_client.command("putlist")
+@nlds_client.command("putlist", 
+                     help=f"Put a number of files specified in a list.{user_help_text}")
 @click.argument("filelist", type=str)
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool)
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to put files for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to put files for.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to put files into.  If the holding "
+              "already exists then the files will be added to it.  If the "
+              "holding does not exist then it will be created with the label. "
+              "If this option is omitted then a new holding with a random label "
+              "will be created.")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of an existing holding to put files into.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tags of a holding to put files into.  If a holding "
+              "with the tags already exists then the files will the added to "
+              "that holding.  If the holding does not exist then it will be "
+              "created with the tags and either a random label or a named label,"
+              "if the label parameter is also supplied.  The set of tags must "
+              "guarantee uniqueness of the holding.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
 def putlist(filelist, user, group, label, holding_id, tag, json):
     # read the filelist from the file
     try:
@@ -360,14 +414,24 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
 
 
 """Get filelist command"""
-@nlds_client.command("getlist")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-t", "--target", default=None, type=click.Path(exists=True))
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool)
+@nlds_client.command("getlist", 
+                     help=f"Get a number of files specified in a list.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to get files for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to get files for.")
+@click.option("-t", "--target", default=None, type=click.Path(exists=True),
+              help="The target path for the retrieved files.  Default is to "
+              "retrieve files to their original path.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding(s) to retrieve files from.  This "
+              "can be a regular expression (regex).")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The id of the holding to retrieve files from.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tag(s) of the holding(s) to retrieve files from.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
 @click.argument("filelist", type=str)
 def getlist(filelist, user, group, target, label, holding_id, tag, json):
     # read the filelist from the file
@@ -394,13 +458,21 @@ def getlist(filelist, user, group, target, label, holding_id, tag, json):
 
 
 """List (holdings) command"""
-@nlds_client.command("list")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, is_flag=True)
+@nlds_client.command("list", 
+                     help=f"List holdings.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to list holdings for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to list holdings for.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding(s) to list.  This can be a regular"
+              "expression (regex).")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of the holding to list.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tag(s) of the holding(s) to list.")
+@click.option("-j", "--json", default=False, is_flag=True,
+              help="Output the result as JSON.")
 def list(user, group, label, holding_id, tag, json):
     # 
     try:
@@ -431,14 +503,27 @@ def list(user, group, label, holding_id, tag, json):
 
 
 """Stat (monitoring) command"""
-@nlds_client.command("stat")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-i", "--id", default=None, type=int)
-@click.option("-T", "--transaction_id", default=None, type=str)
-@click.option("-a", "--api_action", default=None, type=str)
-@click.option("-s", "--state", default=None, type=str)
-@click.option("-j", "--json", default=False, type=bool, is_flag=True)
+@nlds_client.command("stat", 
+                     help=f"List transactions.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to list transactions for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to list transactions for.")
+@click.option("-i", "--id", default=None, type=int,
+              help="The numeric id of the transaction to list.")
+@click.option("-T", "--transaction_id", default=None, type=str,
+              help="The UUID transaction id of the transaction to list.")
+@click.option("-a", "--api_action", default=None, type=str,
+              help="The api action of the transactions to list. Options: get | "
+              "put | getlist | putlist")
+@click.option("-s", "--state", default=None, type=str,
+              help="\bThe state of the transactions to list.  Options: "
+              "INITIALISING | ROUTING | SPLITTING | INDEXING | "
+              "TRANSFER_PUTTING | CATALOG_PUTTING | CATALOG_GETTING | "
+              "TRANSFER_GETTING | COMPLETE | FAILED")
+@click.option("-j", "--json", default=False, type=bool, is_flag=True,
+              help="Output the result as JSON.")
+
 def stat(user, group, id, transaction_id, api_action, state, json):
     try:
         response = monitor_transactions(
@@ -468,14 +553,24 @@ def stat(user, group, id, transaction_id, api_action, state, json):
 
 
 """Find (files) command"""
-@nlds_client.command("find")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-p", "--path", default=None, type=str)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool, is_flag=True)
+@nlds_client.command("find", 
+                     help=f"Find and list files.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to find files for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to find files for.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding which the files belong to.  This "
+              "can be a regular expression (regex).")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of the holding which the files belong to.")
+@click.option("-p", "--path", default=None, type=str,
+              help="The path of the files to find.  This can be a regular "
+              "expression (regex)")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tag(s) of the holding(s) to find files within.")
+@click.option("-j", "--json", default=False, type=bool, is_flag=True,
+              help="Output the result as JSON.")
 def find(user, group, label, holding_id, path, tag, json):
     # 
     try:
@@ -503,15 +598,25 @@ def find(user, group, label, holding_id, path, tag, json):
         raise click.UsageError(re)
 
 """Meta command"""
-@nlds_client.command("meta")
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-L", "--new_label", default=None, type=str)
-@click.option("-T", "--new_tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool, is_flag=True)
+@nlds_client.command("meta", 
+                     help=f"Alter metadata for a holding.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str, 
+              help="The username to use when changing metadata for a holding.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to use when changing metadata for a holding.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to change metadata for.  This can "
+              "be a regular expression (regex)")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of the holding to change metadata for.")
+@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
+              help="The tag(s) of the holding(s) to change metadata for.")
+@click.option("-L", "--new_label", default=None, type=str,
+              help="The new label for the holding.")
+@click.option("-T", "--new_tag", default=None, type=TAG_PARAM_TYPE,
+              help="The new tag(s) for the holding.")
+@click.option("-j", "--json", default=False, type=bool, is_flag=True,
+              help="Output the result as JSON.")
 def meta(user, group, label, holding_id, tag, new_label, new_tag, json):
     # 
     try:
