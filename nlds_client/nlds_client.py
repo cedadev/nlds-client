@@ -142,6 +142,8 @@ def print_single_stat(response: dict, req_details):
         click.echo(f"{'':<4}{'group':<15}: {tr['group']}")
         click.echo(f"{'':<4}{'action':<15}: {tr['api_action']}")
         click.echo(f"{'':<4}{'transaction id':<15}: {tr['transaction_id']}")
+        if 'label' in tr:
+            click.echo(f"{'':<4}{'label':<15}: {tr['label']}")
         click.echo(f"{'':<4}{'creation time':<15}: {(tr['creation_time']).replace('T',' ')}")
         click.echo(f"{'':<4}{'state':<15}: {state}")
         click.echo(f"{'':<4}{'sub records':<15}->")
@@ -171,8 +173,13 @@ def print_multi_stat(response: dict, req_details):
         if state == None:
             continue
         time = time.isoformat().replace("T"," ")
-        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
-                   f"{tr['transaction_id']:<40}{state:<18}{time:<20}")
+        if 'label' in tr:
+            click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
+                       f"{tr['transaction_id']:<48}{tr['label']:<48}"
+                       f"{state:<12}{time:<20}")
+        else:
+            click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
+                       f"{tr['transaction_id']:<48}{state:<12}{time:<20}")
 
 
 def print_stat(response: dict, req_details):
