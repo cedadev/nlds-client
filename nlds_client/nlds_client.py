@@ -118,6 +118,11 @@ def print_list(response: dict, req_details):
         click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')}")
         # click.echo(f"{'':<4}{'user':<16}: {h['user']}")
         # click.echo(f"{'':<4}{'group':<16}: {h['group']}")
+        if 'transactions' in h:
+            trans_str = ""
+            for t in h['transactions']:
+                trans_str += t + f"\n{'':<22}" 
+            click.echo(f"{'':<4}{'transaction id':<16}: {trans_str[:-23]}")
     else:
         # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
         click.echo(f"{'':<4}{'id':<6}{'label':<16}{'ingest time':<32}")
@@ -126,6 +131,7 @@ def print_list(response: dict, req_details):
                 # f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
                 f"{'':<4}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' '):<32}"
             )
+
 
 def print_single_stat(response: dict, req_details):
     """Print a single status in more detail, with a list of failed files if
@@ -167,19 +173,19 @@ def print_multi_stat(response: dict, req_details):
     stat_string += req_details
     click.echo(stat_string)
     click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<40}"
-                f"{'state':<18}{'last update':<20}")
+                f"{'label':<16}{'state':<18}{'last update':<20}")
     for tr in response['data']['records']:
         state, time = get_transaction_state(tr)
         if state == None:
             continue
         time = time.isoformat().replace("T"," ")
         if 'label' in tr:
-            click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
-                       f"{tr['transaction_id']:<48}{tr['label']:<48}"
-                       f"{state:<12}{time:<20}")
+            label = tr['label']
         else:
-            click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
-                       f"{tr['transaction_id']:<48}{state:<12}{time:<20}")
+            label = ""
+        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
+                   f"{tr['transaction_id']:<40}{tr['label']:<16}"
+                   f"{state:<12}{time:<20}")
 
 
 def print_stat(response: dict, req_details):
