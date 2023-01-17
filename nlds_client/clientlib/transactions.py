@@ -219,6 +219,7 @@ def main_loop(url: str,
 def put_filelist(filelist: List[str]=[],
                  user: str=None, 
                  group: str=None,
+                 job_label: str=None,
                  label: str=None, 
                  holding_id: int=None, 
                  tag: dict=None):
@@ -231,6 +232,9 @@ def put_filelist(filelist: List[str]=[],
 
     :param group: the group to put the files
     :type group: string
+
+    :param job_label: an optional label for the transaction to aid user queries
+    :type job_label: string, optional
 
     :param label: the label of an existing holding that files are to be added to
     :type label: str, optional
@@ -281,6 +285,14 @@ def put_filelist(filelist: List[str]=[],
                 }
 
     body_params = {"filelist" : filelist}
+    # add optional job_label.  If None then use first 8 characters of UUID
+    if job_label is None:
+        if label is None:
+            input_params["job_label"] = str(transaction_id)[0:8]
+        else:
+            input_params["job_label"] = label
+    else:
+        input_params["job_label"] = job_label
     # add optional components to body: label, tags, holding_id
     if label is not None:
         body_params["label"] = label
@@ -314,6 +326,7 @@ def get_filelist(filelist: List[str]=[],
                  user: str=None, 
                  group: str=None, 
                  target: str = None,
+                 job_label: str = None,
                  label: str=None, 
                  holding_id: int=None, 
                  tag: dict=None) -> Dict:
@@ -329,6 +342,9 @@ def get_filelist(filelist: List[str]=[],
 
     :param target: the location to write the retrieved files to
     :type target: string, optional
+
+    :param job_label: an optional label for the transaction to aid user queries
+    :type job_label: string, optional
 
     :param label: the label of an existing holding that files are to be 
     retrieved from
@@ -386,6 +402,7 @@ def get_filelist(filelist: List[str]=[],
     #    access_key         : str
     #    secret_key         : str
     #    tenancy            : str (optional)
+    #    job_label          : str (optional)
     #    target             : str (optional - defaults to cwd)
     # and the filelist in the body
     input_params = {"transaction_id" : transaction_id,
@@ -397,6 +414,14 @@ def get_filelist(filelist: List[str]=[],
                     "target": target,
                 }
     body_params = {"filelist" : filelist}
+    # add optional job_label.  If None then use first 8 characters of UUID
+    if job_label is None:
+        if label is None:
+            input_params["job_label"] = str(transaction_id)[0:8]
+        else:
+            input_params["job_label"] = label
+    else:
+        input_params["job_label"] = job_label
     # add optional components to body: label, tags, holding_id
     if label is not None:
         body_params["label"] = label

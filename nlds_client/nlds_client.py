@@ -172,7 +172,7 @@ def print_multi_stat(response: dict, req_details):
     stat_string = "State of transactions for "
     stat_string += req_details
     click.echo(stat_string)
-    click.echo(f"{'':<4}{'id':<6}{'action':<12}{'transaction id':<40}"
+    click.echo(f"{'':<4}{'id':<6}{'action':<16}{'job label':<16}"
                 f"{'label':<16}{'state':<18}{'last update':<20}")
     for tr in response['data']['records']:
         state, time = get_transaction_state(tr)
@@ -183,9 +183,13 @@ def print_multi_stat(response: dict, req_details):
             label = tr['label']
         else:
             label = ""
-        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<12}"
-                   f"{tr['transaction_id']:<40}{tr['label']:<16}"
-                   f"{state:<12}{time:<20}")
+        if 'job_label' in tr and tr['job_label']:
+            job_label = tr['job_label']
+        else:
+            job_label = "" #tr['transaction_id'][0:8]
+        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<16}"
+                   f"{job_label:16}{label:16}"
+                   f"{state:<18}{time:<20}")
 
 
 def print_stat(response: dict, req_details):
@@ -300,6 +304,9 @@ def print_meta(response:dict, req_details):
               "holding does not exist then it will be created with the label. "
               "If this option is omitted then a new holding with a random label "
               "will be created.")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the PUT job, that can be viewed when "
+              "using the stat command")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The numeric id of an existing holding to put the file into.")
 @click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
@@ -311,17 +318,11 @@ def print_meta(response:dict, req_details):
               "guarantee uniqueness of the holding.")
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
-
-@click.option("-u", "--user", default=None, type=str)
-@click.option("-g", "--group", default=None, type=str)
-@click.option("-l", "--label", default=None, type=str)
-@click.option("-i", "--holding_id", default=None, type=int)
-@click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE)
-@click.option("-j", "--json", default=False, type=bool)
 @click.argument("filepath", type=str)
-def put(filepath, user, group, label, holding_id, tag, json):
+def put(filepath, user, group, job_label,
+        label, holding_id, tag, json):
     try:
-        response = put_filelist([filepath], user, group, 
+        response = put_filelist([filepath], user, group, job_label,
                                 label, holding_id, tag)
         if json:
             click.echo(response)
@@ -347,12 +348,15 @@ user_help_text = (" If no user or group is given then these values will "
               help="The username to get a file for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get a file for.")
-@click.option("-t", "--target", default=None, type=click.Path(exists=True),
+@click.option("-r", "--target", default=None, type=click.Path(exists=True),
               help="The target path for the retrieved file.  Default is to "
               "retrieve the file to its original path.")
 @click.option("-l", "--label", default=None, type=str,
               help="The label of the holding to retrieve the file from.  This "
               "can be a regular expression (regex).")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the GET job, that can be viewed when "
+              "using the stat command")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The id of the holding to retrieve the file from.")
 @click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
@@ -360,9 +364,10 @@ user_help_text = (" If no user or group is given then these values will "
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
 @click.argument("filepath", type=str)
-def get(filepath, user, group, target, label, holding_id, tag, json):
+def get(filepath, user, group, target, job_label,
+        label, holding_id, tag, json):
     try:
-        response = get_filelist([filepath], user, group, target, 
+        response = get_filelist([filepath], user, group, target, job_label,
                                 label, holding_id, tag)
         if json:
             click.echo(response)
@@ -390,6 +395,9 @@ def get(filepath, user, group, target, label, holding_id, tag, json):
               "holding does not exist then it will be created with the label. "
               "If this option is omitted then a new holding with a random label "
               "will be created.")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the PUT job, that can be viewed when "
+              "using the stat command")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The numeric id of an existing holding to put files into.")
 @click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
@@ -401,7 +409,8 @@ def get(filepath, user, group, target, label, holding_id, tag, json):
               "guarantee uniqueness of the holding.")
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
-def putlist(filelist, user, group, label, holding_id, tag, json):
+def putlist(filelist, user, group, label, job_label, 
+            holding_id, tag, json):
     # read the filelist from the file
     try:
         fh = open(filelist)
@@ -411,7 +420,7 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
         raise click.UsageError(fe)
 
     try:
-        response = put_filelist(files, user, group, 
+        response = put_filelist(files, user, group, job_label,
                                 label, holding_id, tag)
         if json:
             click.echo(response)
@@ -439,6 +448,9 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
 @click.option("-l", "--label", default=None, type=str,
               help="The label of the holding(s) to retrieve files from.  This "
               "can be a regular expression (regex).")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the GET job, that can be viewed when "
+              "using the stat command")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The id of the holding to retrieve files from.")
 @click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
@@ -446,7 +458,8 @@ def putlist(filelist, user, group, label, holding_id, tag, json):
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
 @click.argument("filelist", type=str)
-def getlist(filelist, user, group, target, label, holding_id, tag, json):
+def getlist(filelist, user, group, target, job_label,  
+            label, holding_id, tag, json):
     # read the filelist from the file
     try:
         fh = open(filelist)
@@ -456,8 +469,8 @@ def getlist(filelist, user, group, target, label, holding_id, tag, json):
         raise click.UsageError(fe)
 
     try:
-        response = get_filelist(files, user, group, 
-                                target, label, holding_id, tag)
+        response = get_filelist(files, user, group, target, job_label,
+                                label, holding_id, tag)
         if json:
             click.echo(response)
         else:
@@ -536,7 +549,6 @@ def list(user, group, label, holding_id, tag, json):
               "TRANSFER_GETTING | COMPLETE | FAILED")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
-
 def stat(user, group, id, transaction_id, api_action, state, json):
     try:
         response = monitor_transactions(
