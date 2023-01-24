@@ -717,6 +717,7 @@ def get_transaction_state(transaction: dict):
         TRANSFER_GETTING = 6
         COMPLETE = 8
         FAILED = 9
+        COMPLETE_WITH_ERRORS = 10
     The overall state is the minimum of these
     """
     state_mapping = {
@@ -730,6 +731,7 @@ def get_transaction_state(transaction: dict):
         "TRANSFER_GETTING" : 6,
         "COMPLETE" : 8,
         "FAILED" : 9,
+        "COMPLETE_WITH_ERRORS" : 10
     }
     state_mapping_reverse = {
         -1 : "INITIALISING",
@@ -742,10 +744,12 @@ def get_transaction_state(transaction: dict):
         6 : "TRANSFER_GETTING",
         8 : "COMPLETE",
         9 : "FAILED",
+        10: "COMPLETE_WITH_ERRORS"
     }
 
     min_state = 100
     min_time = datetime(1970,1,1)
+    error_count = 0
     for sr in transaction["sub_records"]:
         sr_state = sr["state"]
         d = datetime.fromisoformat(sr["last_updated"])
@@ -753,9 +757,14 @@ def get_transaction_state(transaction: dict):
             min_time = d
         if state_mapping[sr_state] < min_state:
             min_state = state_mapping[sr_state]
+        if sr_state == "FAILED":
+            error_count += 1
 
     if min_state == 100:
         return None, None
+
+    if min_state == state_mapping["COMPLETE"] and error_count > 0:
+        min_state = state_mapping["COMPLETE_WITH_ERRORS"]
 
     return state_mapping_reverse[min_state], min_time
 

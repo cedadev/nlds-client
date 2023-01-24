@@ -173,7 +173,7 @@ def print_multi_stat(response: dict, req_details):
     stat_string += req_details
     click.echo(stat_string)
     click.echo(f"{'':<4}{'id':<6}{'action':<16}{'job label':<16}"
-                f"{'label':<16}{'state':<18}{'last update':<20}")
+                f"{'label':<16}{'state':<22}{'last update':<20}")
     for tr in response['data']['records']:
         state, time = get_transaction_state(tr)
         if state == None:
@@ -189,7 +189,7 @@ def print_multi_stat(response: dict, req_details):
             job_label = "" #tr['transaction_id'][0:8]
         click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<16}"
                    f"{job_label:16}{label:16}"
-                   f"{state:<18}{time:<20}")
+                   f"{state:<22}{time:<20}")
 
 
 def print_stat(response: dict, req_details):
