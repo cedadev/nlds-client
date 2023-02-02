@@ -72,7 +72,8 @@ def pretty_size(size):
 
 def format_request_details(user, group, label=None, holding_id=None, 
                            tag=None, id=None, transaction_id=None, sub_id=None,
-                           state=None, retry_count=None, api_action=None):
+                           state=None, retry_count=None, api_action=None,
+                           job_label=None):
     config = load_config()
     out = ""
     user = get_user(config, user)
@@ -91,6 +92,8 @@ def format_request_details(user, group, label=None, holding_id=None,
         out += f"tag:{tag}, "
     if transaction_id:
         out += f"transaction_id:{transaction_id}, "
+    if job_label:
+        out += f"job_label:{job_label}, "
     if sub_id:
         out += f"sub_id:{sub_id}, "
     if state:
@@ -136,7 +139,8 @@ def print_list(response: dict, req_details):
 def print_single_stat(response: dict, req_details):
     """Print a single status in more detail, with a list of failed files if
     necessary"""
-    stat_string = "State of transaction: "
+    stat_string = "State of transaction for "
+    stat_string += req_details
     click.echo(stat_string)
     # still looping over the keys, just in case more than one state returned
     for tr in response['data']['records']:
@@ -495,15 +499,17 @@ def getlist(filelist, user, group, target, job_label,
               "expression (regex).")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The numeric id of the holding to list.")
+@click.option("-n", "--transaction_id", default=None, type=str,
+              help="The UUID transaction id of the transaction to list.")
 @click.option("-t", "--tag", default=None, type=TAG_PARAM_TYPE,
               help="The tag(s) of the holding(s) to list.")
 @click.option("-j", "--json", default=False, is_flag=True,
               help="Output the result as JSON.")
-def list(user, group, label, holding_id, tag, json):
+def list(user, group, label, holding_id, transaction_id, tag, json):
     # 
     try:
         response = list_holding(
-            user, group, label, holding_id, tag
+            user, group, label, holding_id, transaction_id, tag
         )
         req_details = format_request_details(
             user, group, label=label, holding_id=holding_id, tag=tag
@@ -537,22 +543,24 @@ def list(user, group, label, holding_id, tag, json):
               help="The group to list transactions for.")
 @click.option("-i", "--id", default=None, type=int,
               help="The numeric id of the transaction to list.")
-@click.option("-T", "--transaction_id", default=None, type=str,
+@click.option("-n", "--transaction_id", default=None, type=str,
               help="The UUID transaction id of the transaction to list.")
+@click.option("-b", "--job_label", default=None, type=str,
+              help="The job label of the transaction(s) to list.")
 @click.option("-a", "--api_action", default=None, type=str,
               help="The api action of the transactions to list. Options: get | "
               "put | getlist | putlist")
 @click.option("-s", "--state", default=None, type=str,
-              help="\bThe state of the transactions to list.  Options: "
+              help="The state of the transactions to list.  Options: "
               "INITIALISING | ROUTING | SPLITTING | INDEXING | "
               "TRANSFER_PUTTING | CATALOG_PUTTING | CATALOG_GETTING | "
               "TRANSFER_GETTING | COMPLETE | FAILED")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
-def stat(user, group, id, transaction_id, api_action, state, json):
+def stat(user, group, id, transaction_id, job_label, api_action, state, json):
     try:
         response = monitor_transactions(
-            user, group, id, transaction_id, api_action, state,
+            user, group, id, transaction_id, job_label, api_action, state,
         )
         req_details = format_request_details(
                 user, group, id=id, transaction_id=transaction_id, state=state, 
@@ -589,6 +597,8 @@ def stat(user, group, id, transaction_id, api_action, state, json):
               "can be a regular expression (regex).")
 @click.option("-i", "--holding_id", default=None, type=int,
               help="The numeric id of the holding which the files belong to.")
+@click.option("-n", "--transaction_id", default=None, type=str,
+              help="The UUID transaction id of the transaction to list.")
 @click.option("-p", "--path", default=None, type=str,
               help="The path of the files to find.  This can be a regular "
               "expression (regex)")
@@ -596,12 +606,14 @@ def stat(user, group, id, transaction_id, api_action, state, json):
               help="The tag(s) of the holding(s) to find files within.")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
-def find(user, group, label, holding_id, path, tag, json):
+def find(user, group, label, holding_id, transaction_id, path, tag, json):
     # 
     try:
-        response = find_file(user, group, label, holding_id, path, tag)
+        response = find_file(user, group, label, holding_id, 
+                             transaction_id, path, tag)
         req_details = format_request_details(
-                user, group, label, holding_id, tag
+                user, group, label=label, holding_id=holding_id, tag=tag,
+                transaction_id=transaction_id
             )
         if response['success']:
             if json:

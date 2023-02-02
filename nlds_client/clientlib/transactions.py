@@ -454,6 +454,7 @@ def list_holding(user: str,
                  group: str, 
                  label: str=None, 
                  holding_id: int=None, 
+                 transaction_id: str=None,
                  tag: dict=None):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
@@ -499,6 +500,8 @@ def list_holding(user: str,
         input_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         input_params["holding_id"] = holding_id
+    if transaction_id is not None:
+        input_params["transaction_id"] = transaction_id
 
     response_dict = main_loop(
         url=url, 
@@ -522,6 +525,7 @@ def find_file(user: str,
               group: str, 
               label: str=None, 
               holding_id: int=None,
+              transaction_id: str=None,
               path: str=None,
               tag: dict=None):
     """Make a request to find files in the NLDS for a user
@@ -570,6 +574,8 @@ def find_file(user: str,
         input_params["tag"] = tag_to_string(tag)
     if holding_id is not None:
         input_params["holding_id"] = holding_id
+    if transaction_id is not None:
+        input_params["transaction_id"] = transaction_id
     if path is not None:
         input_params["path"] = path
 
@@ -595,6 +601,7 @@ def monitor_transactions(user: str,
                          group: str, 
                          idd: int=None,
                          transaction_id: str=None, 
+                         job_label: str=None,
                          api_action: str=None,
                          state: str=None, 
                          sub_id: str=None,
@@ -612,6 +619,9 @@ def monitor_transactions(user: str,
     :type idd: int
 
     :param transaction_id: a specific transaction_id to get the status of 
+    :type transaction_id: string, optional
+
+    :param job_label: a specific job_label to get the status of 
     :type transaction_id: string, optional
 
     :param api_action: applies an api-action-specific filter to the status 
@@ -654,6 +664,8 @@ def monitor_transactions(user: str,
         input_params["id"] = idd
     if transaction_id is not None:
         input_params["transaction_id"] = transaction_id
+    if job_label is not None:
+        input_params["job_label"] = job_label
     if api_action is not None:
         input_params["api_action"] = api_action
     if sub_id is not None:
