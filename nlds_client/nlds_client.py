@@ -126,6 +126,11 @@ def print_list(response: dict, req_details):
             for t in h['transactions']:
                 trans_str += t + f"\n{'':<22}" 
             click.echo(f"{'':<4}{'transaction id':<16}: {trans_str[:-23]}")
+        if 'tags' in h and len(h['tags']) > 0:
+            tags_str = ""
+            for t in h['tags']:
+                tags_str += f"{t} : {h['tags'][t]}\n{'':22}"
+            click.echo(f"{'':<4}{'tags':<16}: {tags_str[:-23]}")
     else:
         # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
         click.echo(f"{'':<4}{'id':<6}{'label':<16}{'ingest time':<32}")

@@ -297,7 +297,8 @@ def put_filelist(filelist: List[str]=[],
     if label is not None:
         body_params["label"] = label
     if tag is not None:
-        body_params["tag"] = tag_to_string(tag)
+        # tags in body params should not be encoded as a string
+        body_params["tag"] = tag
     if holding_id is not None:
         body_params["holding_id"] = holding_id
     # make the request
