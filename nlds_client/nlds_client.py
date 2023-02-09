@@ -155,7 +155,7 @@ def print_single_stat(response: dict, req_details):
         if 'label' in tr:
             click.echo(f"{'':<4}{'label':<15}: {tr['label']}")
         click.echo(f"{'':<4}{'creation time':<15}: {(tr['creation_time']).replace('T',' ')}")
-        click.echo(f"{'':<4}{'state':<15}: {state}")
+        click.echo(f"{'':<4}{'job_state':<15}: {state}")
         click.echo(f"{'':<4}{'sub records':<15}->")
         for sr in tr['sub_records']:
             click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
