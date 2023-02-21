@@ -128,7 +128,7 @@ def tag_to_string(tag: dict):
     for key in tag:
         tag_str += key+":"+tag[key]+","
     tag_str = tag_str.replace("'","")
-    return tag_str
+    return tag_str[:-1]
     
 
 def main_loop(url: str, 
@@ -297,7 +297,8 @@ def put_filelist(filelist: List[str]=[],
     if label is not None:
         body_params["label"] = label
     if tag is not None:
-        body_params["tag"] = tag_to_string(tag)
+        # tags in body params should not be encoded as a string
+        body_params["tag"] = tag
     if holding_id is not None:
         body_params["holding_id"] = holding_id
     # make the request
@@ -730,6 +731,7 @@ def get_transaction_state(transaction: dict):
         COMPLETE = 8
         FAILED = 9
         COMPLETE_WITH_ERRORS = 10
+        COMPLETE_WITH_WARNINGS = 11
     The overall state is the minimum of these
     """
     state_mapping = {
@@ -744,7 +746,8 @@ def get_transaction_state(transaction: dict):
         "TRANSFER_GETTING" : 7,
         "COMPLETE" : 8,
         "FAILED" : 9,
-        "COMPLETE_WITH_ERRORS" : 10
+        "COMPLETE_WITH_ERRORS" : 10,
+        "COMPLETE_WITH_WARNINGS": 11,
     }
     state_mapping_reverse = {
         -1 : "INITIALISING",
@@ -758,7 +761,8 @@ def get_transaction_state(transaction: dict):
         7 : "TRANSFER_GETTING",
         8 : "COMPLETE",
         9 : "FAILED",
-        10: "COMPLETE_WITH_ERRORS"
+        10: "COMPLETE_WITH_ERRORS",
+        11: "COMPLETE_WITH_WARNINGS"
     }
 
     min_state = 100
@@ -780,6 +784,13 @@ def get_transaction_state(transaction: dict):
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
 
+    # see if any warnings were given
+    warning_count = 0
+    if "warnings" in transaction:
+        warning_count = len(transaction["warnings"])
+    if min_state == state_mapping["COMPLETE"] and warning_count > 0:
+        min_state = state_mapping["COMPLETE_WITH_WARNINGS"]
+
     return state_mapping_reverse[min_state], min_time
 
 
@@ -789,7 +800,8 @@ def change_metadata(user: str,
                     holding_id: int=None,
                     tag: dict=None,
                     new_label: str=None,
-                    new_tag: dict=None):
+                    new_tag: dict=None,
+                    del_tag: dict=None):
     """Make a request to change the metadata for a NLDS holding for a user
     :param user: the username to change the holding(s) for
     :type user: string
@@ -811,8 +823,11 @@ def change_metadata(user: str,
     :param new_label: the new label to change the label to for the holding
     :type new_label: str, optional
 
-    :param new_tag: the tag to add / change for the holding
+    :param new_tag: the tag(s) to add / change for the holding
     :type new_tag: dict, optional
+
+    :param del_tag: the tag(s) to delete for the holding
+    :type del_tag: dict, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -844,6 +859,8 @@ def change_metadata(user: str,
         body_params["new_label"] = new_label
     if new_tag is not None:
         body_params["new_tag"] = new_tag
+    if del_tag is not None:
+        body_params["del_tag"] = del_tag
 
     response_dict = main_loop(
         url=url, 
@@ -860,4 +877,4 @@ def change_metadata(user: str,
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
-    return response_dict   
+    return response_dict
