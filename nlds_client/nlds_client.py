@@ -104,6 +104,13 @@ def format_request_details(user, group, label=None, holding_id=None,
     return out[:-2]
 
 
+def _tags_to_str(tags):
+    tags_str = ""
+    for t in h['tags']:
+        tags_str += f"{t} : {h['tags'][t]}\n{'':22}"
+    return tags_str
+
+
 def print_list(response: dict, req_details):
     """Print out the response from the list command"""
     n_holdings = len(response['data']['holdings'])
@@ -126,9 +133,7 @@ def print_list(response: dict, req_details):
                 trans_str += t + f"\n{'':<22}" 
             click.echo(f"{'':<4}{'transaction id':<16}: {trans_str[:-23]}")
         if 'tags' in h and len(h['tags']) > 0:
-            tags_str = ""
-            for t in h['tags']:
-                tags_str += f"{t} : {h['tags'][t]}\n{'':22}"
+            tags_str = _tags_to_str(h['tags'])
             click.echo(f"{'':<4}{'tags':<16}: {tags_str[:-23]}")
     else:
         # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
@@ -292,7 +297,7 @@ def print_find(response:dict, req_details):
         print_multi_file(response)
 
 
-def print_meta(response:dict, req_details):
+def print_meta(response:dict, req_details:str):
     """Print out the response from the meta command"""
     meta_string = "Changed metadata for holding for "
     meta_string += req_details
@@ -305,6 +310,28 @@ def print_meta(response:dict, req_details):
         click.echo(f"{'':<8}new metadata: ")
         click.echo(f"{'':<12}{'label':<8}: {h['new_meta']['label']}")
         click.echo(f"{'':<12}{'tags':<8}: {h['new_meta']['tags']}")
+
+
+def print_response(tr:dict):
+    if 'msg' in tr and len(tr['msg']) > 0:
+        click.echo(tr['msg'])
+    if 'holding_id' in tr and tr['holding_id'] > 0:
+        click.echo(f"{'':<4}{'id':<16}: {tr['holding_id']}")
+    if 'user' in tr and len(tr['user']) > 0:
+        click.echo(f"{'':<4}{'user':<16}: {tr['user']}")
+    if 'group' in tr and len(tr['group']) > 0:
+        click.echo(f"{'':<4}{'group':<16}: {tr['group']}")
+    if 'api_action' in tr and len(tr['api_action']) > 0:
+        click.echo(f"{'':<4}{'action':<16}: {tr['api_action']}")
+    if 'job_label' in tr and len(tr['job_label']) > 0:
+        click.echo(f"{'':<4}{'job label':<16}: {tr['job_label']}")
+    if 'transaction_id' in tr and len(tr['transaction_id']) > 0:
+        click.echo(f"{'':<4}{'transaction id':<16}: {tr['transaction_id']}")
+    if 'label' in tr and len(tr['label']) > 0:
+        click.echo(f"{'':<4}{'label':<16}: {tr['label']}")
+    if 'tag' in tr and len(tr['tag']) > 0:
+        tag_str = _tags_to_str(tr['tag'])
+        click.echo(f"{'':<4}{'tags':<16}: {tag_str}")
 
 
 """Put files command"""
@@ -342,7 +369,7 @@ def put(filepath, user, group, job_label,
         if json:
             click.echo(response)
         else:
-            click.echo(response['msg'].strip('\n'))
+            print_response(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -387,7 +414,7 @@ def get(filepath, user, group, target, job_label,
         if json:
             click.echo(response)
         else:
-            click.echo(response['msg'].strip('\n'))
+            print_response(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
@@ -440,7 +467,7 @@ def putlist(filelist, user, group, label, job_label,
         if json:
             click.echo(response)
         else:
-            click.echo(response['msg'].strip('\n'))
+            print_response(response)
 
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -489,7 +516,7 @@ def getlist(filelist, user, group, target, job_label,
         if json:
             click.echo(response)
         else:
-            click.echo(response['msg'].strip('\n'))
+            print_response(response)
     except ConnectionError as ce:
         raise click.UsageError(ce)
     except AuthenticationError as ae:
