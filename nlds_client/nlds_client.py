@@ -106,8 +106,8 @@ def format_request_details(user, group, label=None, holding_id=None,
 
 def _tags_to_str(tags):
     tags_str = ""
-    for t in h['tags']:
-        tags_str += f"{t} : {h['tags'][t]}\n{'':22}"
+    for t in tags:
+        tags_str += f"{t} : {tags[t]}\n{'':22}"
     return tags_str
 
 
