@@ -1,0 +1,574 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Welcome to Near-Line Data Store client’s documentation! &#8212; Near-Line Data Store client 0.1.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="welcome-to-near-line-data-store-client-s-documentation">
+<h1>Welcome to Near-Line Data Store client’s documentation!<a class="headerlink" href="#welcome-to-near-line-data-store-client-s-documentation" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="nlds">
+<h2>nlds<a class="headerlink" href="#nlds" title="Permalink to this heading">¶</a></h2>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>COMMAND<span class="w"> </span><span class="o">[</span>ARGS<span class="o">]</span>...
+</pre></div>
+</div>
+<section id="nlds-find">
+<h3>find<a class="headerlink" href="#nlds-find" title="Permalink to this heading">¶</a></h3>
+<p>Find and list files. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>find<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-u">
+<span id="cmdoption-nlds-find-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to find files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-g">
+<span id="cmdoption-nlds-find-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to find files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-l">
+<span id="cmdoption-nlds-find-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding which the files belong to.  This can be a regular expression (regex).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-i">
+<span id="cmdoption-nlds-find-holding_id"></span><span id="cmdoption-nlds-find-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of the holding which the files belong to.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-n">
+<span id="cmdoption-nlds-find-transaction_id"></span><span id="cmdoption-nlds-find-transaction-id"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--transaction_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;transaction_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>The UUID transaction id of the transaction to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-p">
+<span id="cmdoption-nlds-find-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-p" title="Permalink to this definition">¶</a></dt>
+<dd><p>The path of the files to find.  This can be a regular expression (regex)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-t">
+<span id="cmdoption-nlds-find-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag(s) of the holding(s) to find files within.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-j">
+<span id="cmdoption-nlds-find-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-find-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+</section>
+<section id="nlds-get">
+<h3>get<a class="headerlink" href="#nlds-get" title="Permalink to this heading">¶</a></h3>
+<p>Get a single file. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>get<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILEPATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-u">
+<span id="cmdoption-nlds-get-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to get a file for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-g">
+<span id="cmdoption-nlds-get-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to get a file for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-r">
+<span id="cmdoption-nlds-get-target"></span><span class="sig-name descname"><span class="pre">-r</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--target</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;target&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-r" title="Permalink to this definition">¶</a></dt>
+<dd><p>The target path for the retrieved file.  Default is to retrieve the file to its original path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-l">
+<span id="cmdoption-nlds-get-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding to retrieve the file from.  This can be a regular expression (regex).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-b">
+<span id="cmdoption-nlds-get-job_label"></span><span id="cmdoption-nlds-get-job-label"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--job_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;job_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional label for the GET job, that can be viewed when using the stat command</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-i">
+<span id="cmdoption-nlds-get-holding_id"></span><span id="cmdoption-nlds-get-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The id of the holding to retrieve the file from.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-t">
+<span id="cmdoption-nlds-get-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag(s) of the holding to retrieve the file from.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-j">
+<span id="cmdoption-nlds-get-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;json&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-arg-FILEPATH">
+<span id="cmdoption-nlds-get-arg-filepath"></span><span class="sig-name descname"><span class="pre">FILEPATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-get-arg-FILEPATH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="nlds-getlist">
+<h3>getlist<a class="headerlink" href="#nlds-getlist" title="Permalink to this heading">¶</a></h3>
+<p>Get a number of files specified in a list. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>getlist<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILELIST
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-u">
+<span id="cmdoption-nlds-getlist-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to get files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-g">
+<span id="cmdoption-nlds-getlist-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to get files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-t">
+<span id="cmdoption-nlds-getlist-target"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--target</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;target&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The target path for the retrieved files.  Default is to retrieve files to their original path.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-l">
+<span id="cmdoption-nlds-getlist-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding(s) to retrieve files from.  This can be a regular expression (regex).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-b">
+<span id="cmdoption-nlds-getlist-job_label"></span><span id="cmdoption-nlds-getlist-job-label"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--job_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;job_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional label for the GET job, that can be viewed when using the stat command</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-i">
+<span id="cmdoption-nlds-getlist-holding_id"></span><span id="cmdoption-nlds-getlist-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The id of the holding to retrieve files from.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-0">
+<span id="cmdoption-nlds-getlist-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-0" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag(s) of the holding(s) to retrieve files from.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-j">
+<span id="cmdoption-nlds-getlist-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;json&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-getlist-arg-FILELIST">
+<span id="cmdoption-nlds-getlist-arg-filelist"></span><span class="sig-name descname"><span class="pre">FILELIST</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-getlist-arg-FILELIST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="nlds-list">
+<h3>list<a class="headerlink" href="#nlds-list" title="Permalink to this heading">¶</a></h3>
+<p>List holdings. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-u">
+<span id="cmdoption-nlds-list-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to list holdings for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-g">
+<span id="cmdoption-nlds-list-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to list holdings for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-l">
+<span id="cmdoption-nlds-list-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding(s) to list.  This can be a regularexpression (regex).</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-i">
+<span id="cmdoption-nlds-list-holding_id"></span><span id="cmdoption-nlds-list-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of the holding to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-n">
+<span id="cmdoption-nlds-list-transaction_id"></span><span id="cmdoption-nlds-list-transaction-id"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--transaction_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;transaction_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>The UUID transaction id of the transaction to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-t">
+<span id="cmdoption-nlds-list-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag(s) of the holding(s) to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-j">
+<span id="cmdoption-nlds-list-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-list-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+</section>
+<section id="nlds-meta">
+<h3>meta<a class="headerlink" href="#nlds-meta" title="Permalink to this heading">¶</a></h3>
+<p>Alter metadata for a holding. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>meta<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-u">
+<span id="cmdoption-nlds-meta-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to use when changing metadata for a holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-g">
+<span id="cmdoption-nlds-meta-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to use when changing metadata for a holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-l">
+<span id="cmdoption-nlds-meta-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding to change metadata for.  This can be a regular expression (regex)</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-i">
+<span id="cmdoption-nlds-meta-holding_id"></span><span id="cmdoption-nlds-meta-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of the holding to change metadata for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-t">
+<span id="cmdoption-nlds-meta-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tag(s) of the holding(s) to change metadata for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-L">
+<span id="cmdoption-nlds-meta-new_label"></span><span id="cmdoption-nlds-meta-new-label"></span><span class="sig-name descname"><span class="pre">-L</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--new_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;new_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-L" title="Permalink to this definition">¶</a></dt>
+<dd><p>The new label for the holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-T">
+<span id="cmdoption-nlds-meta-new_tag"></span><span id="cmdoption-nlds-meta-new-tag"></span><span class="sig-name descname"><span class="pre">-T</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--new_tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;new_tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-T" title="Permalink to this definition">¶</a></dt>
+<dd><p>The new tag(s) for the holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-meta-j">
+<span id="cmdoption-nlds-meta-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-meta-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+</section>
+<section id="nlds-put">
+<h3>put<a class="headerlink" href="#nlds-put" title="Permalink to this heading">¶</a></h3>
+<p>Put a single file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>put<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILEPATH
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-u">
+<span id="cmdoption-nlds-put-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to put the file for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-g">
+<span id="cmdoption-nlds-put-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to put the file for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-l">
+<span id="cmdoption-nlds-put-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding to put the file into.  If the holding already exists then the file will be added to it.  If the holding does not exist then it will be created with the label. If this option is omitted then a new holding with a random label will be created.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-b">
+<span id="cmdoption-nlds-put-job_label"></span><span id="cmdoption-nlds-put-job-label"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--job_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;job_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional label for the PUT job, that can be viewed when using the stat command</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-i">
+<span id="cmdoption-nlds-put-holding_id"></span><span id="cmdoption-nlds-put-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of an existing holding to put the file into.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-t">
+<span id="cmdoption-nlds-put-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tags of a holding to put the file into.  If a holding with the tags already exists then the file will the added to that holding.  If the holding does not exist then it will be created with the tags and either a random label or a named label,if the label parameter is also supplied.  The set of tags must guarantee uniqueness of the holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-j">
+<span id="cmdoption-nlds-put-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;json&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-put-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-put-arg-FILEPATH">
+<span id="cmdoption-nlds-put-arg-filepath"></span><span class="sig-name descname"><span class="pre">FILEPATH</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-put-arg-FILEPATH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="nlds-putlist">
+<h3>putlist<a class="headerlink" href="#nlds-putlist" title="Permalink to this heading">¶</a></h3>
+<p>Put a number of files specified in a list. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>putlist<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILELIST
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-u">
+<span id="cmdoption-nlds-putlist-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to put files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-g">
+<span id="cmdoption-nlds-putlist-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to put files for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-l">
+<span id="cmdoption-nlds-putlist-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-l" title="Permalink to this definition">¶</a></dt>
+<dd><p>The label of the holding to put files into.  If the holding already exists then the files will be added to it.  If the holding does not exist then it will be created with the label. If this option is omitted then a new holding with a random label will be created.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-b">
+<span id="cmdoption-nlds-putlist-job_label"></span><span id="cmdoption-nlds-putlist-job-label"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--job_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;job_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>An optional label for the PUT job, that can be viewed when using the stat command</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-i">
+<span id="cmdoption-nlds-putlist-holding_id"></span><span id="cmdoption-nlds-putlist-holding-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--holding_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;holding_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of an existing holding to put files into.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-t">
+<span id="cmdoption-nlds-putlist-tag"></span><span class="sig-name descname"><span class="pre">-t</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--tag</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;tag&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-t" title="Permalink to this definition">¶</a></dt>
+<dd><p>The tags of a holding to put files into.  If a holding with the tags already exists then the files will the added to that holding.  If the holding does not exist then it will be created with the tags and either a random label or a named label,if the label parameter is also supplied.  The set of tags must guarantee uniqueness of the holding.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-j">
+<span id="cmdoption-nlds-putlist-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;json&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-putlist-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+<p class="rubric">Arguments</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-putlist-arg-FILELIST">
+<span id="cmdoption-nlds-putlist-arg-filelist"></span><span class="sig-name descname"><span class="pre">FILELIST</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-putlist-arg-FILELIST" title="Permalink to this definition">¶</a></dt>
+<dd><p>Required argument</p>
+</dd></dl>
+
+</section>
+<section id="nlds-stat">
+<h3>stat<a class="headerlink" href="#nlds-stat" title="Permalink to this heading">¶</a></h3>
+<p>List transactions. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>stat<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
+</pre></div>
+</div>
+<p class="rubric">Options</p>
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-u">
+<span id="cmdoption-nlds-stat-user"></span><span class="sig-name descname"><span class="pre">-u</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--user</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;user&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-u" title="Permalink to this definition">¶</a></dt>
+<dd><p>The username to list transactions for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-g">
+<span id="cmdoption-nlds-stat-group"></span><span class="sig-name descname"><span class="pre">-g</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--group</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;group&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-g" title="Permalink to this definition">¶</a></dt>
+<dd><p>The group to list transactions for.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-i">
+<span id="cmdoption-nlds-stat-id"></span><span class="sig-name descname"><span class="pre">-i</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-i" title="Permalink to this definition">¶</a></dt>
+<dd><p>The numeric id of the transaction to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-n">
+<span id="cmdoption-nlds-stat-transaction_id"></span><span id="cmdoption-nlds-stat-transaction-id"></span><span class="sig-name descname"><span class="pre">-n</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--transaction_id</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;transaction_id&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-n" title="Permalink to this definition">¶</a></dt>
+<dd><p>The UUID transaction id of the transaction to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-b">
+<span id="cmdoption-nlds-stat-job_label"></span><span id="cmdoption-nlds-stat-job-label"></span><span class="sig-name descname"><span class="pre">-b</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--job_label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;job_label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-b" title="Permalink to this definition">¶</a></dt>
+<dd><p>The job label of the transaction(s) to list.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-a">
+<span id="cmdoption-nlds-stat-api_action"></span><span id="cmdoption-nlds-stat-api-action"></span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--api_action</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;api_action&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-a" title="Permalink to this definition">¶</a></dt>
+<dd><p>The api action of the transactions to list. Options: get | put | getlist | putlist</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-s">
+<span id="cmdoption-nlds-stat-state"></span><span class="sig-name descname"><span class="pre">-s</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--state</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;state&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-stat-s" title="Permalink to this definition">¶</a></dt>
+<dd><p>The state of the transactions to list.  Options: INITIALISING | ROUTING | SPLITTING | INDEXING | TRANSFER_PUTTING | CATALOG_PUTTING | CATALOG_GETTING | TRANSFER_GETTING | COMPLETE | FAILED</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-j">
+<span id="cmdoption-nlds-stat-json"></span><span class="sig-name descname"><span class="pre">-j</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--json</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-stat-j" title="Permalink to this definition">¶</a></dt>
+<dd><p>Output the result as JSON.</p>
+</dd></dl>
+
+</section>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this heading">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Near-Line Data Store client</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2023, Neil Massey and Jack Leland.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 6.1.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.13</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
