@@ -699,6 +699,8 @@ def get_transaction_state(transaction: dict):
     """Get the overall state of a transaction in a more convienent form by 
     querying the sub-transactions and determining if the overall transaction 
     is complete.
+    transaction: a dictionary for a single transaction.  Note that 
+      monitor_transactions returns a dictionary of transactions
     Transaction dictionary looks like this:
     {
         'id': 2, 
