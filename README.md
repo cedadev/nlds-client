@@ -21,7 +21,7 @@ Installation
     `source ~/nlds-client/bin/activate`
 
 3.  Install the nlds-client package with editing capability:
-    `pip install -e ~/Coding/nlds-client`
+    `pip install git+https://github.com/cedadev/nlds-client.git@development#egg=nlds-client`
 
 Using
 -----

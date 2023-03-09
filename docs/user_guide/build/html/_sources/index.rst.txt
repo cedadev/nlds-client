@@ -3,16 +3,19 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Near-Line Data Store client's documentation!
-=======================================================
+Near-Line Data Store documentation
+==================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 3
    :caption: Contents:
 
-.. click:: nlds_client.nlds_client:nlds_client
-   :prog: nlds
-   :nested: full
+   installation.rst
+   configuration.rst
+   catalog_organisation.rst
+   tutorial.rst
+   status_codes.rst
+   command_ref.rst
 
 Indices and tables
 ==================

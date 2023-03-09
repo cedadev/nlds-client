@@ -333,9 +333,11 @@ def print_response(tr:dict):
         tag_str = _tags_to_str(tr['tag'])
         click.echo(f"{'':<4}{'tags':<16}: {tag_str}")
 
-
+user_help_text = (" If no user or group is given then these values will "
+                  "default to the ``user:default_user`` and "
+                  "``user:default values`` in the ``~/.nlds-config file``.")
 """Put files command"""
-@nlds_client.command("put", help="Put a single file.")
+@nlds_client.command("put", help=f"Put a single file.{user_help_text}")
 @click.option("-u", "--user", default=None, type=str,
               help="The username to put the file for.")
 @click.option("-g", "--group", default=None, type=str,
@@ -376,11 +378,6 @@ def put(filepath, user, group, job_label,
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
-
-
-user_help_text = (" If no user or group is given then these values will "
-                  "default to the user:default_user and user:default values "
-                  "in the ~/.nlds-config file.")
 
 """Get files command"""
 @nlds_client.command("get", 
