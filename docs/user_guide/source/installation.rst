@@ -15,4 +15,4 @@ user space or home directory.
     `source ~/nlds-client/bin/activate`
 
 3.  Install the nlds-client package from github:
-    `pip install git+https://github.com/cedadev/nlds-client.git@development#egg=nlds-client`
+    `pip install git+https://github.com/cedadev/nlds-client.git@0.1.1#egg=nlds-client`
