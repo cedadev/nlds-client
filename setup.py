@@ -1,5 +1,5 @@
 import os
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()
@@ -8,9 +8,9 @@ with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
 os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
-    name='nlds-client',
-    version='0.0.1',
-    packages=['nlds_client'],
+    name='nlds_client',
+    version='0.0.2',
+    packages=find_packages(),
     install_requires=[
         'requests',
         'requests_oauthlib',
