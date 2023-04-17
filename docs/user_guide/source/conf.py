@@ -6,10 +6,10 @@
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 project = 'Near-Line Data Store'
-copyright = '2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.'
+copyright = '2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation'
 author = 'Neil Massey and Jack Leland'
-version = '0.1.0'
-release = '0.1.0-RC1'
+version = '0.1.1'
+release = '0.1.1-RC1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration

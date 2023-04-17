@@ -7,7 +7,7 @@ Near-Line Data Store documentation
 ==================================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 1
    :caption: Contents:
 
    installation.rst

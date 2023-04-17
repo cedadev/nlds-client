@@ -2,13 +2,15 @@
 
   <br/>
 
+.. _installation:
+
 Installation
 ============
 To use NLDS, first you must install the client software.  This guide will show
 you how to install it into a Python virtual-environment (virtualenv) in your
 user space or home directory.
 
-#. log into the machine where you wish to install the JDMA client into your 
+#. log onto the machine where you wish to install the JDMA client into your 
    user space or home directory.
 
 #. Create a Python virtual environment: |br|

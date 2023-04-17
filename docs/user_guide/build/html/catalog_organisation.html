@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catalog Organisation &mdash; Near-Line Data Store 0.1.0-RC1 documentation</title>
+  <title>Catalog Organisation &mdash; Near-Line Data Store 0.1.1-RC1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
             Near-Line Data Store
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -48,7 +48,14 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalog Organisation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Catalog Organisation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#holdings">Holdings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#transactions">Transactions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#tags">Tags</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#file">File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#location">Location</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
@@ -79,14 +86,146 @@
            <div itemprop="articleBody">
              
   <section id="catalog-organisation">
-<h1>Catalog Organisation<a class="headerlink" href="#catalog-organisation" title="Permalink to this heading"></a></h1>
-<p>When a user PUTs data to the NLDS, the files are recorded in a catalog.</p>
-<p>Database Image</p>
-<p>Holdings
-Transactions
-Tags
-Labels</p>
-<p>What this means - multiple files, fetching the latest file</p>
+<span id="id1"></span><h1>Catalog Organisation<a class="headerlink" href="#catalog-organisation" title="Permalink to this heading"></a></h1>
+<p>When a user PUTs files to the NLDS, the files are recorded in a catalog on
+behalf of the user.  The user can then list which files they have in the catalog
+and also search for files based on a regular expression.  Additionally, users
+can associate a label and tags, in the form of <em>key:value</em> pairs with a file or
+collection of files.</p>
+<p><em>Figure 1</em> shows a simplified version of the structure of the catalog, with just
+the information relevant to the user remaining.</p>
+<figure class="align-default" id="id5">
+<img alt="_images/simple_catalog.png" src="_images/simple_catalog.png" />
+<figcaption>
+<p><span class="caption-text">Figure 1: Simplified view of the NLDS data-catalog</span><a class="headerlink" href="#id5" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+<p>The terms in figure 1 are explained below:</p>
+<ol class="arabic simple">
+<li><p><a class="reference internal" href="#holding"><span class="std std-ref">Holdings</span></a></p></li>
+<li><p><a class="reference internal" href="#transaction"><span class="std std-ref">Transactions</span></a></p></li>
+<li><p><a class="reference internal" href="#tags"><span class="std std-ref">Tags</span></a></p></li>
+<li><p><a class="reference internal" href="#file"><span class="std std-ref">File</span></a></p></li>
+<li><p><a class="reference internal" href="#location"><span class="std std-ref">Location</span></a></p></li>
+</ol>
+<section id="holdings">
+<span id="holding"></span><h2>Holdings<a class="headerlink" href="#holdings" title="Permalink to this heading"></a></h2>
+<p><strong>Holdings</strong> are collections of files, that the user has chosen to collect
+together and assign a label to the collection.  A reason to collect files in a
+holding might be that they are from the same experiment, or climate model run,
+or measuring campaign.  Users can give the holding a <strong>label</strong>, but if they do
+not then a seemingly random <strong>label</strong> will be assigned to the holding.  This is
+actually the id of the first <strong>transaction</strong> that created the holding.  Users
+can change the <strong>label</strong> that a holding has at any time.</p>
+<p><strong>Holdings</strong> are created when a user PUTs a file into the NLDS, using either the
+<code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">put</span></code> or <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">putlist</span></code> command.  These commands take a <strong>label</strong>
+argument with the <code class="docutils literal notranslate"><span class="pre">-l</span></code> or <code class="docutils literal notranslate"><span class="pre">--label</span></code> option.  The first time a user PUTs a
+file, or list of files, into a <strong>holding</strong>, the <strong>holding</strong> will be created.
+If a <strong>label</strong> is specified then the <strong>holding</strong> will be assigned that <strong>label</strong>.
+If a <strong>label</strong> is not specified then the seemingly random <strong>label</strong> will be
+assigned.</p>
+<p>After this, if a user PUTs a file into the NLDS and specifies a <strong>label</strong> for a
+<strong>holding</strong> that already exists, then the file will be added to that <strong>holding</strong>.
+If the <strong>holding</strong> with the specified <strong>label</strong> does not exist then the file
+will be added to a new <strong>holding</strong>.  This leads to the behaviour that, if a
+<strong>label</strong> is not specified when PUTting a file (or list of files) into the NLDS,
+a new <strong>holding</strong> will be created for each file (or list of files).</p>
+<p>Reading this, you may ask the question “What happens if I add a file that
+already exists in the NLDS?”.  This is a good question, and a number of rules
+cover it:</p>
+<p>1.  The <code class="docutils literal notranslate"><span class="pre">original_path</span></code> of a file must be unique within a <strong>holding</strong>.  An
+error is given if a user PUTs a file into a <strong>holding</strong> that already exists and
+the file with <code class="docutils literal notranslate"><span class="pre">original_path</span></code> already exists in the <strong>holding</strong>.</p>
+<p>2.  The <code class="docutils literal notranslate"><span class="pre">original_path</span></code> does not have to be unique across <strong>holdings</strong>.
+Multiple files with the same <code class="docutils literal notranslate"><span class="pre">original_path</span></code> can exist in the NLDS, providing
+that they belong to different <strong>holdings</strong>, with different <strong>labels</strong>.</p>
+<p>3.  Users can GET files without specifying which <strong>holding</strong> to get them from,
+i.e. the <code class="docutils literal notranslate"><span class="pre">-l</span></code> or <code class="docutils literal notranslate"><span class="pre">--label</span></code> option is not given when <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">get</span></code> or <code class="docutils literal notranslate"><span class="pre">nlds</span>
+<span class="pre">getlist</span></code> commands are invoked.  In this case, the newest file is returned.</p>
+<p>Organising the catalog in this way means that users can use the NLDS as an
+iterative backup solution, by PUTting files into differently labelled
+<strong>holdings</strong> at different times.  GETting the files will returned the latest
+files, while leaving the older files still accessible by specifying the
+<strong>holding</strong> <strong>label</strong>.</p>
+</section>
+<section id="transactions">
+<span id="transaction"></span><h2>Transactions<a class="headerlink" href="#transactions" title="Permalink to this heading"></a></h2>
+<p><strong>Transactions</strong> record the user’s action when PUTting a file into the NLDS.
+As alluded to above, in the <span class="xref std std-ref">_holding</span> section, each <strong>holding</strong> can contain
+numerous <strong>transactions</strong>.  A <strong>transaction</strong> is created every time a user PUTs
+a single file, or list of files, into the NLDS.  This <strong>transaction</strong> is assigned
+to a holding based on the <strong>label</strong> supplied by the user.  If a <strong>label</strong> is
+specified for a number of PUT actions, then the <strong>holding</strong> with that label will
+contain all the <strong>transactions</strong> arising from the PUT actions.</p>
+<p>A <strong>transaction</strong> contains very little information itself, but its place in the
+catalog hierarchy is important.  As can be seen in figure 2, it contains a list
+of <strong>files</strong> and it belongs to a <strong>holding</strong>.  This is the mapping that allows
+users to add files to <strong>holdings</strong> iteratively and at different times.  For
+example, a user may PUT the files <code class="docutils literal notranslate"><span class="pre">file_1</span></code>, <code class="docutils literal notranslate"><span class="pre">file_2</span></code> and <code class="docutils literal notranslate"><span class="pre">file_3</span></code> into the
+<strong>holding</strong> with <code class="docutils literal notranslate"><span class="pre">backup_1</span></code> <strong>label</strong> on the 23rd Dec 2023.  The user may then
+PUT <code class="docutils literal notranslate"><span class="pre">file_4</span></code>, <code class="docutils literal notranslate"><span class="pre">file_5</span></code> and <code class="docutils literal notranslate"><span class="pre">file_6</span></code> into the same <strong>holding</strong> on the 4th
+Jan 2024, by specifying the label <code class="docutils literal notranslate"><span class="pre">backup_1</span></code>.  This will have the effect of
+creating two <strong>transactions</strong> - one containing <code class="docutils literal notranslate"><span class="pre">file_1</span></code>, <code class="docutils literal notranslate"><span class="pre">file_2</span></code> and <code class="docutils literal notranslate"><span class="pre">file_3</span></code>
+and the other containing <code class="docutils literal notranslate"><span class="pre">file_4</span></code>, <code class="docutils literal notranslate"><span class="pre">file_5</span></code> and <code class="docutils literal notranslate"><span class="pre">file_6</span></code>, with the
+<code class="docutils literal notranslate"><span class="pre">backup_1</span></code> <strong>holding</strong> containing both <strong>transactions</strong>.  Therefore, all <strong>files</strong>
+(<code class="docutils literal notranslate"><span class="pre">file_1</span></code> through to <code class="docutils literal notranslate"><span class="pre">file_6</span></code>) are associated with the <code class="docutils literal notranslate"><span class="pre">backup_1</span></code>
+<strong>holding</strong> at particular <code class="docutils literal notranslate"><span class="pre">ingest_times</span></code>.</p>
+<p>If, at a later time, the user puts <code class="docutils literal notranslate"><span class="pre">file_1</span></code> to <code class="docutils literal notranslate"><span class="pre">file_6</span></code> into
+another <strong>holding</strong> with a <strong>label</strong> of <code class="docutils literal notranslate"><span class="pre">backup_2</span></code> then another
+<strong>transaction</strong> will be created with a later <code class="docutils literal notranslate"><span class="pre">ingest_time</span></code> and the <strong>files</strong>
+will be associated with the <strong>transaction</strong> and the <code class="docutils literal notranslate"><span class="pre">backup_2</span></code> <strong>holding</strong>.
+The <strong>files</strong> may have changed in the interim and, therefore, the <strong>files</strong>
+with the same filenames may be different in <code class="docutils literal notranslate"><span class="pre">backup_2</span></code> than they are in
+<code class="docutils literal notranslate"><span class="pre">backup_1</span></code>.  This is the mechanism by which NLDS allows users to perform
+iterative backups and how users can get the latest files, via the <code class="docutils literal notranslate"><span class="pre">ingest_time</span></code>.</p>
+</section>
+<section id="tags">
+<span id="id2"></span><h2>Tags<a class="headerlink" href="#tags" title="Permalink to this heading"></a></h2>
+<p>NLDS allows the user to associate <strong>tags</strong> with a <strong>holding</strong>, in a
+<code class="docutils literal notranslate"><span class="pre">key:value</span></code> format.  For example, a series of <strong>holding</strong> could have <strong>tags</strong>
+with the <code class="docutils literal notranslate"><span class="pre">key</span></code> as <code class="docutils literal notranslate"><span class="pre">experiment</span></code> and <code class="docutils literal notranslate"><span class="pre">value</span></code> as the experiment name or
+number.</p>
+<p>A <strong>holding</strong> can contain numerous <strong>tags</strong> and these are in addition to the
+<strong>holdings</strong> <strong>label</strong>.  <strong>Tags</strong> can be used for searching for files in the
+<code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">find</span></code> commands.</p>
+</section>
+<section id="file">
+<span id="id3"></span><h2>File<a class="headerlink" href="#file" title="Permalink to this heading"></a></h2>
+<p>The very purpose of NLDS is the long term storage of <strong>files</strong>, recording their
+details in a data catalog and then accessing (GETting) them when they are
+required.  The <strong>file</strong> object in the data catalog records the details of a
+single <strong>file</strong>, including the original path of the file, its size and the
+ownership and permissions of the file.  Users can GET files in a number of ways,
+including by using just the <code class="docutils literal notranslate"><span class="pre">original_path</span></code> where the NLDS will return the
+most recent file with that path.</p>
+<p>Also associated with <strong>files</strong> is the checksum of the file.  NLDS supports
+different methods of calculating checksums, and so more than one checksum can
+be associated with a single file.</p>
+</section>
+<section id="location">
+<span id="id4"></span><h2>Location<a class="headerlink" href="#location" title="Permalink to this heading"></a></h2>
+<p>The user interacts with the NLDS by PUTting and GETting <strong>files</strong>, without knowing
+(or caring) where those <strong>files</strong> are stored.  From a user view, the <strong>files</strong> are
+stored in the NLDS.  In reality the NLDS first writes the <strong>files</strong> to <em>object
+storage</em>.  Later the <strong>files</strong> are backed up to <em>tape storage</em>.  When the NLDS
+<em>object storage</em> approaches capacity, <strong>files</strong> will be removed from the
+<em>object storage</em> depending on a policy which takes into account several variables,
+including when they were last accessed.  If a user subsequently GETs a <strong>file</strong>
+that has removed from the <em>object storage</em> then the NLDS will first retrive
+the <strong>file</strong> from the <em>tape storage</em> to the <em>object storage</em> before copying it
+to the user specified target.</p>
+<p>The <strong>location</strong> object in the Catalog database is associated to a file, and
+can have one of three states:</p>
+<p>1.  The <strong>file</strong> is held on the <em>object storage</em> only.  It will be backed up
+to the <em>tape storage</em> later.
+2.  The <strong>file</strong> is held on both the <em>object storage</em> and <em>tape storage</em>.  Users
+can access the file without any staging required by the NLDS.
+3.  The <strong>file</strong> is held on the <em>tape storage</em> only.  If a user accesses the
+<strong>file</strong> then the NLDS will <em>stage</em> it to the <em>tape storage</em>, before completing
+the GET on behalf of the user.  The user does not need to concern themselves
+with the details of this.  However, accessing a file that is stored only on
+<em>tape</em> will take longer than if it was held on <em>object storage</em>.</p>
+</section>
 </section>
 
 
@@ -100,7 +239,7 @@ Labels</p>
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..</p>
+    <p>&#169; Copyright 2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

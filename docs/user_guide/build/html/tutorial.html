@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; Near-Line Data Store 0.1.0-RC1 documentation</title>
+  <title>Tutorial &mdash; Near-Line Data Store 0.1.1-RC1 documentation</title>
       <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
   <!--[if lt IE 9]>
@@ -34,7 +34,7 @@
             Near-Line Data Store
           </a>
               <div class="version">
-                0.1.0
+                0.1.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -49,7 +49,22 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#introduction-to-the-nlds">Introduction to the NLDS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#setting-up-the-nlds-client">Setting up the NLDS client</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-the-nlds-client-for-the-first-time">Running the NLDS client for the first time</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#how-the-nlds-data-catalog-is-organised">How the NLDS data catalog is organised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copying-a-single-file-put-to-the-nlds">Copying a single file (PUT) to the NLDS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#copying-a-list-of-files-putlist-to-the-nlds">Copying a list of files (PUTLIST) to the NLDS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-the-status-of-a-transaction-stat">Querying the status of a transaction (STAT)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-the-file-collection-the-user-holds-on-the-nlds-list">Querying the file collection the user holds on the NLDS (LIST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-the-files-the-user-holds-on-the-nlds-find">Querying the files the user holds on the NLDS (FIND)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#changing-the-label-of-a-file-collection-meta">Changing the label of a file collection (META)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adding-tags-to-a-file-collection-meta">Adding tags to a file collection (META)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#searching-for-files-based-on-the-file-collection-label">Searching for files based on the file collection label</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#searching-for-files-based-on-the-file-collection-tags">Searching for files based on the file collection tags</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
 </ul>
@@ -80,7 +95,129 @@
              
   <section id="tutorial">
 <h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
-<p>There will be a tutorial, based on the JDMA one, as that was very successful.</p>
+<p>This page is a tutorial on NLDS covering:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#intro"><span class="std std-ref">Introduction to the NLDS</span></a></p></li>
+<li><p><a class="reference internal" href="#client"><span class="std std-ref">Setting up the NLDS client</span></a></p></li>
+<li><p><a class="reference internal" href="#first"><span class="std std-ref">Running the NLDS client for the first time</span></a></p></li>
+<li><p><a class="reference internal" href="#catalog"><span class="std std-ref">How the NLDS data catalog is organised</span></a></p></li>
+<li><p><a class="reference internal" href="#put"><span class="std std-ref">Copying a single file (PUT) to the NLDS</span></a></p></li>
+<li><p><a class="reference internal" href="#putlist"><span class="std std-ref">Copying a list of files (PUTLIST) to the NLDS</span></a></p></li>
+<li><p><a class="reference internal" href="#stat"><span class="std std-ref">Querying the status of a transaction (STAT)</span></a></p></li>
+<li><p><a class="reference internal" href="#list"><span class="std std-ref">Querying the file collection the user holds on the NLDS (LIST)</span></a></p></li>
+<li><p><a class="reference internal" href="#find"><span class="std std-ref">Querying the files the user holds on the NLDS (FIND)</span></a></p></li>
+<li><p><a class="reference internal" href="#label"><span class="std std-ref">Changing the label of a file collection (META)</span></a></p></li>
+<li><p><a class="reference internal" href="#tags"><span class="std std-ref">Adding tags to a file collection (META)</span></a></p></li>
+<li><p><a class="reference internal" href="#search-label"><span class="std std-ref">Searching for files based on the file collection label</span></a></p></li>
+<li><p><a class="reference internal" href="#search-tags"><span class="std std-ref">Searching for files based on the file collection tags</span></a></p></li>
+</ul>
+<section id="introduction-to-the-nlds">
+<span id="intro"></span><h2>Introduction to the NLDS<a class="headerlink" href="#introduction-to-the-nlds" title="Permalink to this heading"></a></h2>
+<p>The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses
+Object Storage as a front end to a tape library.  Interaction with NLDS is via
+a HTTP API, with a Python library and command-line client provided to users for
+programmatic or interactive use.</p>
+<p>When a user transfers files to the NLDS, the files are first written to the
+Object Storage, and a backup is made to tape.
+When the Object Storage is approaching capacity, a set of policies is
+interrogated to determine which files will be removed from the Object Storage.
+When a user retrieves a file, the NLDS may have to first transfer the file from
+tape to the Object Storage, if it has been deleted by the policies.  This in
+effect creates a multitier of hot (disk), warm (Object Storage) and cold (Tape)
+storage, with a common interface to all.</p>
+<p>The NLDS also provides a searchable catalog of files, with the user able to
+assign a label and tags to a collection of files.</p>
+<figure class="align-default" id="id1">
+<img alt="_images/userview.png" src="_images/userview.png" />
+<figcaption>
+<p><span class="caption-text">Figure 1: User view of the Near-Line Data Store</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="setting-up-the-nlds-client">
+<span id="client"></span><h2>Setting up the NLDS client<a class="headerlink" href="#setting-up-the-nlds-client" title="Permalink to this heading"></a></h2>
+<p>Before using the NLDS, a user must install and set-up the NLDS client.  For the
+NLDS installation on JASMIN, the user must also:</p>
+<ol class="arabic simple">
+<li><p>Have access to the Object Storage tenancy they wish to write files to</p></li>
+<li><p>Be a member of the GroupWorkspace they wish to use for writing to tape</p></li>
+<li><p>Have access to a GroupWorkspace to read and write files to</p></li>
+</ol>
+<p>The NLDS client is a command-line program with the name <cite>nlds</cite>.
+To install this, refer to the page <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">nlds</span></code> client program relies on a configuration file stored in the user’s
+home directory with the path <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>.  This contains information
+needed to connect the client to the NLDS server.  For more information, refer
+to the page <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">configuration</span></a>.</p>
+<p>On JASMIN, the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">user_gws</span></code> fields can be filled in by the
+user.  However, all of the fields in the <code class="docutils literal notranslate"><span class="pre">server</span></code> section of the file, and the
+<code class="docutils literal notranslate"><span class="pre">authentication</span></code> section will need to be provided by the JASMIN system
+adminstrators.  Fields in the <code class="docutils literal notranslate"><span class="pre">object_storage</span></code> section will need to match
+those generated by the Object Storage portal on JASMIN.
+Users can freely change the value of the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> field in
+the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section.</p>
+</section>
+<section id="running-the-nlds-client-for-the-first-time">
+<span id="first"></span><h2>Running the NLDS client for the first time<a class="headerlink" href="#running-the-nlds-client-for-the-first-time" title="Permalink to this heading"></a></h2>
+<p>Once the NLDS client is successfully installed, the user can run it.  On JASMIN,
+the first time <code class="docutils literal notranslate"><span class="pre">nlds</span></code> is run, the user will be asked for their user name and
+password.  These are the JASMIN <strong>user name</strong> and <strong>password</strong>, which the user
+usually uses to login into JASMIN via the <code class="docutils literal notranslate"><span class="pre">loginx.jasmin.ac.uk</span></code> servers.</p>
+<p>The following message is displayed:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>This application uses OAuth2 to authenticate with the server on your behalf.
+To do this it needs your username and password.
+Your password is not stored.  It is used to obtain an access token, which is stored in the file: ~/.nlds-token
+Username:
+Password:
+</pre></div>
+</div>
+<p>After entering your JASMIN user name and password, the OAuth2 token is created
+at the path pointed to by <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>
+file.  The NLDS authorisation system uses refresh tokens to fetch a new token
+when the current one has expired</p>
+</section>
+<section id="how-the-nlds-data-catalog-is-organised">
+<span id="catalog"></span><h2>How the NLDS data catalog is organised<a class="headerlink" href="#how-the-nlds-data-catalog-is-organised" title="Permalink to this heading"></a></h2>
+<p>When a user PUTs files into the NLDS, a record of those files is kept in a data
+catalog.  This organises the files into <em>Holdings</em>, <em>Transactions</em> and <em>Files</em>,
+with the ability to add metadata to the <em>Holdings</em> in the form of <em>Tags</em> and
+<em>Labels</em>.</p>
+<p>Figure 2 shows a simplified view of the NLDS data-catalog.  This is covered in
+much more depth in the <a class="reference internal" href="catalog_organisation.html#catalog-organisation"><span class="std std-ref">Catalog Organisation</span></a> section.</p>
+<figure class="align-default" id="id2">
+<img alt="_images/simple_catalog.png" src="_images/simple_catalog.png" />
+<figcaption>
+<p><span class="caption-text">Figure 2: Simplified view of the NLDS data-catalog</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+</figcaption>
+</figure>
+</section>
+<section id="copying-a-single-file-put-to-the-nlds">
+<span id="put"></span><h2>Copying a single file (PUT) to the NLDS<a class="headerlink" href="#copying-a-single-file-put-to-the-nlds" title="Permalink to this heading"></a></h2>
+</section>
+<section id="copying-a-list-of-files-putlist-to-the-nlds">
+<span id="putlist"></span><h2>Copying a list of files (PUTLIST) to the NLDS<a class="headerlink" href="#copying-a-list-of-files-putlist-to-the-nlds" title="Permalink to this heading"></a></h2>
+</section>
+<section id="querying-the-status-of-a-transaction-stat">
+<span id="stat"></span><h2>Querying the status of a transaction (STAT)<a class="headerlink" href="#querying-the-status-of-a-transaction-stat" title="Permalink to this heading"></a></h2>
+</section>
+<section id="querying-the-file-collection-the-user-holds-on-the-nlds-list">
+<span id="list"></span><h2>Querying the file collection the user holds on the NLDS (LIST)<a class="headerlink" href="#querying-the-file-collection-the-user-holds-on-the-nlds-list" title="Permalink to this heading"></a></h2>
+</section>
+<section id="querying-the-files-the-user-holds-on-the-nlds-find">
+<span id="find"></span><h2>Querying the files the user holds on the NLDS (FIND)<a class="headerlink" href="#querying-the-files-the-user-holds-on-the-nlds-find" title="Permalink to this heading"></a></h2>
+</section>
+<section id="changing-the-label-of-a-file-collection-meta">
+<span id="label"></span><h2>Changing the label of a file collection (META)<a class="headerlink" href="#changing-the-label-of-a-file-collection-meta" title="Permalink to this heading"></a></h2>
+</section>
+<section id="adding-tags-to-a-file-collection-meta">
+<span id="tags"></span><h2>Adding tags to a file collection (META)<a class="headerlink" href="#adding-tags-to-a-file-collection-meta" title="Permalink to this heading"></a></h2>
+</section>
+<section id="searching-for-files-based-on-the-file-collection-label">
+<span id="search-label"></span><h2>Searching for files based on the file collection label<a class="headerlink" href="#searching-for-files-based-on-the-file-collection-label" title="Permalink to this heading"></a></h2>
+</section>
+<section id="searching-for-files-based-on-the-file-collection-tags">
+<span id="search-tags"></span><h2>Searching for files based on the file collection tags<a class="headerlink" href="#searching-for-files-based-on-the-file-collection-tags" title="Permalink to this heading"></a></h2>
+</section>
 </section>
 
 
@@ -94,7 +231,7 @@
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation..</p>
+    <p>&#169; Copyright 2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

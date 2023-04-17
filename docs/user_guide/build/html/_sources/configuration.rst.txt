@@ -1,3 +1,5 @@
+.. _configuration:
+
 Configuration File
 ==================
 
@@ -10,7 +12,7 @@ user's home directory with the path:
 This configuration file is JSON formatted and contains the authentication
 credentials required by:
 
-  * The OAuth server.
+  * The OAuth server
   * The Object Storage
 
 It also contains the default user and group to use when issuing a request to the
@@ -21,8 +23,8 @@ Finally, it contains the URL of the server and the API version, and the location
 of the OAuth token file that is also created the first time the ``nlds`` command
 is invoked.
 
-An example configuration file is shown below.  Authentication details have been
-have been redacted.  You will have to contact the service provider to gain these
+An example configuration file is shown below.  Authentication details have been 
+redacted.  You will have to contact the service provider to gain these 
 credentials.
 
 ::
