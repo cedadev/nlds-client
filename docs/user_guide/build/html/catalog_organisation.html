@@ -217,10 +217,10 @@ to the user specified target.</p>
 <p>The <strong>location</strong> object in the Catalog database is associated to a file, and
 can have one of three states:</p>
 <p>1.  The <strong>file</strong> is held on the <em>object storage</em> only.  It will be backed up
-to the <em>tape storage</em> later.
-2.  The <strong>file</strong> is held on both the <em>object storage</em> and <em>tape storage</em>.  Users
-can access the file without any staging required by the NLDS.
-3.  The <strong>file</strong> is held on the <em>tape storage</em> only.  If a user accesses the
+to the <em>tape storage</em> later.</p>
+<p>2.  The <strong>file</strong> is held on both the <em>object storage</em> and <em>tape storage</em>.  Users
+can access the file without any staging required by the NLDS.</p>
+<p>3.  The <strong>file</strong> is held on the <em>tape storage</em> only.  If a user accesses the
 <strong>file</strong> then the NLDS will <em>stage</em> it to the <em>tape storage</em>, before completing
 the GET on behalf of the user.  The user does not need to concern themselves
 with the details of this.  However, accessing a file that is stored only on

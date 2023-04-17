@@ -162,8 +162,10 @@ can have one of three states:
 
 1.  The **file** is held on the *object storage* only.  It will be backed up
 to the *tape storage* later.
+
 2.  The **file** is held on both the *object storage* and *tape storage*.  Users
 can access the file without any staging required by the NLDS.
+
 3.  The **file** is held on the *tape storage* only.  If a user accesses the 
 **file** then the NLDS will *stage* it to the *tape storage*, before completing
 the GET on behalf of the user.  The user does not need to concern themselves
