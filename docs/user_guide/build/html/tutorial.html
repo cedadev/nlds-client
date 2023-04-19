@@ -54,11 +54,14 @@
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-the-nlds-client">Setting up the NLDS client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-nlds-client-for-the-first-time">Running the NLDS client for the first time</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#how-the-nlds-data-catalog-is-organised">How the NLDS data catalog is organised</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getting-help-on-the-nlds-commands">Getting help on the NLDS commands</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#copying-a-single-file-put-to-the-nlds">Copying a single file (PUT) to the NLDS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#copying-a-list-of-files-putlist-to-the-nlds">Copying a list of files (PUTLIST) to the NLDS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#querying-the-status-of-a-transaction-stat">Querying the status of a transaction (STAT)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#querying-the-file-collection-the-user-holds-on-the-nlds-list">Querying the file collection the user holds on the NLDS (LIST)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#querying-the-file-collections-the-user-holds-on-the-nlds-list">Querying the file collections the user holds on the NLDS (LIST)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#querying-the-files-the-user-holds-on-the-nlds-find">Querying the files the user holds on the NLDS (FIND)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-a-single-file-from-the-nlds-get">Retrieving a single file from the NLDS (GET)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#retrieving-a-list-of-files-from-the-nlds-getlist">Retrieving a list of files from the NLDS (GETLIST)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#changing-the-label-of-a-file-collection-meta">Changing the label of a file collection (META)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#adding-tags-to-a-file-collection-meta">Adding tags to a file collection (META)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#searching-for-files-based-on-the-file-collection-label">Searching for files based on the file collection label</a></li>
@@ -101,10 +104,11 @@
 <li><p><a class="reference internal" href="#client"><span class="std std-ref">Setting up the NLDS client</span></a></p></li>
 <li><p><a class="reference internal" href="#first"><span class="std std-ref">Running the NLDS client for the first time</span></a></p></li>
 <li><p><a class="reference internal" href="#catalog"><span class="std std-ref">How the NLDS data catalog is organised</span></a></p></li>
+<li><p><a class="reference internal" href="#help"><span class="std std-ref">Getting help on the NLDS commands</span></a></p></li>
 <li><p><a class="reference internal" href="#put"><span class="std std-ref">Copying a single file (PUT) to the NLDS</span></a></p></li>
 <li><p><a class="reference internal" href="#putlist"><span class="std std-ref">Copying a list of files (PUTLIST) to the NLDS</span></a></p></li>
 <li><p><a class="reference internal" href="#stat"><span class="std std-ref">Querying the status of a transaction (STAT)</span></a></p></li>
-<li><p><a class="reference internal" href="#list"><span class="std std-ref">Querying the file collection the user holds on the NLDS (LIST)</span></a></p></li>
+<li><p><a class="reference internal" href="#list"><span class="std std-ref">Querying the file collections the user holds on the NLDS (LIST)</span></a></p></li>
 <li><p><a class="reference internal" href="#find"><span class="std std-ref">Querying the files the user holds on the NLDS (FIND)</span></a></p></li>
 <li><p><a class="reference internal" href="#label"><span class="std std-ref">Changing the label of a file collection (META)</span></a></p></li>
 <li><p><a class="reference internal" href="#tags"><span class="std std-ref">Adding tags to a file collection (META)</span></a></p></li>
@@ -191,20 +195,346 @@ much more depth in the <a class="reference internal" href="catalog_organisation.
 </figcaption>
 </figure>
 </section>
+<section id="getting-help-on-the-nlds-commands">
+<span id="help"></span><h2>Getting help on the NLDS commands<a class="headerlink" href="#getting-help-on-the-nlds-commands" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">--help</span></code> option can be used in conjunction with any command to get help
+on that specific command.  To get a list of commands, just use the <code class="docutils literal notranslate"><span class="pre">--help</span></code>
+option.</p>
+<p><strong>Examples:</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds --help
+Usage: nlds [OPTIONS] COMMAND [ARGS]...
+
+Options:
+  --help  Show this message and exit.
+
+Commands:
+  find     Find and list files.
+  get      Get a single file.
+  getlist  Get a number of files specified in a list.
+  list     List holdings.
+  meta     Alter metadata for a holding.
+  put      Put a single file.
+  putlist  Put a number of files specified in a list.
+  stat     List transactions.
+</pre></div>
+</div>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find --help
+
+Usage: nlds find [OPTIONS]
+
+  Find and list files. If no user or group is given then these values will
+  default to the ``user:default_user`` and ``user:default values`` in the
+  ``~/.nlds-config file``.
+
+Options:
+  -u, --user TEXT            The username to find files for.
+  -g, --group TEXT           The group to find files for.
+  -l, --label TEXT           The label of the holding which the files belong
+                              to.  This can be a regular expression (regex).
+  -i, --holding_id INTEGER   The numeric id of the holding which the files
+                              belong to.
+  -n, --transaction_id TEXT  The UUID transaction id of the transaction to
+                              list.
+  -p, --path TEXT            The path of the files to find.  This can be a
+                              regular expression (regex)
+  -t, --tag TAG              The tag(s) of the holding(s) to find files
+                              within.
+  -j, --json                 Output the result as JSON.
+  --help                     Show this message and exit.
+</pre></div>
+</div>
+</section>
 <section id="copying-a-single-file-put-to-the-nlds">
 <span id="put"></span><h2>Copying a single file (PUT) to the NLDS<a class="headerlink" href="#copying-a-single-file-put-to-the-nlds" title="Permalink to this heading"></a></h2>
+<p>To put a single file into the NLDS use the command:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">nlds</span> <span class="pre">put</span> <span class="pre">&lt;filepath&gt;</span></code></p>
+<p>This is the simplest form of the command and will PUT the file into a <strong>holding</strong>
+with a seemingly random <strong>label</strong>.  It will also use the values of <code class="docutils literal notranslate"><span class="pre">user</span></code> and
+<code class="docutils literal notranslate"><span class="pre">group</span></code> from the <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">Configuration File</span></a>.</p>
+<p>To specify the <code class="docutils literal notranslate"><span class="pre">user</span></code> and <code class="docutils literal notranslate"><span class="pre">group</span></code>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">nlds</span> <span class="pre">put</span> <span class="pre">-u</span> <span class="pre">&lt;name&gt;</span> <span class="pre">-g</span> <span class="pre">&lt;group&gt;</span> <span class="pre">&lt;filepath&gt;</span></code></p>
+<p>To give the newly created holding a sensible <strong>label</strong>:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">nlds</span> <span class="pre">put</span> <span class="pre">-l</span> <span class="pre">&lt;label&gt;</span> <span class="pre">&lt;filepath&gt;</span></code></p>
+<p>(<code class="docutils literal notranslate"><span class="pre">-u</span></code> and <code class="docutils literal notranslate"><span class="pre">-g</span></code> can also be used at the same time as <code class="docutils literal notranslate"><span class="pre">-l</span></code>).</p>
+<p>To add tags to the holding while PUTting a file to the NLDS:</p>
+<p><code class="docutils literal notranslate"><span class="pre">&gt;</span> <span class="pre">nlds</span> <span class="pre">put</span> <span class="pre">-l</span> <span class="pre">&lt;label&gt;</span> <span class="pre">-t</span> <span class="pre">&lt;key:value&gt;</span> <span class="pre">&lt;filepath&gt;</span></code></p>
+<p>(<code class="docutils literal notranslate"><span class="pre">-l</span></code> is optional here).</p>
+<p>To specify a job label use <code class="docutils literal notranslate"><span class="pre">-b</span> <span class="pre">&lt;job_label&gt;</span></code>.  This is a convenience function
+for the user to allow them to group multiple <strong>transactions</strong> under a single
+<code class="docutils literal notranslate"><span class="pre">job_label</span></code>.</p>
+<p>To get the return output from the <code class="docutils literal notranslate"><span class="pre">put</span></code> command in JSON format, specify the
+<code class="docutils literal notranslate"><span class="pre">-j</span></code> option.</p>
+<p>When a command is invoked, NLDS will return a summary of the command, including
+the <strong>transaction_id</strong>.</p>
+<p><strong>Example</strong>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds put -l SheepPen /Users/nrmassey/sheep.txt -u nrmassey -g cedaproc -b SheepHerding -t sheepdog:skye
+PUT transaction accepted for processing.
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    job label       : SheepHerding
+    transaction id  : c31abca8-2bc4-43dc-ac64-7d28359d6828
+    label           : SheepPen
+    tags            : sheepdog : skye
+</pre></div>
+</div>
 </section>
 <section id="copying-a-list-of-files-putlist-to-the-nlds">
 <span id="putlist"></span><h2>Copying a list of files (PUTLIST) to the NLDS<a class="headerlink" href="#copying-a-list-of-files-putlist-to-the-nlds" title="Permalink to this heading"></a></h2>
+<p>To PUT more than one file into the NLDS, use the <code class="docutils literal notranslate"><span class="pre">putlist</span></code> command.  This
+takes the same options as the <code class="docutils literal notranslate"><span class="pre">put</span></code> command but, rather than taking the path
+of a single file as an argument, it takes the name of a plain text file which
+contains the paths of the files to PUT into the NLDS.  This <em>filelist</em> file must
+be in plain text format, with the path of a single file per line, for example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/nrmassey/albatross.txt
+/Users/nrmassey/rabbit.txt
+</pre></div>
+</div>
+<p>The command and response then becomes (where <code class="docutils literal notranslate"><span class="pre">test_list</span></code> is the name of the
+above file):</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds putlist -l Zoo test_list -u nrmassey -g cedaproc -b test_putlist -t zoo:Bristol
+PUT transaction accepted for processing.
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    job label       : test_putlist
+    transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    label           : Zoo
+    tags            : zoo : Bristol
+</pre></div>
+</div>
 </section>
 <section id="querying-the-status-of-a-transaction-stat">
 <span id="stat"></span><h2>Querying the status of a transaction (STAT)<a class="headerlink" href="#querying-the-status-of-a-transaction-stat" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code> commands above create <strong>transactions</strong>.  These are
+actions in the NLDS that carry out a specific task, usually either a <code class="docutils literal notranslate"><span class="pre">put</span></code>,
+<code class="docutils literal notranslate"><span class="pre">putlist</span></code>, <code class="docutils literal notranslate"><span class="pre">get</span></code> or <code class="docutils literal notranslate"><span class="pre">getlist</span></code> command.  To view the status of a
+<strong>transaction</strong>, use the <code class="docutils literal notranslate"><span class="pre">stat</span></code> command.  Invoke the <code class="docutils literal notranslate"><span class="pre">stat</span></code> command on its
+own to view the state of all the transactions for a user:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat
+State of transactions for user:nrmassey, group:cedaproc
+    id    action          job label       label           state                  last update
+    1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
+    2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
+</pre></div>
+</div>
+<p>(the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">group</span></code> have not been specified with the <code class="docutils literal notranslate"><span class="pre">-u</span></code> and
+<code class="docutils literal notranslate"><span class="pre">-g</span></code> arguments here, and so the defaults are read from the
+<a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">Configuration File</span></a>.)</p>
+<p>This table shows the numeric <code class="docutils literal notranslate"><span class="pre">id</span></code>, the <code class="docutils literal notranslate"><span class="pre">action</span></code> which created the
+transaction, the user-specified <code class="docutils literal notranslate"><span class="pre">job</span> <span class="pre">label</span></code>, the holding <code class="docutils literal notranslate"><span class="pre">label</span></code>, the last
+time the <code class="docutils literal notranslate"><span class="pre">state</span></code> was updated and the <code class="docutils literal notranslate"><span class="pre">state</span></code> of the transaction.</p>
+<p>As the transaction is processed by the NLDS, it goes through a number of
+<em>states</em> and will end with a <em>terminating state</em>.  All possible <em>states</em> are
+listed on the <a class="reference internal" href="status_codes.html#status-codes"><span class="std std-ref">Status Codes</span></a> page.  The <em>terminating states</em> are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">COMPLETE</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FAILED</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COMPLETE_WITH_ERRORS</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">COMPLETE_WITH_WARNINGS</span></code></p></li>
+</ul>
+<p>Results for the <code class="docutils literal notranslate"><span class="pre">stat</span></code> command can be filtered using the following options:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">-b</span></code> : filter on the user-specified <code class="docutils literal notranslate"><span class="pre">job</span> <span class="pre">label</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> : filter on the <code class="docutils literal notranslate"><span class="pre">state</span></code>.  See <a class="reference internal" href="status_codes.html#status-codes"><span class="std std-ref">Status Codes</span></a> for a list of possible values.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code> : filter on the api action. Options are <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> <code class="docutils literal notranslate"><span class="pre">getlist</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code>.</p></li>
+</ul>
+<p><strong>Examples</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -s COMPLETE
+State of transactions for user:nrmassey, group:cedaproc, state:COMPLETE
+    id    action          job label       label           state                  last update
+    1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
+    2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
+
+&gt; nlds stat -a put
+State of transactions for user:nrmassey, group:cedaproc, api-action:put
+    id    action          job label       label           state                  last update
+    1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
+    2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
+
+&gt; nlds stat -b SheepHerding
+State of transaction for user:nrmassey, group:cedaproc
+    id              : 1
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
+    label           : SheepPen
+    creation time   : 2023-04-18 15:21:36
+    state           : COMPLETE
+    warnings        :
+    sub records     -&gt;
+    +   id           : 1
+        sub_id       : 19ccd443-e269-465d-b0ed-51c5e98b8fad
+        state        : COMPLETE
+        retries      : 0
+        last update  : 2023-04-18 15:21:41
+</pre></div>
+</div>
+<p>In the last example, only one transaction was found, and so the entire details
+for a single transaction was returned.  If more than one transaction had the
+same <code class="docutils literal notranslate"><span class="pre">job_label</span></code>, then the list format would be returned.</p>
+<p>To guarantee to get the full information for a single transaction, the <code class="docutils literal notranslate"><span class="pre">-i</span></code>
+option can be used with the numeric id of the transaction.  The <code class="docutils literal notranslate"><span class="pre">-n</span></code> option
+can also be used with the transaction id, if you know it.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 2
+State of transaction for user:nrmassey, group:cedaproc, id:2
+    id              : 2
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    label           : Zoo
+    creation time   : 2023-04-18 15:28:48
+    state           : COMPLETE
+    warnings        :
+    sub records     -&gt;
+    +   id           : 2
+        sub_id       : 8d457f6c-f26c-43db-98ff-7c2efe7ff695
+        state        : COMPLETE
+        retries      : 0
+        last update  : 2023-04-18 15:28:53
+
+&gt; nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+State of transaction for user:nrmassey, group:cedaproc, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    id              : 2
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    label           : Zoo
+    creation time   : 2023-04-18 15:28:48
+    state           : COMPLETE
+    warnings        :
+    sub records     -&gt;
+    +   id           : 2
+        sub_id       : 8d457f6c-f26c-43db-98ff-7c2efe7ff695
+        state        : COMPLETE
+        retries      : 0
+        last update  : 2023-04-18 15:28:53
+</pre></div>
+</div>
+<p>In these last examples, the <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">records</span></code> are present as the NLDS will split
+large transactions (with many files, or large files) into smaller units of work,
+and create a <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">record</span></code> for each one of them.  Additionally, if a file (or
+number of files) cannot be transferred, then the NLDS will retry, up to a
+maximum of 5 times, and create a <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">record</span></code> for each retry attempt.</p>
+<p>Being able to easily check the progress of transactions in the NLDS is a key
+design idea.  To enable a program to check the progress, the <code class="docutils literal notranslate"><span class="pre">-j</span></code> option can
+be used to return a JSON formatted version of the status.</p>
 </section>
-<section id="querying-the-file-collection-the-user-holds-on-the-nlds-list">
-<span id="list"></span><h2>Querying the file collection the user holds on the NLDS (LIST)<a class="headerlink" href="#querying-the-file-collection-the-user-holds-on-the-nlds-list" title="Permalink to this heading"></a></h2>
+<section id="querying-the-file-collections-the-user-holds-on-the-nlds-list">
+<span id="list"></span><h2>Querying the file collections the user holds on the NLDS (LIST)<a class="headerlink" href="#querying-the-file-collections-the-user-holds-on-the-nlds-list" title="Permalink to this heading"></a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code> commands above create <strong>holdings</strong> in the NLDS
+catalog.  <strong>Holdings</strong> can be thought of as collections of <strong>transactions</strong>
+which, in themselves, are collections of <strong>files</strong>.  Therefore, a <strong>holding</strong>
+can also be thought of as a collection of files.</p>
+<p>To see the <strong>holdings</strong> that are assigned to a user in NLDS, use the <code class="docutils literal notranslate"><span class="pre">list</span></code>
+command.  Invoke the <code class="docutils literal notranslate"><span class="pre">list</span></code> command on its own to see all of the <strong>holdings</strong>
+that a user has:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list
+Listing holdings for user:nrmassey, group:cedaproc
+    id    label           ingest time
+    1     SheepPen        2023-04-18 15:21:37
+    2     Zoo             2023-04-18 15:28:48
+</pre></div>
+</div>
+<p>(the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">group</span></code> have not been specified with the <code class="docutils literal notranslate"><span class="pre">-u</span></code> and
+<code class="docutils literal notranslate"><span class="pre">-g</span></code> arguments here, and so the defaults are read from the
+<a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">Configuration File</span></a>.)</p>
+<p>This table shows the numeric <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code> and latest <code class="docutils literal notranslate"><span class="pre">ingest</span> <span class="pre">time</span></code> for
+the <strong>holding</strong>.  To examine the <strong>holding</strong> in more detail, the <code class="docutils literal notranslate"><span class="pre">-i</span></code> option
+can be used with the <code class="docutils literal notranslate"><span class="pre">id</span></code>, or the <code class="docutils literal notranslate"><span class="pre">-l</span></code> option can be used with the <code class="docutils literal notranslate"><span class="pre">label</span></code>.</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list -l SheepPen
+    id              : 1
+    label           : SheepPen
+    ingest time     : 2023-04-18 15:21:37
+    transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
+    tags            : sheepdog : skye
+
+&gt; nlds list -i 2 -u nrmassey -g cedaproc
+    id              : 2
+    label           : Zoo
+    ingest time     : 2023-04-18 15:28:48
+    transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    tags            : zoo : Bristol
+</pre></div>
+</div>
 </section>
 <section id="querying-the-files-the-user-holds-on-the-nlds-find">
 <span id="find"></span><h2>Querying the files the user holds on the NLDS (FIND)<a class="headerlink" href="#querying-the-files-the-user-holds-on-the-nlds-find" title="Permalink to this heading"></a></h2>
+<p>To view which <strong>files</strong> the user holds in the NLDS, use the <code class="docutils literal notranslate"><span class="pre">find</span></code> command:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find
+Listing files for holdings for user:nrmassey, group:cedaproc
+    h-id  h-label         path                                   size    time
+    1     SheepPen        /Users/nrmassey/sheep.txt              49.0B   2023-04-18 15:21:37
+    2     Zoo             /Users/nrmassey/albatross.txt          96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/nrmassey/rabbit.txt             50.0B   2023-04-18 15:28:48
+</pre></div>
+</div>
+<p><strong>Warning</strong> : issuing the <code class="docutils literal notranslate"><span class="pre">find</span></code> command like this, with no filters, will
+make an attempt to list <em>all</em> of a user’s files.  When a user has many files in
+the NLDS, this is likely to end in a <code class="docutils literal notranslate"><span class="pre">gateway</span> <span class="pre">timeout</span></code>, as the request will
+take too long to process.  It is much better to use the options to the <code class="docutils literal notranslate"><span class="pre">find</span></code>
+command to limit the number of files that will be returned.  This can be done
+in a number of ways, which will be illustrated below.</p>
+<p>To list the files in a holding, use <code class="docutils literal notranslate"><span class="pre">-i</span></code> with the holding id (<code class="docutils literal notranslate"><span class="pre">h-id</span></code>) or
+<code class="docutils literal notranslate"><span class="pre">-l</span></code> with the holding label (<code class="docutils literal notranslate"><span class="pre">h-label</span></code>).</p>
+<p><strong>Examples</strong></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -i 1
+Listing files for holding for user:nrmassey, group:cedaproc, holding_id:1
+    path            : /Users/nrmassey/sheep.txt
+    type            : FILE
+    size            : 49.0B
+    user uid        : 0
+    group gid       : 20
+    permissions     : rw-r--r--
+    ingest time     : 2023-04-18 15:21:37
+    storage location: OBJECT_STORAGE
+
+&gt; nlds find -l Zoo
+Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+    h-id  h-label         path                                   size    time
+    2     Zoo             /Users/nrmassey/albatross.txt          96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/nrmassey/rabbit.txt             50.0B   2023-04-18 15:28:48
+</pre></div>
+</div>
+<p>In the first example, only one file is returned, so the full details are shown.
+To view the particular details of a file in the second example, the <code class="docutils literal notranslate"><span class="pre">filepath</span></code>
+of the file can be used with the <code class="docutils literal notranslate"><span class="pre">-p</span></code> argument.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/nrmassey/rabbit.txt
+Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+    path            : /Users/nrmassey/rabbit.txt
+    type            : FILE
+    size            : 50.0B
+    user uid        : 504
+    group gid       : 20
+    permissions     : rw-r--r--
+    ingest time     : 2023-04-18 15:28:48
+    storage location: OBJECT_STORAGE
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">filepath</span></code> argument can be a regular expression:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/nrmassey/a.*
+Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+    path            : /Users/nrmassey/albatross.txt
+    type            : FILE
+    size            : 96.0B
+    user uid        : 504
+    group gid       : 20
+    permissions     : rw-r--r--
+    ingest time     : 2023-04-18 15:28:48
+    storage location: OBJECT_STORAGE
+</pre></div>
+</div>
+</section>
+<section id="retrieving-a-single-file-from-the-nlds-get">
+<span id="get"></span><h2>Retrieving a single file from the NLDS (GET)<a class="headerlink" href="#retrieving-a-single-file-from-the-nlds-get" title="Permalink to this heading"></a></h2>
+</section>
+<section id="retrieving-a-list-of-files-from-the-nlds-getlist">
+<span id="getlist"></span><h2>Retrieving a list of files from the NLDS (GETLIST)<a class="headerlink" href="#retrieving-a-list-of-files-from-the-nlds-getlist" title="Permalink to this heading"></a></h2>
 </section>
 <section id="changing-the-label-of-a-file-collection-meta">
 <span id="label"></span><h2>Changing the label of a file collection (META)<a class="headerlink" href="#changing-the-label-of-a-file-collection-meta" title="Permalink to this heading"></a></h2>

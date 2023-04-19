@@ -7,10 +7,11 @@ This page is a tutorial on NLDS covering:
 * :ref:`Setting up the NLDS client <client>`
 * :ref:`Running the NLDS client for the first time <first>`
 * :ref:`How the NLDS data catalog is organised <catalog>`
+* :ref:`Getting help on the NLDS commands <help>`
 * :ref:`Copying a single file (PUT) to the NLDS <put>`
 * :ref:`Copying a list of files (PUTLIST) to the NLDS <putlist>`
 * :ref:`Querying the status of a transaction (STAT) <stat>`
-* :ref:`Querying the file collection the user holds on the NLDS (LIST) <list>`
+* :ref:`Querying the file collections the user holds on the NLDS (LIST) <list>`
 * :ref:`Querying the files the user holds on the NLDS (FIND) <find>`
 * :ref:`Changing the label of a file collection (META) <label>`
 * :ref:`Adding tags to a file collection (META) <tags>`
@@ -113,29 +114,415 @@ much more depth in the :ref:`catalog_organisation` section.
 
     Figure 2: Simplified view of the NLDS data-catalog
 
+.. _help:
+
+Getting help on the NLDS commands
+--------------------------------------------------------------
+
+The ``--help`` option can be used in conjunction with any command to get help
+on that specific command.  To get a list of commands, just use the ``--help``
+option.
+
+**Examples:**
+
+.. code-block:: text
+
+    > nlds --help
+    Usage: nlds [OPTIONS] COMMAND [ARGS]...
+
+    Options:
+      --help  Show this message and exit.
+
+    Commands:
+      find     Find and list files.
+      get      Get a single file.
+      getlist  Get a number of files specified in a list.
+      list     List holdings.
+      meta     Alter metadata for a holding.
+      put      Put a single file.
+      putlist  Put a number of files specified in a list.
+      stat     List transactions.
+
+
+.. code-block:: text
+
+    > nlds find --help
+
+    Usage: nlds find [OPTIONS]
+
+      Find and list files. If no user or group is given then these values will
+      default to the ``user:default_user`` and ``user:default values`` in the
+      ``~/.nlds-config file``.
+
+    Options:
+      -u, --user TEXT            The username to find files for.
+      -g, --group TEXT           The group to find files for.
+      -l, --label TEXT           The label of the holding which the files belong
+                                  to.  This can be a regular expression (regex).
+      -i, --holding_id INTEGER   The numeric id of the holding which the files
+                                  belong to.
+      -n, --transaction_id TEXT  The UUID transaction id of the transaction to
+                                  list.
+      -p, --path TEXT            The path of the files to find.  This can be a
+                                  regular expression (regex)
+      -t, --tag TAG              The tag(s) of the holding(s) to find files
+                                  within.
+      -j, --json                 Output the result as JSON.
+      --help                     Show this message and exit.
+
 .. _put:
 
 Copying a single file (PUT) to the NLDS
 --------------------------------------------------------------
+
+To put a single file into the NLDS use the command:
+
+``> nlds put <filepath>``
+
+This is the simplest form of the command and will PUT the file into a **holding**
+with a seemingly random **label**.  It will also use the values of ``user`` and
+``group`` from the :ref:`configuration`.
+
+To specify the ``user`` and ``group``:
+
+``> nlds put -u <name> -g <group> <filepath>``
+
+To give the newly created holding a sensible **label**:
+
+``> nlds put -l <label> <filepath>``
+
+(``-u`` and ``-g`` can also be used at the same time as ``-l``).
+
+To add tags to the holding while PUTting a file to the NLDS:
+
+``> nlds put -l <label> -t <key:value> <filepath>``
+
+(``-l`` is optional here).
+
+To specify a job label use ``-b <job_label>``.  This is a convenience function 
+for the user to allow them to group multiple **transactions** under a single 
+``job_label``.
+
+To get the return output from the ``put`` command in JSON format, specify the
+``-j`` option.
+
+When a command is invoked, NLDS will return a summary of the command, including
+the **transaction_id**.
+
+**Example**:
+
+.. code-block:: text
+
+    > nlds put -l SheepPen /Users/nrmassey/sheep.txt -u nrmassey -g cedaproc -b SheepHerding -t sheepdog:skye
+    PUT transaction accepted for processing.
+        user            : nrmassey
+        group           : cedaproc
+        action          : put
+        job label       : SheepHerding
+        transaction id  : c31abca8-2bc4-43dc-ac64-7d28359d6828
+        label           : SheepPen
+        tags            : sheepdog : skye
 
 .. _putlist:
 
 Copying a list of files (PUTLIST) to the NLDS
 --------------------------------------------------------------
 
+To PUT more than one file into the NLDS, use the ``putlist`` command.  This 
+takes the same options as the ``put`` command but, rather than taking the path
+of a single file as an argument, it takes the name of a plain text file which
+contains the paths of the files to PUT into the NLDS.  This *filelist* file must
+be in plain text format, with the path of a single file per line, for example:
+
+.. code-block:: text
+    
+    /Users/nrmassey/albatross.txt
+    /Users/nrmassey/rabbit.txt
+
+The command and response then becomes (where ``test_list`` is the name of the 
+above file):
+
+.. code-block:: text
+
+    > nlds putlist -l Zoo test_list -u nrmassey -g cedaproc -b test_putlist -t zoo:Bristol
+    PUT transaction accepted for processing.
+        user            : nrmassey
+        group           : cedaproc
+        action          : put
+        job label       : test_putlist
+        transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+        label           : Zoo
+        tags            : zoo : Bristol
+
 .. _stat:
 
 Querying the status of a transaction (STAT)
 --------------------------------------------------------------
 
+The ``put`` and ``putlist`` commands above create **transactions**.  These are
+actions in the NLDS that carry out a specific task, usually either a ``put``,
+``putlist``, ``get`` or ``getlist`` command.  To view the status of a 
+**transaction**, use the ``stat`` command.  Invoke the ``stat`` command on its
+own to view the state of all the transactions for a user:
+
+.. code-block:: text
+
+    > nlds stat
+    State of transactions for user:nrmassey, group:cedaproc
+        id    action          job label       label           state                  last update         
+        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
+        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+
+(the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
+``-g`` arguments here, and so the defaults are read from the 
+:ref:`configuration`.)
+
+This table shows the numeric ``id``, the ``action`` which created the 
+transaction, the user-specified ``job label``, the holding ``label``, the last
+time the ``state`` was updated and the ``state`` of the transaction.
+
+As the transaction is processed by the NLDS, it goes through a number of 
+*states* and will end with a *terminating state*.  All possible *states* are
+listed on the :ref:`status_codes` page.  The *terminating states* are:
+
+* ``COMPLETE``
+* ``FAILED``
+* ``COMPLETE_WITH_ERRORS``
+* ``COMPLETE_WITH_WARNINGS``
+
+Results for the ``stat`` command can be filtered using the following options:
+
+* ``-b`` : filter on the user-specified ``job label``.
+* ``-s`` : filter on the ``state``.  See :ref:`status_codes` for a list of possible values.
+* ``-a`` : filter on the api action. Options are ``get``, ``put`` ``getlist`` and ``putlist``.
+
+**Examples**
+
+.. code-block:: text
+
+    > nlds stat -s COMPLETE
+    State of transactions for user:nrmassey, group:cedaproc, state:COMPLETE
+        id    action          job label       label           state                  last update         
+        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
+        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+
+    > nlds stat -a put
+    State of transactions for user:nrmassey, group:cedaproc, api-action:put
+        id    action          job label       label           state                  last update         
+        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
+        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+
+    > nlds stat -b SheepHerding
+    State of transaction for user:nrmassey, group:cedaproc
+        id              : 1
+        user            : nrmassey
+        group           : cedaproc
+        action          : put
+        transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
+        label           : SheepPen
+        creation time   : 2023-04-18 15:21:36
+        state           : COMPLETE
+        warnings        : 
+        sub records     ->
+        +   id           : 1
+            sub_id       : 19ccd443-e269-465d-b0ed-51c5e98b8fad
+            state        : COMPLETE
+            retries      : 0
+            last update  : 2023-04-18 15:21:41
+   
+In the last example, only one transaction was found, and so the entire details
+for a single transaction was returned.  If more than one transaction had the
+same ``job_label``, then the list format would be returned.
+
+To guarantee to get the full information for a single transaction, the ``-i``
+option can be used with the numeric id of the transaction.  The ``-n`` option
+can also be used with the transaction id, if you know it.
+
+**Examples**
+
+.. code-block:: text
+
+    > nlds stat -i 2
+    State of transaction for user:nrmassey, group:cedaproc, id:2
+        id              : 2
+        user            : nrmassey
+        group           : cedaproc
+        action          : put
+        transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+        label           : Zoo
+        creation time   : 2023-04-18 15:28:48
+        state           : COMPLETE
+        warnings        : 
+        sub records     ->
+        +   id           : 2
+            sub_id       : 8d457f6c-f26c-43db-98ff-7c2efe7ff695
+            state        : COMPLETE
+            retries      : 0
+            last update  : 2023-04-18 15:28:53
+
+    > nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    State of transaction for user:nrmassey, group:cedaproc, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
+        id              : 2
+        user            : nrmassey
+        group           : cedaproc
+        action          : put
+        transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+        label           : Zoo
+        creation time   : 2023-04-18 15:28:48
+        state           : COMPLETE
+        warnings        : 
+        sub records     ->
+        +   id           : 2
+            sub_id       : 8d457f6c-f26c-43db-98ff-7c2efe7ff695
+            state        : COMPLETE
+            retries      : 0
+            last update  : 2023-04-18 15:28:53
+
+In these last examples, the ``sub records`` are present as the NLDS will split
+large transactions (with many files, or large files) into smaller units of work,
+and create a ``sub record`` for each one of them.  Additionally, if a file (or
+number of files) cannot be transferred, then the NLDS will retry, up to a 
+maximum of 5 times, and create a ``sub record`` for each retry attempt.
+
+Being able to easily check the progress of transactions in the NLDS is a key 
+design idea.  To enable a program to check the progress, the ``-j`` option can
+be used to return a JSON formatted version of the status.
+
 .. _list:
 
-Querying the file collection the user holds on the NLDS (LIST)
---------------------------------------------------------------
+Querying the file collections the user holds on the NLDS (LIST)
+---------------------------------------------------------------
+
+The ``put`` and ``putlist`` commands above create **holdings** in the NLDS 
+catalog.  **Holdings** can be thought of as collections of **transactions** 
+which, in themselves, are collections of **files**.  Therefore, a **holding**
+can also be thought of as a collection of files.
+
+To see the **holdings** that are assigned to a user in NLDS, use the ``list``
+command.  Invoke the ``list`` command on its own to see all of the **holdings**
+that a user has:
+
+.. code-block:: text
+
+    > nlds list
+    Listing holdings for user:nrmassey, group:cedaproc
+        id    label           ingest time                     
+        1     SheepPen        2023-04-18 15:21:37             
+        2     Zoo             2023-04-18 15:28:48
+
+(the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
+``-g`` arguments here, and so the defaults are read from the 
+:ref:`configuration`.)
+
+This table shows the numeric ``id``, ``label`` and latest ``ingest time`` for
+the **holding**.  To examine the **holding** in more detail, the ``-i`` option
+can be used with the ``id``, or the ``-l`` option can be used with the ``label``.
+
+**Examples**
+
+.. code-block:: text
+
+    > nlds list -l SheepPen
+        id              : 1
+        label           : SheepPen
+        ingest time     : 2023-04-18 15:21:37
+        transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
+        tags            : sheepdog : skye
+
+    > nlds list -i 2 -u nrmassey -g cedaproc
+        id              : 2
+        label           : Zoo
+        ingest time     : 2023-04-18 15:28:48
+        transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+        tags            : zoo : Bristol
 
 .. _find:
 
 Querying the files the user holds on the NLDS (FIND)
+--------------------------------------------------------------
+
+To view which **files** the user holds in the NLDS, use the ``find`` command:
+
+.. code-block:: text
+
+    > nlds find
+    Listing files for holdings for user:nrmassey, group:cedaproc
+        h-id  h-label         path                                   size    time        
+        1     SheepPen        /Users/nrmassey/sheep.txt              49.0B   2023-04-18 15:21:37
+        2     Zoo             /Users/nrmassey/albatross.txt          96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/nrmassey/rabbit.txt             50.0B   2023-04-18 15:28:48
+
+**Warning** : issuing the ``find`` command like this, with no filters, will 
+make an attempt to list *all* of a user's files.  When a user has many files in
+the NLDS, this is likely to end in a ``gateway timeout``, as the request will
+take too long to process.  It is much better to use the options to the ``find``
+command to limit the number of files that will be returned.  This can be done
+in a number of ways, which will be illustrated below.
+
+To list the files in a holding, use ``-i`` with the holding id (``h-id``) or
+``-l`` with the holding label (``h-label``).
+
+**Examples**
+
+.. code-block:: text
+
+    > nlds find -i 1
+    Listing files for holding for user:nrmassey, group:cedaproc, holding_id:1
+        path            : /Users/nrmassey/sheep.txt
+        type            : FILE
+        size            : 49.0B
+        user uid        : 0
+        group gid       : 20
+        permissions     : rw-r--r--
+        ingest time     : 2023-04-18 15:21:37
+        storage location: OBJECT_STORAGE
+
+    > nlds find -l Zoo
+    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+        h-id  h-label         path                                   size    time        
+        2     Zoo             /Users/nrmassey/albatross.txt          96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/nrmassey/rabbit.txt             50.0B   2023-04-18 15:28:48
+
+In the first example, only one file is returned, so the full details are shown.
+To view the particular details of a file in the second example, the ``filepath``
+of the file can be used with the ``-p`` argument.
+
+.. code-block:: text
+
+    > nlds find -l Zoo -p /Users/nrmassey/rabbit.txt
+    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+        path            : /Users/nrmassey/rabbit.txt
+        type            : FILE
+        size            : 50.0B
+        user uid        : 504
+        group gid       : 20
+        permissions     : rw-r--r--
+        ingest time     : 2023-04-18 15:28:48
+        storage location: OBJECT_STORAGE
+
+The ``filepath`` argument can be a regular expression:
+
+.. code-block:: text
+
+    > nlds find -l Zoo -p /Users/nrmassey/a.*
+    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+        path            : /Users/nrmassey/albatross.txt
+        type            : FILE
+        size            : 96.0B
+        user uid        : 504
+        group gid       : 20
+        permissions     : rw-r--r--
+        ingest time     : 2023-04-18 15:28:48
+        storage location: OBJECT_STORAGE
+
+.. _get:
+
+Retrieving a single file from the NLDS (GET)
+--------------------------------------------------------------
+
+.. _getlist:
+
+Retrieving a list of files from the NLDS (GETLIST)
 --------------------------------------------------------------
 
 .. _label:
