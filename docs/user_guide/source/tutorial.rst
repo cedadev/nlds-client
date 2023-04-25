@@ -726,7 +726,7 @@ example:
     /Users/nrmassey/rabbit.txt
 
 The command and response then becomes (where ``test_getlist`` is the name of the 
-above file).  Here we are giving the retrieval a *job_label* of ``getlisttest``:
+above file).  Here give the retrieval a *job_label* of ``getlisttest``:
 
 .. code-block:: text
 
@@ -925,8 +925,9 @@ a new value, then the tag is modified:
                 label   : SmallHolding
                 tags    : {'type': 'animal', 'address': '1CowLane'}
 
-It is also possible to delete a tag.  Here we will use the ``-t`` option to
-specify the holding(s) to delete the tag from:
+It is also possible to delete a tag.  Here the ``-t`` option is used to specify 
+the holding(s) to delete the tag from, and the ``-D`` option is used to name the
+tag that is to be deleted:
 
 .. code-block:: text
 

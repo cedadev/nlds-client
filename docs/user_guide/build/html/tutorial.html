@@ -717,7 +717,7 @@ example:</p>
 </pre></div>
 </div>
 <p>The command and response then becomes (where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name of the
-above file).  Here we are giving the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
+above file).  Here give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist test_list -r ./ -b getlisttest
 GETLIST transaction accepted for processing.
     user            : nrmassey
@@ -890,8 +890,9 @@ Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHoldi
             tags    : {&#39;type&#39;: &#39;animal&#39;, &#39;address&#39;: &#39;1CowLane&#39;}
 </pre></div>
 </div>
-<p>It is also possible to delete a tag.  Here we will use the <code class="docutils literal notranslate"><span class="pre">-t</span></code> option to
-specify the holding(s) to delete the tag from:</p>
+<p>It is also possible to delete a tag.  Here the <code class="docutils literal notranslate"><span class="pre">-t</span></code> option is used to specify
+the holding(s) to delete the tag from, and the <code class="docutils literal notranslate"><span class="pre">-D</span></code> option is used to name the
+tag that is to be deleted:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -t type:animal -D type:animal
 Changed metadata for holding for user:nrmassey, group:cedaproc, tag:{&#39;type&#39;: &#39;animal&#39;}
     id  : 3
