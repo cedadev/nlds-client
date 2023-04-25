@@ -1,4 +1,12 @@
+.. _license:
+
+NLDS License
+------------
+
+NLDS is Open Source software made available under a BSD 2-Clause License.
+
 BSD 2-Clause License
+====================
 
 Copyright (c) 2019-2023, Centre of Environmental Data Analysis Developers,
 Scientific and Technical Facilities Council (STFC),

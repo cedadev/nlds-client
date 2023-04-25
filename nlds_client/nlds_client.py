@@ -481,7 +481,7 @@ def putlist(filelist, user, group, label, job_label,
               help="The username to get files for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get files for.")
-@click.option("-t", "--target", default=None, type=click.Path(exists=True),
+@click.option("-r", "--target", default=None, type=click.Path(exists=True),
               help="The target path for the retrieved files.  Default is to "
               "retrieve files to their original path.")
 @click.option("-l", "--label", default=None, type=str,
