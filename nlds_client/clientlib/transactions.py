@@ -705,8 +705,8 @@ def get_transaction_state(transaction: dict):
     {
         'id': 2, 
         'transaction_id': 'a06ec7b3-e83c-4ac7-97d8-2545a0b8d317', 
-        'user': 'nrmassey', 
-        'group': 'cedaproc', 
+        'user': 'frjohn', 
+        'group': 'farmers', 
         'api_action': 'getlist', 
         'creation_time': '2022-12-06T15:45:43', 
         'sub_records': [

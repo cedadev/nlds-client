@@ -207,10 +207,10 @@ the transaction_id.
 
 .. code-block:: text
 
-    > nlds put -l SheepPen /Users/nrmassey/sheep.txt -u nrmassey -g cedaproc -b SheepHerding -t sheepdog:skye
+    > nlds put -l SheepPen /Users/frjohn/sheep.txt -u frjohn -g farmers -b SheepHerding -t sheepdog:skye
     PUT transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : put
         job label       : SheepHerding
         transaction id  : c31abca8-2bc4-43dc-ac64-7d28359d6828
@@ -230,18 +230,18 @@ be in plain text format, with the path of a single file per line, for example:
 
 .. code-block:: text
     
-    /Users/nrmassey/albatross.txt
-    /Users/nrmassey/rabbit.txt
+    /Users/frjohn/albatross.txt
+    /Users/frjohn/rabbit.txt
 
 The command and response then becomes (where ``test_putlist`` is the name of the 
 above file):
 
 .. code-block:: text
 
-    > nlds putlist -l Zoo test_list -u nrmassey -g cedaproc -b test_putlist -t zoo:Bristol
+    > nlds putlist -l Zoo test_list -u frjohn -g farmers -b test_putlist -t zoo:Bristol
     PUT transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : put
         job label       : test_putlist
         transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
@@ -262,7 +262,7 @@ own to view the state of all the transactions for a user:
 .. code-block:: text
 
     > nlds stat
-    State of transactions for user:nrmassey, group:cedaproc
+    State of transactions for user:frjohn, group:farmers
         id    action          job label       label           state                  last update         
         1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
         2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
@@ -293,22 +293,22 @@ Results for the ``stat`` command can be filtered using the following options:
 .. code-block:: text
 
     > nlds stat -s COMPLETE
-    State of transactions for user:nrmassey, group:cedaproc, state:COMPLETE
+    State of transactions for user:frjohn, group:farmers, state:COMPLETE
         id    action          job label       label           state                  last update         
         1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
         2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
 
     > nlds stat -a put
-    State of transactions for user:nrmassey, group:cedaproc, api-action:put
+    State of transactions for user:frjohn, group:farmers, api-action:put
         id    action          job label       label           state                  last update         
         1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
         2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
 
     > nlds stat -b SheepHerding
-    State of transaction for user:nrmassey, group:cedaproc
+    State of transaction for user:frjohn, group:farmers
         id              : 1
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : put
         transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
         label           : SheepPen
@@ -333,10 +333,10 @@ can also be used with the transaction id, if you know it.
 .. code-block:: text
 
     > nlds stat -i 2
-    State of transaction for user:nrmassey, group:cedaproc, id:2
+    State of transaction for user:frjohn, group:farmers, id:2
         id              : 2
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : put
         transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
         label           : Zoo
@@ -351,10 +351,10 @@ can also be used with the transaction id, if you know it.
             last update  : 2023-04-18 15:28:53
 
     > nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1
-    State of transaction for user:nrmassey, group:cedaproc, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    State of transaction for user:frjohn, group:farmers, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
         id              : 2
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : put
         transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
         label           : Zoo
@@ -395,7 +395,7 @@ that a user has:
 .. code-block:: text
 
     > nlds list
-    Listing holdings for user:nrmassey, group:cedaproc
+    Listing holdings for user:frjohn, group:farmers
         id    label           ingest time                     
         1     SheepPen        2023-04-18 15:21:37             
         2     Zoo             2023-04-18 15:28:48
@@ -417,7 +417,7 @@ can be used with the ``id``, or the ``-l`` option can be used with the ``label``
         transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
         tags            : sheepdog : skye
 
-    > nlds list -i 2 -u nrmassey -g cedaproc
+    > nlds list -i 2 -u frjohn -g farmers
         id              : 2
         label           : Zoo
         ingest time     : 2023-04-18 15:28:48
@@ -429,7 +429,7 @@ Finally, tags can be used to seach for a holding:
 .. code-block:: text
 
     > nlds list  -t sheepdog:skye
-        Listing holding for user:nrmassey, group:cedaproc, tag:{'sheepdog': 'skye'}
+        Listing holding for user:frjohn, group:farmers, tag:{'sheepdog': 'skye'}
             id              : 1
             label           : SheepPen
             ingest time     : 2023-04-18 15:21:37
@@ -446,11 +446,11 @@ To view which files the user holds in the NLDS, use the ``find`` command:
 .. code-block:: text
 
     > nlds find
-    Listing files for holdings for user:nrmassey, group:cedaproc
+    Listing files for holdings for user:frjohn, group:farmers
         h-id  h-label         path                              size    time        
-        1     SheepPen        /Users/nrmassey/sheep.txt         49.0B   2023-04-18 15:21:37
-        2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+        1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
+        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 
 **Warning** : issuing the ``find`` command like this, with no filters, will 
 make an attempt to list *all* of a user's files.  When a user has many files in
@@ -465,8 +465,8 @@ To list the files in a holding, use ``-i`` with the holding id (``h-id``) or
 .. code-block:: text
 
     > nlds find -i 1
-    Listing files for holding for user:nrmassey, group:cedaproc, holding_id:1
-        path            : /Users/nrmassey/sheep.txt
+    Listing files for holding for user:frjohn, group:farmers, holding_id:1
+        path            : /Users/frjohn/sheep.txt
         type            : FILE
         size            : 49.0B
         user uid        : 0
@@ -476,10 +476,10 @@ To list the files in a holding, use ``-i`` with the holding id (``h-id``) or
         storage location: OBJECT_STORAGE
 
     > nlds find -l Zoo
-    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+    Listing files for holding for user:frjohn, group:farmers, label:Zoo
         h-id  h-label         path                              size    time        
-        2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 
 In the first example, only one file is returned, so the full details are shown.
 To view the particular details of a file in the second example, the ``filepath``
@@ -487,9 +487,9 @@ of the file can be used with the ``-p`` argument.
 
 .. code-block:: text
 
-    > nlds find -l Zoo -p /Users/nrmassey/rabbit.txt
-    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
-        path            : /Users/nrmassey/rabbit.txt
+    > nlds find -l Zoo -p /Users/frjohn/rabbit.txt
+    Listing files for holding for user:frjohn, group:farmers, label:Zoo
+        path            : /Users/frjohn/rabbit.txt
         type            : FILE
         size            : 50.0B
         user uid        : 504
@@ -502,9 +502,9 @@ The ``filepath`` argument can be a regular expression:
 
 .. code-block:: text
 
-    > nlds find -l Zoo -p /Users/nrmassey/a.*
-    Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
-        path            : /Users/nrmassey/albatross.txt
+    > nlds find -l Zoo -p /Users/frjohn/a.*
+    Listing files for holding for user:frjohn, group:farmers, label:Zoo
+        path            : /Users/frjohn/albatross.txt
         type            : FILE
         size            : 96.0B
         user uid        : 504
@@ -518,10 +518,10 @@ Finally, tags can be used to list files from holdings that contain those tags:
 .. code-block:: text
 
     > nlds find  -t zoo:Bristol
-    Listing files for holding for user:nrmassey, group:cedaproc, tag:{'zoo': 'Bristol'}
+    Listing files for holding for user:frjohn, group:farmers, tag:{'zoo': 'Bristol'}
         h-id  h-label         path                              size    time        
-        2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 
 .. _get:
 
@@ -534,11 +534,11 @@ two holdings in the NLDS, which can be seen by issuing the ``find`` command.
 .. code-block:: text
 
     > nlds find
-    Listing files for holdings for user:nrmassey, group:cedaproc
+    Listing files for holdings for user:frjohn, group:farmers
         h-id  h-label         path                              size    time        
-        1     SheepPen        /Users/nrmassey/sheep.txt         49.0B   2023-04-18 15:21:37
-        2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+        1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
+        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 
 NLDS supports ways five of retrieving these files, by using the ``get`` command 
 in conjunction with:
@@ -560,16 +560,16 @@ current directory, invoke the command:
 
 .. code-block:: text
 
-    > nlds get /Users/nrmassey/sheep.txt -r ./
+    > nlds get /Users/frjohn/sheep.txt -r ./
     GETLIST transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : 14bc9846
         transaction id  : 14bc9846-9d45-440a-af6c-dfcb5cb9dcae
 
 This will also recreate the directory structure in the current directory, i.e.
-the file will be written to ``<current_directory>/Users/nrmassey/sheep.txt``.
+the file will be written to ``<current_directory>/Users/frjohn/sheep.txt``.
 
 Using this method of retrieval, no holding is specified.  If more than one file
 with the filepath is held in the NLDS (in different holdings), then the latest
@@ -585,15 +585,15 @@ get files using regular expressions, use the command:
 
 .. code-block:: text
 
-    > nlds get "/Users/nrmassey/.*" -r ./
+    > nlds get "/Users/frjohn/.*" -r ./
     GETLIST transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : 016ae5b7
         transaction id  : 016ae5b7-3b0d-485c-8812-7b3fa1b003de
 
-(The ``Users/nrmassey/.*`` has to be in ``""`` so as to not confuse the shell, which
+(The ``Users/frjohn/.*`` has to be in ``""`` so as to not confuse the shell, which
 will see the ``*`` as a wildcard and try to expand it to all files and directories
 in the current path.  Enclosing it in ``""`` prevents this.)
 
@@ -603,11 +603,11 @@ version, ingested on a particular day, the holding id can be specified in the
 
 .. code-block:: text
 
-    > nlds get -i 2 /Users/nrmassey/albatross.txt -r ./
+    > nlds get -i 2 /Users/frjohn/albatross.txt -r ./
     GETLIST transaction accepted for processing.
         id              : 2
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : fb130e43
         transaction id  : fb130e43-25a3-4cef-9eeb-b31e72a1f808
@@ -618,20 +618,20 @@ of the transaction.
 
 .. code-block:: text
 
-    > nlds get -i 1 /Users/nrmassey/albatross.txt
+    > nlds get -i 1 /Users/frjohn/albatross.txt
     GETLIST transaction accepted for processing.
         id              : 1
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : 5842d371
         transaction id  : 5842d371-bf07-4ad4-a6ff-c46876a84ca6
 
     > nlds stat -i 13
-    State of transaction for user:nrmassey, group:cedaproc, id:13
+    State of transaction for user:frjohn, group:farmers, id:13
         id              : 13
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         transaction id  : 5842d371-bf07-4ad4-a6ff-c46876a84ca6
         label           : 
@@ -645,18 +645,18 @@ of the transaction.
             retries      : 6
             last update  : 2023-04-24 16:01:06
             failed files ->
-            +    filepath : /Users/nrmassey/albatross.txt
-                reason   : File:/Users/nrmassey/albatross.txt not found in holding:SheepPen for user:nrmassey in group:cedaproc.
+            +    filepath : /Users/frjohn/albatross.txt
+                reason   : File:/Users/frjohn/albatross.txt not found in holding:SheepPen for user:frjohn in group:farmers.
 
 **4.** Similary to **3**, a label can be used to fetch a particular file from a 
 holding.
 
 .. code-block:: text
 
-    > nlds get -l SheepPen /Users/nrmassey/sheep.txt -r ./
+    > nlds get -l SheepPen /Users/frjohn/sheep.txt -r ./
     GETLIST transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : SheepPen
         transaction id  : b0544301-aadb-4f26-b2e0-b4643b0adfee
@@ -667,20 +667,20 @@ the holding will return an error:
 
 .. code-block:: text
 
-    > nlds get -l sheeppen /Users/nrmassey/sheep.txt -r ./
+    > nlds get -l sheeppen /Users/frjohn/sheep.txt -r ./
     GETLIST transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : sheeppen
         transaction id  : c07dd223-88cb-41ec-a1e2-00f31c162116
         label           : sheeppen
 
     > nlds stat -i 15
-    State of transaction for user:nrmassey, group:cedaproc, id:15
+    State of transaction for user:frjohn, group:farmers, id:15
         id              : 15
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         transaction id  : c07dd223-88cb-41ec-a1e2-00f31c162116
         label           : 
@@ -694,17 +694,17 @@ the holding will return an error:
             retries      : 0
             last update  : 2023-04-24 16:11:04
             failed files ->
-            +    filepath : /Users/nrmassey/sheep.txt
+            +    filepath : /Users/frjohn/sheep.txt
                 reason   : Exception during callback: Could not find record of requested holding: label: sheeppen, id: None
 
 **5.** Finally, a tag can be specified when retrieving files:
 
     .. code-block:: text
 
-        > nlds get -t sheepdog:skye /Users/nrmassey/sheep.txt -r ./
+        > nlds get -t sheepdog:skye /Users/frjohn/sheep.txt -r ./
         GETLIST transaction accepted for processing.
-            user            : nrmassey
-            group           : cedaproc
+            user            : frjohn
+            group           : farmers
             action          : getlist
             job label       : 23db226f
             transaction id  : 23db226f-d377-4511-8cc8-656b006c4f1e
@@ -722,8 +722,8 @@ example:
 
 .. code-block:: text
     
-    /Users/nrmassey/albatross.txt
-    /Users/nrmassey/rabbit.txt
+    /Users/frjohn/albatross.txt
+    /Users/frjohn/rabbit.txt
 
 The command and response then becomes (where ``test_getlist`` is the name of the 
 above file).  Here give the retrieval a *job_label* of ``getlisttest``:
@@ -732,8 +732,8 @@ above file).  Here give the retrieval a *job_label* of ``getlisttest``:
 
     > nlds getlist test_list -r ./ -b getlisttest
     GETLIST transaction accepted for processing.
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : getlisttest
         transaction id  : d83d8c2d-7ba8-4be8-b8dd-c643e4bfba49
@@ -743,10 +743,10 @@ The ``stat`` command can then be used to check on the progress of the retrieval.
 .. code-block:: text
 
     > nlds stat -b getlisttest
-    State of transaction for user:nrmassey, group:cedaproc
+    State of transaction for user:frjohn, group:farmers
         id              : 18
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         transaction id  : d83d8c2d-7ba8-4be8-b8dd-c643e4bfba49
         label           : 
@@ -768,8 +768,8 @@ the correct version of the filepaths in the *filelist* are retrieved.
     > nlds getlist -i 2 test_list -r ./ -b getlist2
     GETLIST transaction accepted for processing.
         id              : 2
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : getlist2
         transaction id  : 441065cb-fc14-4260-9661-2a3b163a5dce
@@ -780,9 +780,9 @@ different *terminating state* will be produced for the transaction.  If the
 
 .. code-block:: text
     
-    /Users/nrmassey/albatross.txt
-    /Users/nrmassey/rabbit.txt
-    /Users/nrmassey/sheep.txt
+    /Users/frjohn/albatross.txt
+    /Users/frjohn/rabbit.txt
+    /Users/frjohn/sheep.txt
 
 and the command is issued:
 
@@ -791,22 +791,22 @@ and the command is issued:
     > nlds getlist -i 1 test_list -r ./ -b getlist3
     GETLIST transaction accepted for processing.
         id              : 2
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         job label       : getlist3
         transaction id  : c4c520a1-fd2b-42cd-9a36-32ba94f3b562
 
 then the *terminating state* is ``COMPLETE_WITH_ERRORS`` because the 
-``/Users/nrmassey/sheep.txt`` is not a part of the ``Zoo`` holding:
+``/Users/frjohn/sheep.txt`` is not a part of the ``Zoo`` holding:
 
 .. code-block:: text
 
     > nlds stat -i 22
-    State of transaction for user:nrmassey, group:cedaproc, id:22
+    State of transaction for user:frjohn, group:farmers, id:22
         id              : 22
-        user            : nrmassey
-        group           : cedaproc
+        user            : frjohn
+        group           : farmers
         action          : getlist
         transaction id  : 0f1d711e-6227-4bd9-bd0b-d1b7ed47220f
         label           : 
@@ -825,8 +825,8 @@ then the *terminating state* is ``COMPLETE_WITH_ERRORS`` because the
             retries      : 6
             last update  : 2023-04-25 14:44:53
             failed files ->
-            +   filepath : /Users/nrmassey/sheep.txt
-                reason   : File:/Users/nrmassey/sheep.txt not found in holding:Zoo for user:nrmassey in group:cedaproc.
+            +   filepath : /Users/frjohn/sheep.txt
+                reason   : File:/Users/frjohn/sheep.txt not found in holding:Zoo for user:frjohn in group:farmers.
 
 .. _label:
 
@@ -840,7 +840,7 @@ seemingly random label has been assigned to the holding:
 .. code-block:: text
 
     > nlds list
-    Listing holdings for user:nrmassey, group:cedaproc
+    Listing holdings for user:frjohn, group:farmers
         id    label           ingest time                     
         1     SheepPen        2023-04-18 15:21:37             
         2     Zoo             2023-04-18 15:28:48             
@@ -854,7 +854,7 @@ label for the ``-i`` (holding id) or ``-l`` (existing label) options can be used
 .. code-block:: text
 
     > nlds meta -i 3 -L Farm
-    Changed metadata for holding for user:nrmassey, group:cedaproc, holding_id:3
+    Changed metadata for holding for user:frjohn, group:farmers, holding_id:3
         id  : 3
             old metadata: 
                 label   : e4c00744
@@ -864,7 +864,7 @@ label for the ``-i`` (holding id) or ``-l`` (existing label) options can be used
                 tags    : {}
 
     > nlds meta -l Farm -L SmallHolding
-    Changed metadata for holding for user:nrmassey, group:cedaproc, label:Farm
+    Changed metadata for holding for user:frjohn, group:farmers, label:Farm
         id  : 3
             old metadata: 
                 label   : Farm
@@ -886,7 +886,7 @@ For a holding with no tags, specifying tags will add them to the holding:
 .. code-block:: text
 
     > nlds meta -l SmallHolding -T type:arable
-    Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+    Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
         id  : 3
             old metadata: 
                 label   : SmallHolding
@@ -900,7 +900,7 @@ Extra tags can then also be added:
 .. code-block:: text
 
     > nlds meta -l SmallHolding -T address:"1 Cow Lane"
-    Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+    Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
         id  : 3
             old metadata: 
                 label   : SmallHolding
@@ -916,7 +916,7 @@ a new value, then the tag is modified:
 .. code-block:: text
 
     > nlds meta -l SmallHolding -T type:animal
-    Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+    Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
         id  : 3
             old metadata: 
                 label   : SmallHolding
@@ -932,7 +932,7 @@ tag that is to be deleted:
 .. code-block:: text
 
     > nlds meta -t type:animal -D type:animal
-    Changed metadata for holding for user:nrmassey, group:cedaproc, tag:{'type': 'animal'}
+    Changed metadata for holding for user:frjohn, group:farmers, tag:{'type': 'animal'}
         id  : 3
             old metadata: 
                 label   : SmallHolding

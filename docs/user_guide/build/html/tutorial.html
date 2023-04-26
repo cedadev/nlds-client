@@ -262,10 +262,10 @@ for the user to allow them to group multiple transactions under a single
 <code class="docutils literal notranslate"><span class="pre">-j</span></code> option.</p>
 <p>When a command is invoked, NLDS will return a summary of the command, including
 the transaction_id.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds put -l SheepPen /Users/nrmassey/sheep.txt -u nrmassey -g cedaproc -b SheepHerding -t sheepdog:skye
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds put -l SheepPen /Users/frjohn/sheep.txt -u frjohn -g farmers -b SheepHerding -t sheepdog:skye
 PUT transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : put
     job label       : SheepHerding
     transaction id  : c31abca8-2bc4-43dc-ac64-7d28359d6828
@@ -281,16 +281,16 @@ takes the same options as the <code class="docutils literal notranslate"><span c
 of a single file as an argument, it takes the name of a plain text file which
 contains the paths of the files to PUT into the NLDS.  This <em>filelist</em> file must
 be in plain text format, with the path of a single file per line, for example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/nrmassey/albatross.txt
-/Users/nrmassey/rabbit.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/frjohn/albatross.txt
+/Users/frjohn/rabbit.txt
 </pre></div>
 </div>
 <p>The command and response then becomes (where <code class="docutils literal notranslate"><span class="pre">test_putlist</span></code> is the name of the
 above file):</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds putlist -l Zoo test_list -u nrmassey -g cedaproc -b test_putlist -t zoo:Bristol
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds putlist -l Zoo test_list -u frjohn -g farmers -b test_putlist -t zoo:Bristol
 PUT transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : put
     job label       : test_putlist
     transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
@@ -307,7 +307,7 @@ actions in the NLDS that carry out a specific task, usually either a <code class
 transaction, use the <code class="docutils literal notranslate"><span class="pre">stat</span></code> command.  Invoke the <code class="docutils literal notranslate"><span class="pre">stat</span></code> command on its
 own to view the state of all the transactions for a user:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat
-State of transactions for user:nrmassey, group:cedaproc
+State of transactions for user:frjohn, group:farmers
     id    action          job label       label           state                  last update
     1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
     2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
@@ -335,22 +335,22 @@ listed on the <a class="reference internal" href="status_codes.html#status-codes
 <li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code> : filter on the api action. Options are <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> <code class="docutils literal notranslate"><span class="pre">getlist</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code>.</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -s COMPLETE
-State of transactions for user:nrmassey, group:cedaproc, state:COMPLETE
+State of transactions for user:frjohn, group:farmers, state:COMPLETE
     id    action          job label       label           state                  last update
     1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
     2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
 
 &gt; nlds stat -a put
-State of transactions for user:nrmassey, group:cedaproc, api-action:put
+State of transactions for user:frjohn, group:farmers, api-action:put
     id    action          job label       label           state                  last update
     1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41
     2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53
 
 &gt; nlds stat -b SheepHerding
-State of transaction for user:nrmassey, group:cedaproc
+State of transaction for user:frjohn, group:farmers
     id              : 1
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : put
     transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
     label           : SheepPen
@@ -372,10 +372,10 @@ same <code class="docutils literal notranslate"><span class="pre">job_label</spa
 option can be used with the numeric id of the transaction.  The <code class="docutils literal notranslate"><span class="pre">-n</span></code> option
 can also be used with the transaction id, if you know it.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 2
-State of transaction for user:nrmassey, group:cedaproc, id:2
+State of transaction for user:frjohn, group:farmers, id:2
     id              : 2
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : put
     transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
     label           : Zoo
@@ -390,10 +390,10 @@ State of transaction for user:nrmassey, group:cedaproc, id:2
         last update  : 2023-04-18 15:28:53
 
 &gt; nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1
-State of transaction for user:nrmassey, group:cedaproc, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
+State of transaction for user:frjohn, group:farmers, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
     id              : 2
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : put
     transaction id  : 41d412e2-1c1b-4d59-943a-40d9e717a0a1
     label           : Zoo
@@ -427,7 +427,7 @@ can also be thought of as a collection of files.</p>
 command.  Invoke the <code class="docutils literal notranslate"><span class="pre">list</span></code> command on its own to see all of the holdings
 that a user has:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list
-Listing holdings for user:nrmassey, group:cedaproc
+Listing holdings for user:frjohn, group:farmers
     id    label           ingest time
     1     SheepPen        2023-04-18 15:21:37
     2     Zoo             2023-04-18 15:28:48
@@ -446,7 +446,7 @@ can be used with the <code class="docutils literal notranslate"><span class="pre
     transaction id  : ebb89e7d-5671-41f9-9f42-968fa69b0c87
     tags            : sheepdog : skye
 
-&gt; nlds list -i 2 -u nrmassey -g cedaproc
+&gt; nlds list -i 2 -u frjohn -g farmers
     id              : 2
     label           : Zoo
     ingest time     : 2023-04-18 15:28:48
@@ -456,7 +456,7 @@ can be used with the <code class="docutils literal notranslate"><span class="pre
 </div>
 <p>Finally, tags can be used to seach for a holding:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list  -t sheepdog:skye
-    Listing holding for user:nrmassey, group:cedaproc, tag:{&#39;sheepdog&#39;: &#39;skye&#39;}
+    Listing holding for user:frjohn, group:farmers, tag:{&#39;sheepdog&#39;: &#39;skye&#39;}
         id              : 1
         label           : SheepPen
         ingest time     : 2023-04-18 15:21:37
@@ -469,11 +469,11 @@ can be used with the <code class="docutils literal notranslate"><span class="pre
 <span id="find"></span><h2>Querying the files the user holds on the NLDS (FIND)<a class="headerlink" href="#querying-the-files-the-user-holds-on-the-nlds-find" title="Permalink to this heading"></a></h2>
 <p>To view which files the user holds in the NLDS, use the <code class="docutils literal notranslate"><span class="pre">find</span></code> command:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find
-Listing files for holdings for user:nrmassey, group:cedaproc
+Listing files for holdings for user:frjohn, group:farmers
     h-id  h-label         path                              size    time
-    1     SheepPen        /Users/nrmassey/sheep.txt         49.0B   2023-04-18 15:21:37
-    2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-    2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+    1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
+    2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 </pre></div>
 </div>
 <p><strong>Warning</strong> : issuing the <code class="docutils literal notranslate"><span class="pre">find</span></code> command like this, with no filters, will
@@ -485,8 +485,8 @@ in a number of ways, which will be illustrated below.</p>
 <p>To list the files in a holding, use <code class="docutils literal notranslate"><span class="pre">-i</span></code> with the holding id (<code class="docutils literal notranslate"><span class="pre">h-id</span></code>) or
 <code class="docutils literal notranslate"><span class="pre">-l</span></code> with the holding label (<code class="docutils literal notranslate"><span class="pre">h-label</span></code>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -i 1
-Listing files for holding for user:nrmassey, group:cedaproc, holding_id:1
-    path            : /Users/nrmassey/sheep.txt
+Listing files for holding for user:frjohn, group:farmers, holding_id:1
+    path            : /Users/frjohn/sheep.txt
     type            : FILE
     size            : 49.0B
     user uid        : 0
@@ -496,18 +496,18 @@ Listing files for holding for user:nrmassey, group:cedaproc, holding_id:1
     storage location: OBJECT_STORAGE
 
 &gt; nlds find -l Zoo
-Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
+Listing files for holding for user:frjohn, group:farmers, label:Zoo
     h-id  h-label         path                              size    time
-    2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-    2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 </pre></div>
 </div>
 <p>In the first example, only one file is returned, so the full details are shown.
 To view the particular details of a file in the second example, the <code class="docutils literal notranslate"><span class="pre">filepath</span></code>
 of the file can be used with the <code class="docutils literal notranslate"><span class="pre">-p</span></code> argument.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/nrmassey/rabbit.txt
-Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
-    path            : /Users/nrmassey/rabbit.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/frjohn/rabbit.txt
+Listing files for holding for user:frjohn, group:farmers, label:Zoo
+    path            : /Users/frjohn/rabbit.txt
     type            : FILE
     size            : 50.0B
     user uid        : 504
@@ -518,9 +518,9 @@ Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
 </pre></div>
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">filepath</span></code> argument can be a regular expression:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/nrmassey/a.*
-Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
-    path            : /Users/nrmassey/albatross.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -l Zoo -p /Users/frjohn/a.*
+Listing files for holding for user:frjohn, group:farmers, label:Zoo
+    path            : /Users/frjohn/albatross.txt
     type            : FILE
     size            : 96.0B
     user uid        : 504
@@ -532,10 +532,10 @@ Listing files for holding for user:nrmassey, group:cedaproc, label:Zoo
 </div>
 <p>Finally, tags can be used to list files from holdings that contain those tags:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find  -t zoo:Bristol
-Listing files for holding for user:nrmassey, group:cedaproc, tag:{&#39;zoo&#39;: &#39;Bristol&#39;}
+Listing files for holding for user:frjohn, group:farmers, tag:{&#39;zoo&#39;: &#39;Bristol&#39;}
     h-id  h-label         path                              size    time
-    2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-    2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 </pre></div>
 </div>
 </section>
@@ -544,11 +544,11 @@ Listing files for holding for user:nrmassey, group:cedaproc, tag:{&#39;zoo&#39;:
 <p>After the <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code> commands above, there are three files in
 two holdings in the NLDS, which can be seen by issuing the <code class="docutils literal notranslate"><span class="pre">find</span></code> command.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find
-Listing files for holdings for user:nrmassey, group:cedaproc
+Listing files for holdings for user:frjohn, group:farmers
     h-id  h-label         path                              size    time
-    1     SheepPen        /Users/nrmassey/sheep.txt         49.0B   2023-04-18 15:21:37
-    2     Zoo             /Users/nrmassey/albatross.txt     96.0B   2023-04-18 15:28:48
-    2     Zoo             /Users/nrmassey/rabbit.txt        50.0B   2023-04-18 15:28:48
+    1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
+    2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
+    2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 </pre></div>
 </div>
 <p>NLDS supports ways five of retrieving these files, by using the <code class="docutils literal notranslate"><span class="pre">get</span></code> command
@@ -567,17 +567,17 @@ access that filepath, then the optional <em>target directory</em> can be specifi
 the option <code class="docutils literal notranslate"><span class="pre">-r</span> <span class="pre">&lt;target_path&gt;</span></code></p>
 <p><strong>1.</strong> To GET a file using the fully qualified filepath, and write it to the
 current directory, invoke the command:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get /Users/nrmassey/sheep.txt -r ./
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get /Users/frjohn/sheep.txt -r ./
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : 14bc9846
     transaction id  : 14bc9846-9d45-440a-af6c-dfcb5cb9dcae
 </pre></div>
 </div>
 <p>This will also recreate the directory structure in the current directory, i.e.
-the file will be written to <code class="docutils literal notranslate"><span class="pre">&lt;current_directory&gt;/Users/nrmassey/sheep.txt</span></code>.</p>
+the file will be written to <code class="docutils literal notranslate"><span class="pre">&lt;current_directory&gt;/Users/frjohn/sheep.txt</span></code>.</p>
 <p>Using this method of retrieval, no holding is specified.  If more than one file
 with the filepath is held in the NLDS (in different holdings), then the latest
 ingested file will be returned.  See <strong>3. A holding id</strong> or
@@ -588,26 +588,26 @@ time is returned.</p>
 This is a useful tool as it allows a user to get files depending on a pattern.
 One use case would be to get all of the files beneath a certain directory.  To
 get files using regular expressions, use the command:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get &quot;/Users/nrmassey/.*&quot; -r ./
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get &quot;/Users/frjohn/.*&quot; -r ./
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : 016ae5b7
     transaction id  : 016ae5b7-3b0d-485c-8812-7b3fa1b003de
 </pre></div>
 </div>
-<p>(The <code class="docutils literal notranslate"><span class="pre">Users/nrmassey/.*</span></code> has to be in <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> so as to not confuse the shell, which
+<p>(The <code class="docutils literal notranslate"><span class="pre">Users/frjohn/.*</span></code> has to be in <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> so as to not confuse the shell, which
 will see the <code class="docutils literal notranslate"><span class="pre">*</span></code> as a wildcard and try to expand it to all files and directories
 in the current path.  Enclosing it in <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> prevents this.)</p>
 <p><strong>3.</strong> To ensure that the file at a filepath retrieved from the NLDS is a particular
 version, ingested on a particular day, the holding id can be specified in the
 <code class="docutils literal notranslate"><span class="pre">get</span></code> command using the option <code class="docutils literal notranslate"><span class="pre">-i</span></code>.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i 2 /Users/nrmassey/albatross.txt -r ./
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i 2 /Users/frjohn/albatross.txt -r ./
 GETLIST transaction accepted for processing.
     id              : 2
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : fb130e43
     transaction id  : fb130e43-25a3-4cef-9eeb-b31e72a1f808
@@ -616,20 +616,20 @@ GETLIST transaction accepted for processing.
 <p>If the user attempts to get a file from a holding that does not contain it, then
 an error will be returned when a <code class="docutils literal notranslate"><span class="pre">stat</span></code> command is used to check the status
 of the transaction.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i 1 /Users/nrmassey/albatross.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i 1 /Users/frjohn/albatross.txt
 GETLIST transaction accepted for processing.
     id              : 1
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : 5842d371
     transaction id  : 5842d371-bf07-4ad4-a6ff-c46876a84ca6
 
 &gt; nlds stat -i 13
-State of transaction for user:nrmassey, group:cedaproc, id:13
+State of transaction for user:frjohn, group:farmers, id:13
     id              : 13
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     transaction id  : 5842d371-bf07-4ad4-a6ff-c46876a84ca6
     label           :
@@ -643,16 +643,16 @@ State of transaction for user:nrmassey, group:cedaproc, id:13
         retries      : 6
         last update  : 2023-04-24 16:01:06
         failed files -&gt;
-        +    filepath : /Users/nrmassey/albatross.txt
-            reason   : File:/Users/nrmassey/albatross.txt not found in holding:SheepPen for user:nrmassey in group:cedaproc.
+        +    filepath : /Users/frjohn/albatross.txt
+            reason   : File:/Users/frjohn/albatross.txt not found in holding:SheepPen for user:frjohn in group:farmers.
 </pre></div>
 </div>
 <p><strong>4.</strong> Similary to <strong>3</strong>, a label can be used to fetch a particular file from a
 holding.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -l SheepPen /Users/nrmassey/sheep.txt -r ./
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -l SheepPen /Users/frjohn/sheep.txt -r ./
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : SheepPen
     transaction id  : b0544301-aadb-4f26-b2e0-b4643b0adfee
@@ -661,20 +661,20 @@ GETLIST transaction accepted for processing.
 </div>
 <p>Again, specifying a label that doesn’t exist or a file that does not exist in
 the holding will return an error:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -l sheeppen /Users/nrmassey/sheep.txt -r ./
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -l sheeppen /Users/frjohn/sheep.txt -r ./
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : sheeppen
     transaction id  : c07dd223-88cb-41ec-a1e2-00f31c162116
     label           : sheeppen
 
 &gt; nlds stat -i 15
-State of transaction for user:nrmassey, group:cedaproc, id:15
+State of transaction for user:frjohn, group:farmers, id:15
     id              : 15
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     transaction id  : c07dd223-88cb-41ec-a1e2-00f31c162116
     label           :
@@ -688,16 +688,16 @@ State of transaction for user:nrmassey, group:cedaproc, id:15
         retries      : 0
         last update  : 2023-04-24 16:11:04
         failed files -&gt;
-        +    filepath : /Users/nrmassey/sheep.txt
+        +    filepath : /Users/frjohn/sheep.txt
             reason   : Exception during callback: Could not find record of requested holding: label: sheeppen, id: None
 </pre></div>
 </div>
 <p><strong>5.</strong> Finally, a tag can be specified when retrieving files:</p>
 <blockquote>
-<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -t sheepdog:skye /Users/nrmassey/sheep.txt -r ./
+<div><div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -t sheepdog:skye /Users/frjohn/sheep.txt -r ./
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : 23db226f
     transaction id  : 23db226f-d377-4511-8cc8-656b006c4f1e
@@ -712,16 +712,16 @@ GETLIST transaction accepted for processing.
 GET files specified as a list in a text file.  As before, this <em>filelist</em> file
 must be in plain text format, with the path of a single file per line, for
 example:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/nrmassey/albatross.txt
-/Users/nrmassey/rabbit.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/frjohn/albatross.txt
+/Users/frjohn/rabbit.txt
 </pre></div>
 </div>
 <p>The command and response then becomes (where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name of the
 above file).  Here give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist test_list -r ./ -b getlisttest
 GETLIST transaction accepted for processing.
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : getlisttest
     transaction id  : d83d8c2d-7ba8-4be8-b8dd-c643e4bfba49
@@ -729,10 +729,10 @@ GETLIST transaction accepted for processing.
 </div>
 <p>The <code class="docutils literal notranslate"><span class="pre">stat</span></code> command can then be used to check on the progress of the retrieval.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -b getlisttest
-State of transaction for user:nrmassey, group:cedaproc
+State of transaction for user:frjohn, group:farmers
     id              : 18
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     transaction id  : d83d8c2d-7ba8-4be8-b8dd-c643e4bfba49
     label           :
@@ -752,8 +752,8 @@ the correct version of the filepaths in the <em>filelist</em> are retrieved.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 2 test_list -r ./ -b getlist2
 GETLIST transaction accepted for processing.
     id              : 2
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : getlist2
     transaction id  : 441065cb-fc14-4260-9661-2a3b163a5dce
@@ -762,29 +762,29 @@ GETLIST transaction accepted for processing.
 <p>However, if the <em>filelist</em> contains files that are not in the holding id, a
 different <em>terminating state</em> will be produced for the transaction.  If the
 <em>filelist</em> now contains:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/nrmassey/albatross.txt
-/Users/nrmassey/rabbit.txt
-/Users/nrmassey/sheep.txt
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>/Users/frjohn/albatross.txt
+/Users/frjohn/rabbit.txt
+/Users/frjohn/sheep.txt
 </pre></div>
 </div>
 <p>and the command is issued:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 1 test_list -r ./ -b getlist3
 GETLIST transaction accepted for processing.
     id              : 2
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     job label       : getlist3
     transaction id  : c4c520a1-fd2b-42cd-9a36-32ba94f3b562
 </pre></div>
 </div>
 <p>then the <em>terminating state</em> is <code class="docutils literal notranslate"><span class="pre">COMPLETE_WITH_ERRORS</span></code> because the
-<code class="docutils literal notranslate"><span class="pre">/Users/nrmassey/sheep.txt</span></code> is not a part of the <code class="docutils literal notranslate"><span class="pre">Zoo</span></code> holding:</p>
+<code class="docutils literal notranslate"><span class="pre">/Users/frjohn/sheep.txt</span></code> is not a part of the <code class="docutils literal notranslate"><span class="pre">Zoo</span></code> holding:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 22
-State of transaction for user:nrmassey, group:cedaproc, id:22
+State of transaction for user:frjohn, group:farmers, id:22
     id              : 22
-    user            : nrmassey
-    group           : cedaproc
+    user            : frjohn
+    group           : farmers
     action          : getlist
     transaction id  : 0f1d711e-6227-4bd9-bd0b-d1b7ed47220f
     label           :
@@ -803,8 +803,8 @@ State of transaction for user:nrmassey, group:cedaproc, id:22
         retries      : 6
         last update  : 2023-04-25 14:44:53
         failed files -&gt;
-        +   filepath : /Users/nrmassey/sheep.txt
-            reason   : File:/Users/nrmassey/sheep.txt not found in holding:Zoo for user:nrmassey in group:cedaproc.
+        +   filepath : /Users/frjohn/sheep.txt
+            reason   : File:/Users/frjohn/sheep.txt not found in holding:Zoo for user:frjohn in group:farmers.
 </pre></div>
 </div>
 </section>
@@ -814,7 +814,7 @@ State of transaction for user:nrmassey, group:cedaproc, id:22
 the holding’s tags.  Changing the label is particularly useful if an automatically,
 seemingly random label has been assigned to the holding:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list
-Listing holdings for user:nrmassey, group:cedaproc
+Listing holdings for user:frjohn, group:farmers
     id    label           ingest time
     1     SheepPen        2023-04-18 15:21:37
     2     Zoo             2023-04-18 15:28:48
@@ -826,7 +826,7 @@ This can be changed to something more rememberable by using the <code class="doc
 with the <code class="docutils literal notranslate"><span class="pre">-L</span></code> (for new label) option.  To specify which holding to change the
 label for the <code class="docutils literal notranslate"><span class="pre">-i</span></code> (holding id) or <code class="docutils literal notranslate"><span class="pre">-l</span></code> (existing label) options can be used.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -i 3 -L Farm
-Changed metadata for holding for user:nrmassey, group:cedaproc, holding_id:3
+Changed metadata for holding for user:frjohn, group:farmers, holding_id:3
     id  : 3
         old metadata:
             label   : e4c00744
@@ -836,7 +836,7 @@ Changed metadata for holding for user:nrmassey, group:cedaproc, holding_id:3
             tags    : {}
 
 &gt; nlds meta -l Farm -L SmallHolding
-Changed metadata for holding for user:nrmassey, group:cedaproc, label:Farm
+Changed metadata for holding for user:frjohn, group:farmers, label:Farm
     id  : 3
         old metadata:
             label   : Farm
@@ -854,7 +854,7 @@ command also allows the user to add or alter the holding’s tags.
 Tags are specified as <code class="docutils literal notranslate"><span class="pre">key:value</span></code> pairs, and using the <code class="docutils literal notranslate"><span class="pre">-T</span></code> (new tags) option.
 For a holding with no tags, specifying tags will add them to the holding:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -l SmallHolding -T type:arable
-Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
     id  : 3
         old metadata:
             label   : SmallHolding
@@ -866,7 +866,7 @@ Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHoldi
 </div>
 <p>Extra tags can then also be added:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -l SmallHolding -T address:&quot;1 Cow Lane&quot;
-Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
     id  : 3
         old metadata:
             label   : SmallHolding
@@ -880,7 +880,7 @@ Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHoldi
 If a holding already has a tag with a key, and the user specifies the key with
 a new value, then the tag is modified:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -l SmallHolding -T type:animal
-Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHolding
+Changed metadata for holding for user:frjohn, group:farmers, label:SmallHolding
     id  : 3
         old metadata:
             label   : SmallHolding
@@ -894,7 +894,7 @@ Changed metadata for holding for user:nrmassey, group:cedaproc, label:SmallHoldi
 the holding(s) to delete the tag from, and the <code class="docutils literal notranslate"><span class="pre">-D</span></code> option is used to name the
 tag that is to be deleted:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds meta -t type:animal -D type:animal
-Changed metadata for holding for user:nrmassey, group:cedaproc, tag:{&#39;type&#39;: &#39;animal&#39;}
+Changed metadata for holding for user:frjohn, group:farmers, tag:{&#39;type&#39;: &#39;animal&#39;}
     id  : 3
         old metadata:
             label   : SmallHolding
