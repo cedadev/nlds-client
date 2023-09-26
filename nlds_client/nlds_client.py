@@ -266,6 +266,15 @@ def print_single_file(response):
                 click.echo(f"{'':<4}{'storage location':<16}:{stls[0:-2]}")
 
 
+def print_simple_file(response):
+    for hkey in response['data']['holdings']:
+        h = response['data']['holdings'][hkey]
+        for tkey in h['transactions']:
+            t = h['transactions'][tkey]
+            for f in t['filelist']:
+                click.echo(f"{f['original_path']}")
+
+
 def print_multi_file(response):
     click.echo(f"{'':<4}{'user':<16}{'h-id':<6}{'h-label':<16}{'size':<8}{'date':<12}{'path'}")
     for hkey in response['data']['holdings']:
@@ -280,21 +289,24 @@ def print_multi_file(response):
                            f"{size:<8}{time[:11]:<12}{f['original_path']}")
 
 
-def print_find(response:dict, req_details):
+def print_find(response:dict, req_details, simple):
     """Print out the response from the find command"""
     n_holdings = len(response['data']['holdings'])
-    list_string = "Listing files for holding"
-    if n_holdings > 1:
-        list_string += "s"
-    list_string += " for "
-    list_string += req_details
-    click.echo(list_string)
+    if not simple:
+        list_string = "Listing files for holding"
+        if n_holdings > 1:
+            list_string += "s"
+        list_string += " for "
+        list_string += req_details
+        click.echo(list_string)
     # get total number of files
     n_files = __count_files(response)
     if (n_files == 1):
         print_single_file(response)
+    elif simple:
+        print_simple_file(response)
     else:
-        print_multi_file(response)
+        print_multi_file(response, simple)
 
 
 def print_meta(response:dict, req_details:str):
@@ -665,8 +677,10 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action,
               help="The tag(s) of the holding(s) to find files within.")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
+@click.option("-1", "--simple", default=False, type=bool, is_flag=True,
+              help="Output the list of files, one per line, filepath only.")
 def find(user, group, groupall, label, holding_id, transaction_id, path, tag, 
-         json):
+         json, simple):
     # 
     try:
         response = find_file(
@@ -681,7 +695,7 @@ def find(user, group, groupall, label, holding_id, transaction_id, path, tag,
             if json:
                 click.echo(response)
             else:
-                print_find(response, req_details)
+                print_find(response, req_details, simple)
         else:
             fail_string = "Failed to list files with "
             fail_string += req_details
