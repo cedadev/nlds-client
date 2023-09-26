@@ -326,6 +326,7 @@ def put_filelist(filelist: List[str]=[],
 def get_filelist(filelist: List[str]=[],
                  user: str=None, 
                  group: str=None, 
+                 groupall: bool=False,
                  target: str = None,
                  job_label: str = None,
                  label: str=None, 
@@ -409,6 +410,7 @@ def get_filelist(filelist: List[str]=[],
     input_params = {"transaction_id" : transaction_id,
                     "user" : user,
                     "group" : group,
+                    "groupall" : groupall,
                     "access_key" : access_key,
                     "secret_key" : secret_key,
                     "tenancy" : tenancy,
@@ -453,6 +455,7 @@ def get_filelist(filelist: List[str]=[],
 
 def list_holding(user: str, 
                  group: str, 
+                 groupall: bool=False,
                  label: str=None, 
                  holding_id: int=None, 
                  transaction_id: str=None,
@@ -463,6 +466,9 @@ def list_holding(user: str,
 
     :param group: the group to get the holding(s) for
     :type group: string
+
+    :param groupall: list holdings for the entire group, not just the user
+    :type groupall: bool
 
     :param label: the label of an existing holding to get the details for
     :type label: str, optional
@@ -492,7 +498,8 @@ def list_holding(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -524,6 +531,7 @@ def list_holding(user: str,
 
 def find_file(user: str, 
               group: str, 
+              groupall: bool=False,
               label: str=None, 
               holding_id: int=None,
               transaction_id: str=None,
@@ -535,6 +543,9 @@ def find_file(user: str,
 
     :param group: the group to get the holding(s) for
     :type group: string
+
+    :param groupall: list files for the entire group, not just the user
+    :type groupall: bool
 
     :param label: the label of an existing holding to get the details for
     :type label: str, optional
@@ -566,7 +577,8 @@ def find_file(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -600,6 +612,7 @@ def find_file(user: str,
 
 def monitor_transactions(user: str, 
                          group: str, 
+                         groupall: bool=False,
                          idd: int=None,
                          transaction_id: str=None, 
                          job_label: str=None,
@@ -615,6 +628,9 @@ def monitor_transactions(user: str,
 
     :param group: the group to get the transaction state(s) for
     :type group: string
+
+    :param groupall: list transactions for the entire group, not just the user
+    :type groupall: bool
 
     :param idd: the numeric id (primary key) of the transaction
     :type idd: int
@@ -658,7 +674,8 @@ def monitor_transactions(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if idd is not None:

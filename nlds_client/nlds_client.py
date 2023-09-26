@@ -69,10 +69,10 @@ def pretty_size(size):
     return round(size / float(multipler), 2).__str__() + suf
 
 
-def format_request_details(user, group, label=None, holding_id=None, 
-                           tag=None, id=None, transaction_id=None, sub_id=None,
-                           state=None, retry_count=None, api_action=None,
-                           job_label=None):
+def format_request_details(user, group, groupall=False, label=None, 
+                           holding_id=None, tag=None, id=None, 
+                           transaction_id=None, sub_id=None, state=None, 
+                           retry_count=None, api_action=None, job_label=None):
     config = load_config()
     out = ""
     user = get_user(config, user)
@@ -81,6 +81,8 @@ def format_request_details(user, group, label=None, holding_id=None,
     group = get_group(config, group)
     out += f"group:{group}, "
 
+    if groupall:
+        out += f"groupall:{groupall}, "
     if label:
         out += f"label:{label}, "
     if id:
@@ -122,10 +124,10 @@ def print_list(response: dict, req_details):
     click.echo(list_string)
     if n_holdings == 1:
         h = response['data']['holdings'][0]
+        click.echo(f"{'':<4}{'user':<16}: {h['user']}")
         click.echo(f"{'':<4}{'id':<16}: {h['id']}")
         click.echo(f"{'':<4}{'label':<16}: {h['label']}")
         click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')}")
-        # click.echo(f"{'':<4}{'user':<16}: {h['user']}")
         # click.echo(f"{'':<4}{'group':<16}: {h['group']}")
         if 'transactions' in h:
             trans_str = ""
@@ -136,12 +138,10 @@ def print_list(response: dict, req_details):
             tags_str = _tags_to_str(h['tags'])
             click.echo(f"{'':<4}{'tags':<16}: {tags_str[:-23]}")
     else:
-        # click.echo(f"{'':<4}{'id':<6}{'label':<16}{'user':<16}{'group':<16}")
-        click.echo(f"{'':<4}{'id':<6}{'label':<16}{'ingest time':<32}")
+        click.echo(f"{'':<4}{'user':<16}{'id':<6}{'label':<16}{'ingest time':<32}")
         for h in response['data']['holdings']:
             click.echo(
-                # f"{'':<4}{h['id']:<6}{h['label']:<16}{h['user']:<16}{h['group']:<16}"
-                f"{'':<4}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' '):<32}"
+                f"{'':<4}{h['user']:<16}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' '):<32}"
             )
 
 
@@ -191,7 +191,7 @@ def print_multi_stat(response: dict, req_details):
     stat_string = "State of transactions for "
     stat_string += req_details
     click.echo(stat_string)
-    click.echo(f"{'':<4}{'id':<6}{'action':<16}{'job label':<16}"
+    click.echo(f"{'':<4}{'user':<16}{'id':<6}{'action':<16}{'job label':<16}"
                 f"{'label':<16}{'state':<23}{'last update':<20}")
     for tr in response['data']['records']:
         state, time = get_transaction_state(tr)
@@ -206,7 +206,7 @@ def print_multi_stat(response: dict, req_details):
             job_label = tr['job_label']
         else:
             job_label = "" #tr['transaction_id'][0:8]
-        click.echo(f"{'':<4}{tr['id']:<6}{tr['api_action']:<16}"
+        click.echo(f"{'':<4}{tr['user']:<16}{tr['id']:<6}{tr['api_action']:<16}"
                    f"{job_label:16}{label:16}"
                    f"{state:<23}{time:<20}")
 
@@ -267,7 +267,7 @@ def print_single_file(response):
 
 
 def print_multi_file(response):
-    click.echo(f"{'':<4}{'h-id':<6}{'h-label':<16}{'path':<64}{'size':<8}{'time':<12}")
+    click.echo(f"{'':<4}{'user':<16}{'h-id':<6}{'h-label':<16}{'size':<8}{'date':<12}{'path'}")
     for hkey in response['data']['holdings']:
         h = response['data']['holdings'][hkey]
         for tkey in h['transactions']:
@@ -275,9 +275,9 @@ def print_multi_file(response):
             time = t['ingest_time'].replace("T", " ")
             for f in t['filelist']:
                 size = pretty_size(f['size'])
-                click.echo(f"{'':4}{h['holding_id']:<6}{h['label']:<16}"
-                           f"{f['original_path']:<64}{size:<8}"
-                           f"{time:<12}")
+                click.echo(f"{'':4}{h['user']:<16}"
+                           f"{h['holding_id']:<6}{h['label']:<16}"
+                           f"{size:<8}{time[:11]:<12}{f['original_path']}")
 
 
 def print_find(response:dict, req_details):
@@ -390,6 +390,9 @@ user_help_text = (" If no user or group is given then these values will "
               help="The username to get a file for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get a file for.")
+@click.option("-G", "--groupall", default=False, is_flag=True,
+              help="Get a file that belongs to a group, rather than a single "
+                   "user")
 @click.option("-r", "--target", default=None, type=click.Path(exists=True),
               help="The target path for the retrieved file.  Default is to "
               "retrieve the file to its original path.")
@@ -406,11 +409,11 @@ user_help_text = (" If no user or group is given then these values will "
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
 @click.argument("filepath", type=str)
-def get(filepath, user, group, target, job_label,
+def get(filepath, user, group, groupall, target, job_label,
         label, holding_id, tag, json):
     try:
-        response = get_filelist([filepath], user, group, target, job_label,
-                                label, holding_id, tag)
+        response = get_filelist([filepath], user, group, groupall, target, 
+                                job_label, label, holding_id, tag)
         if json:
             click.echo(response)
         else:
@@ -484,6 +487,9 @@ def putlist(filelist, user, group, label, job_label,
               help="The username to get files for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get files for.")
+@click.option("-G", "--groupall", default=False, is_flag=True,
+              help="Get files that belong to a group, rather than a single "
+                   "user")
 @click.option("-t", "--target", default=None, type=click.Path(exists=True),
               help="The target path for the retrieved files.  Default is to "
               "retrieve files to their original path.")
@@ -500,7 +506,7 @@ def putlist(filelist, user, group, label, job_label,
 @click.option("-j", "--json", default=False, type=bool,
               help="Output the result as JSON.")
 @click.argument("filelist", type=str)
-def getlist(filelist, user, group, target, job_label,  
+def getlist(filelist, user, group, groupall, target, job_label,  
             label, holding_id, tag, json):
     # read the filelist from the file
     try:
@@ -511,7 +517,7 @@ def getlist(filelist, user, group, target, job_label,
         raise click.UsageError(fe)
 
     try:
-        response = get_filelist(files, user, group, target, job_label,
+        response = get_filelist(files, user, group, groupall, target, job_label,
                                 label, holding_id, tag)
         if json:
             click.echo(response)
@@ -532,6 +538,9 @@ def getlist(filelist, user, group, target, job_label,
               help="The username to list holdings for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to list holdings for.")
+@click.option("-G", "--groupall", default=False, is_flag=True,
+              help="List holdings that belong to a group, rather than a single "
+                   "user")
 @click.option("-l", "--label", default=None, type=str,
               help="The label of the holding(s) to list.  This can be a regular"
               "expression (regex).")
@@ -543,14 +552,16 @@ def getlist(filelist, user, group, target, job_label,
               help="The tag(s) of the holding(s) to list.")
 @click.option("-j", "--json", default=False, is_flag=True,
               help="Output the result as JSON.")
-def list(user, group, label, holding_id, transaction_id, tag, json):
+def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
     # 
     try:
         response = list_holding(
-            user, group, label, holding_id, transaction_id, tag
+            user, group, groupall=groupall, label=label, 
+            holding_id=holding_id, transaction_id=transaction_id, tag=tag
         )
         req_details = format_request_details(
-            user, group, label=label, holding_id=holding_id, tag=tag
+            user, group, groupall=groupall, label=label, 
+            holding_id=holding_id, tag=tag
         )
         if response['success']:
             if json:
@@ -579,6 +590,9 @@ def list(user, group, label, holding_id, transaction_id, tag, json):
               help="The username to list transactions for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to list transactions for.")
+@click.option("-G", "--groupall", default=False, is_flag=True,
+              help="List transactions that belong to a group, rather than a "
+                   "single user")
 @click.option("-i", "--id", default=None, type=int,
               help="The numeric id of the transaction to list.")
 @click.option("-n", "--transaction_id", default=None, type=str,
@@ -595,15 +609,19 @@ def list(user, group, label, holding_id, transaction_id, tag, json):
               "TRANSFER_GETTING | COMPLETE | FAILED")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
-def stat(user, group, id, transaction_id, job_label, api_action, state, json):
+def stat(user, group, groupall, id, transaction_id, job_label, api_action, 
+         state, json):
     try:
         response = monitor_transactions(
-            user, group, id, transaction_id, job_label, api_action, state,
+            user, group, groupall=groupall, idd=id, 
+            transaction_id=transaction_id, job_label=job_label, 
+            api_action=api_action, state=state,
         )
         req_details = format_request_details(
-                user, group, id=id, transaction_id=transaction_id, state=state, 
-                api_action=api_action,
-            )
+            user, group, groupall=groupall, id=id, 
+            transaction_id=transaction_id, state=state, 
+            api_action=api_action,
+        )
         if response['success']:
             if json:
                 click.echo(response)
@@ -630,6 +648,9 @@ def stat(user, group, id, transaction_id, job_label, api_action, state, json):
               help="The username to find files for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to find files for.")
+@click.option("-G", "--groupall", default=False, is_flag=True,
+              help="Find files that belong to a group, rather than a single "
+                   "user")
 @click.option("-l", "--label", default=None, type=str,
               help="The label of the holding which the files belong to.  This "
               "can be a regular expression (regex).")
@@ -644,15 +665,18 @@ def stat(user, group, id, transaction_id, job_label, api_action, state, json):
               help="The tag(s) of the holding(s) to find files within.")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
-def find(user, group, label, holding_id, transaction_id, path, tag, json):
+def find(user, group, groupall, label, holding_id, transaction_id, path, tag, 
+         json):
     # 
     try:
-        response = find_file(user, group, label, holding_id, 
-                             transaction_id, path, tag)
+        response = find_file(
+            user, group, groupall=groupall, label=label, holding_id=holding_id, 
+            transaction_id=transaction_id, path=path, tag=tag
+        )
         req_details = format_request_details(
-                user, group, label=label, holding_id=holding_id, tag=tag,
-                transaction_id=transaction_id
-            )
+            user, group, groupall=groupall, label=label, 
+            holding_id=holding_id, tag=tag, transaction_id=transaction_id
+        )
         if response['success']:
             if json:
                 click.echo(response)
@@ -698,7 +722,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     #
     try:
         req_details = format_request_details(
-                user, group, label, holding_id, tag
+                user, group, label=label, holding_id=holding_id, tag=tag
             )
         response = change_metadata(user, group, label, holding_id, tag,
                                    new_label, new_tag, del_tag)
