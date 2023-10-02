@@ -233,7 +233,7 @@ def __count_files(response:dict):
     return n_files
 
 
-def print_single_file(response):
+def print_single_file(response, print_url=False):
     """Print (full) details of one file"""
     # NRM - note: still using loops over dictionary keys as its
     # 1. easier than trying to just use the first key
@@ -260,22 +260,36 @@ def print_single_file(response):
                 click.echo(f"{'':<4}{'ingest time':<16}: {time}")
                 # locations
                 stls = " "
+                url = _get_url_from_file(f)
                 for s in f['locations']:
                     stls += s['storage_type']+", "
 
                 click.echo(f"{'':<4}{'storage location':<16}:{stls[0:-2]}")
+                if url is not None and print_url:
+                    click.echo(f"{'':<4}{'url':<16}: {url}")
+
+def _get_url_from_file(f):
+    url = None
+    for s in f['locations']:
+        if s['storage_type'] == "OBJECT_STORAGE":
+            url = s['url']
+    return url
 
 
-def print_simple_file(response):
+def print_simple_file(response, print_url=False):
     for hkey in response['data']['holdings']:
         h = response['data']['holdings'][hkey]
         for tkey in h['transactions']:
             t = h['transactions'][tkey]
             for f in t['filelist']:
-                click.echo(f"{f['original_path']}")
+                url = _get_url_from_file(f)
+                if print_url and url:
+                    click.echo(url)
+                else:
+                    click.echo(f"{f['original_path']}")
 
 
-def print_multi_file(response):
+def print_multi_file(response, print_url):
     click.echo(f"{'':<4}{'user':<16}{'h-id':<6}{'h-label':<16}{'size':<8}{'date':<12}{'path'}")
     for hkey in response['data']['holdings']:
         h = response['data']['holdings'][hkey]
@@ -284,12 +298,17 @@ def print_multi_file(response):
             time = t['ingest_time'].replace("T", " ")
             for f in t['filelist']:
                 size = pretty_size(f['size'])
+                url = _get_url_from_file(f)
+                if url and print_url:
+                    path_print = _get_url_from_file(f)
+                else:
+                    path_print = f['original_path']
                 click.echo(f"{'':4}{h['user']:<16}"
                            f"{h['holding_id']:<6}{h['label']:<16}"
-                           f"{size:<8}{time[:11]:<12}{f['original_path']}")
+                           f"{size:<8}{time[:11]:<12}{path_print}")
 
 
-def print_find(response:dict, req_details, simple):
+def print_find(response:dict, req_details, simple, url):
     """Print out the response from the find command"""
     n_holdings = len(response['data']['holdings'])
     if not simple:
@@ -301,12 +320,12 @@ def print_find(response:dict, req_details, simple):
         click.echo(list_string)
     # get total number of files
     n_files = __count_files(response)
-    if (n_files == 1):
-        print_single_file(response)
-    elif simple:
-        print_simple_file(response)
+    if (simple):
+        print_simple_file(response, url)
+    elif (n_files == 1):
+        print_single_file(response, url)
     else:
-        print_multi_file(response, simple)
+        print_multi_file(response, url)
 
 
 def print_meta(response:dict, req_details:str):
@@ -679,8 +698,10 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action,
               help="Output the result as JSON.")
 @click.option("-1", "--simple", default=False, type=bool, is_flag=True,
               help="Output the list of files, one per line, filepath only.")
+@click.option("-U", "--url", default=False, type=bool, is_flag=True,
+              help="Output the URL for the file on the object storage.")
 def find(user, group, groupall, label, holding_id, transaction_id, path, tag, 
-         json, simple):
+         json, simple, url):
     # 
     try:
         response = find_file(
@@ -695,7 +716,7 @@ def find(user, group, groupall, label, holding_id, transaction_id, path, tag,
             if json:
                 click.echo(response)
             else:
-                print_find(response, req_details, simple)
+                print_find(response, req_details, simple, url)
         else:
             fail_string = "Failed to list files with "
             fail_string += req_details
