@@ -421,7 +421,7 @@ user_help_text = (" If no user or group is given then these values will "
               help="The username to get a file for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get a file for.")
-@click.option("-G", "--groupall", default=False, is_flag=True,
+@click.option("-A", "--groupall", default=False, is_flag=True,
               help="Get a file that belongs to a group, rather than a single "
                    "user")
 @click.option("-r", "--target", default=None, type=click.Path(exists=True),
@@ -518,7 +518,7 @@ def putlist(filelist, user, group, label, job_label,
               help="The username to get files for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get files for.")
-@click.option("-G", "--groupall", default=False, is_flag=True,
+@click.option("-A", "--groupall", default=False, is_flag=True,
               help="Get files that belong to a group, rather than a single "
                    "user")
 @click.option("-t", "--target", default=None, type=click.Path(exists=True),
@@ -569,7 +569,7 @@ def getlist(filelist, user, group, groupall, target, job_label,
               help="The username to list holdings for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to list holdings for.")
-@click.option("-G", "--groupall", default=False, is_flag=True,
+@click.option("-A", "--groupall", default=False, is_flag=True,
               help="List holdings that belong to a group, rather than a single "
                    "user")
 @click.option("-l", "--label", default=None, type=str,
@@ -621,7 +621,7 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
               help="The username to list transactions for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to list transactions for.")
-@click.option("-G", "--groupall", default=False, is_flag=True,
+@click.option("-A", "--groupall", default=False, is_flag=True,
               help="List transactions that belong to a group, rather than a "
                    "single user")
 @click.option("-i", "--id", default=None, type=int,
@@ -679,7 +679,7 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action,
               help="The username to find files for.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to find files for.")
-@click.option("-G", "--groupall", default=False, is_flag=True,
+@click.option("-A", "--groupall", default=False, is_flag=True,
               help="Find files that belong to a group, rather than a single "
                    "user")
 @click.option("-l", "--label", default=None, type=str,
