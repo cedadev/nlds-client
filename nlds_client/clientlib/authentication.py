@@ -58,7 +58,7 @@ def process_fetch_oauth2_token_response(config, response):
             "The request was unauthorized.\n"
             "Check the ['authentication']['oauth_client_id'] and "
             "['authentication']['oauth_client_secret'] settings in the "
-            f"~/.ceda-nlds-config file. (HTTP_{response.status_code})",
+            f"~/.nlds-config file. (HTTP_{response.status_code})",
             response.status_code
         )
     elif response.status_code == requests.codes.forbidden:   # code 403
@@ -74,7 +74,7 @@ def process_fetch_oauth2_token_response(config, response):
             f"{auth_config['oauth_token_url']}\n"
             "The token server was not found.\n"
             "Check the ['authentication']['oauth_token_url'] setting in the "
-            f"~/.ceda-nlds-config file. (HTTP_{response.status_code})",
+            f"~/.nlds-config file. (HTTP_{response.status_code})",
             response.status_code
         )
     else:
