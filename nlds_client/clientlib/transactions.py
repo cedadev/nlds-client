@@ -453,6 +453,106 @@ def get_filelist(filelist: List[str]=[],
     return response_dict
 
 
+def del_filelist(filelist: List[str]=[],
+                 user: str=None,
+                 group: str=None,
+                 groupall: bool=False,
+                 job_label: str = None,
+                 label: str=None, 
+                 holding_id: int=None) -> Dict:
+    """Make a request to delete a list of files from the NLDS.
+    :param filelist: the list of filepaths to delete from the storage
+    :type filelist: List[string]
+
+    :param user: the username to delete the files
+    :type user: string, optional
+
+    :param group: the group to delete the files
+    :type group: string, optional
+
+    :param groupall: delete other user's data - will depend on the user having
+                     a DEPUTY or MANAGER role
+    :type groupall: bool, optional
+
+    :param job_label: an optional label for the transaction to aid user queries
+    :type job_label: string, optional
+
+    :param label: the label of an existing holding that files are to be 
+    deleted from
+    :type label: str, optional
+
+    :param holding_id: the integer id of a holding that files are to be 
+    deleted from
+    :type holding_id: int, optional
+
+    :raises requests.exceptions.ConnectionError: if the server cannot be reached
+
+    :return: A Dictionary of the response
+    :rtype: Dict
+    """
+
+    # get the config, user and group
+    config = load_config()
+    user = get_user(config, user)
+    group = get_group(config, group)
+    tenancy = get_tenancy(config)
+    access_key = get_access_key(config)
+    secret_key = get_secret_key(config)
+    transaction_id = uuid.uuid4()
+    url = construct_server_url(config, "files")
+
+    # build the parameters.  files/dellist/put requires:
+    #    transaction_id     : UUID
+    #    user               : str
+    #    group              : str
+    #    access_key         : str
+    #    secret_key         : str
+    #    tenancy            : str (optional)
+    #    job_label          : str (optional)
+    # and the filelist in the body
+    input_params = {"transaction_id" : transaction_id,
+                    "user" : user,
+                    "group" : group,
+                    "groupall" : groupall,
+                    "access_key" : access_key,
+                    "secret_key" : secret_key,
+                    "tenancy" : tenancy,
+                }
+    body_params = {"filelist" : filelist}
+    # add optional job_label.  If None then use first 8 characters of UUID
+    if job_label is None:
+        if label is None:
+            input_params["job_label"] = str(transaction_id)[0:8]
+        else:
+            input_params["job_label"] = label
+    else:
+        input_params["job_label"] = job_label
+    # add optional components to body: label, tags, holding_id
+    if label is not None:
+        body_params["label"] = label
+    if holding_id is not None:
+        body_params["holding_id"] = holding_id
+    # make the request
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        body_params=body_params,
+        method=requests.delete
+    )
+    if not response_dict:
+        # If we get to this point then the transaction could not be processed
+        response_dict = {
+            "uuid" : str(transaction_id),
+            "msg"  : f"DEL transaction with id {transaction_id} failed",
+            "success" : False
+        }
+    # mark as failed in RPC call
+    elif "details" in response_dict and "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
+    return response_dict
+
+
 def list_holding(user: str, 
                  group: str, 
                  groupall: bool=False,
@@ -669,7 +769,6 @@ def monitor_transactions(user: str,
     group = get_group(config, group)
     url = construct_server_url(config, "status")
     MAX_LOOPS = 2
-    print(group, groupall)
 
     # build the parameters.  monitoring->get requires
     #    user: str

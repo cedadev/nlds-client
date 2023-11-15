@@ -1,10 +1,9 @@
 #! /usr/bin/env python
 import click
-from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
-                                                list_holding, find_file,
-                                                monitor_transactions,
-                                                get_transaction_state,
-                                                change_metadata)
+from nlds_client.clientlib.transactions import (
+    get_filelist, put_filelist, del_filelist, list_holding, find_file,
+    monitor_transactions, get_transaction_state, change_metadata
+)
 from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
                                              AuthenticationError
 from nlds_client.clientlib.config import get_user, get_group, load_config
@@ -364,9 +363,13 @@ def print_response(tr:dict):
         tag_str = _tags_to_str(tr['tag'])
         click.echo(f"{'':<4}{'tags':<16}: {tag_str}")
 
+user_help_text = (" If no user or group is given then these values will "
+                  "default to the user:default_user and user:default values "
+                  "in the ~/.nlds-config file.")
+
 
 """Put files command"""
-@nlds_client.command("put", help="Put a single file.")
+@nlds_client.command("put", help=f"Put a single file.{user_help_text}")
 @click.option("-u", "--user", default=None, type=str,
               help="The username to put the file for.")
 @click.option("-g", "--group", default=None, type=str,
@@ -407,11 +410,7 @@ def put(filepath, user, group, job_label,
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
-
-
-user_help_text = (" If no user or group is given then these values will "
-                  "default to the user:default_user and user:default values "
-                  "in the ~/.nlds-config file.")
+    
 
 """Get files command"""
 @nlds_client.command("get", 
@@ -456,6 +455,43 @@ def get(filepath, user, group, groupall, target, job_label,
     except RequestError as re:
         raise click.UsageError(re)
 
+
+"""delete files command"""
+@nlds_client.command("delete", 
+                     help=f"Delete a single file.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to delete a file for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to delete a file for.")
+@click.option("-A", "--groupall", default=False, is_flag=True,
+              help="Get files that belong to a group, rather than a single "
+                   "user")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to delete the file from.  This "
+              "can be a regular expression (regex).")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the DEL job, that can be viewed when "
+              "using the stat command")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The id of the holding to delete the file from.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
+@click.argument("filepath", type=str)
+def delete(filepath, user, group, groupall, job_label, label, holding_id, json):
+    try:
+        response = del_filelist([filepath], user, group, groupall,
+                                job_label, label, holding_id)
+        if json:
+            click.echo(response)
+        else:
+            print_response(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+    
 
 """Put filelist command"""
 @nlds_client.command("putlist", 
@@ -561,6 +597,65 @@ def getlist(filelist, user, group, groupall, target, job_label,
     except RequestError as re:
         raise click.UsageError(re)
 
+"""dellist files command"""
+@nlds_client.command("dellist", 
+                     help=f"Delete a number of files specified in a list.{user_help_text}")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username to delete files for.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to delete files for.")
+@click.option("-A", "--groupall", default=False, is_flag=True,
+              help="Get files that belong to a group, rather than a single "
+                   "user")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding to delete files from.  This "
+              "can be a regular expression (regex).")
+@click.option("-b", "--job_label", default=None, type=str, 
+              help="An optional label for the DELLIST job, that can be viewed "
+              "when using the stat command")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The id of the holding to delete the file from.")
+@click.option("-j", "--json", default=False, type=bool,
+              help="Output the result as JSON.")
+@click.argument("filelist", type=str)
+def dellist(filelist, user, group, groupall, job_label, label, holding_id, json):
+    # read the filelist from the file
+    try:
+        fh = open(filelist)
+        files = fh.readlines()
+        fh.close()
+    except FileNotFoundError as fe:
+        raise click.UsageError(fe)
+
+    try:
+        req_details = format_request_details(
+            user, group, groupall=groupall, label=label, holding_id=holding_id
+        )
+        response = del_filelist(files, user, group, groupall, job_label, label, 
+                                holding_id)
+        if response['success']:
+            if json:
+                click.echo(response)
+            else:
+                print_list(response, req_details)
+        else:
+            fail_string = "Failed to delete file(s) with "
+            fail_string += req_details
+            if 'failure' in response['details']:
+                fail_string += "\nReason: " + response['details']['failure']
+            raise click.UsageError(fail_string)
+        
+        if json:
+            click.echo(response)
+        else:
+            print_response(response)
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+    
 
 """List (holdings) command"""
 @nlds_client.command("list", 
