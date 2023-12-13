@@ -8,13 +8,21 @@ from datetime import datetime
 
 from typing import List, Dict
 
-from nlds_client.clientlib.config import load_config, get_user, get_group, \
-                            get_option, \
-                            get_tenancy, get_access_key, get_secret_key
-from nlds_client.clientlib.authentication import load_token,\
-                                     get_username_password,\
-                                     fetch_oauth2_token,\
-                                     fetch_oauth2_token_from_refresh
+from nlds_client.clientlib.config import (
+    load_config,
+    get_user,
+    get_group,
+    get_option,
+    get_tenancy,
+    get_access_key,
+    get_secret_key,
+)
+from nlds_client.clientlib.authentication import (
+    load_token,
+    get_username_password,
+    fetch_oauth2_token,
+    fetch_oauth2_token_from_refresh,
+)
 from nlds_client.clientlib.exceptions import *
 
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
@@ -32,16 +40,18 @@ def construct_server_url(config: Dict, method=""):
     :return: a fully qualified url to the server hosting the REST API for NLDS.
     :rtype: string
     """
-    url = urllib.parse.urljoin(config["server"]["url"],
-                               "/".join([config["server"]["api"],
-                               method])
-                              ) + "/"
+    url = (
+        urllib.parse.urljoin(
+            config["server"]["url"], "/".join([config["server"]["api"], method])
+        )
+        + "/"
+    )
     return url
 
 
-def process_transaction_response(response: requests.models.Response, 
-                                 url: str,
-                                 config: Dict):
+def process_transaction_response(
+    response: requests.models.Response, url: str, config: Dict
+):
     """Process the response to raise exceptions for errors or return the
     response result.
 
@@ -67,51 +77,53 @@ def process_transaction_response(response: requests.models.Response,
     """
     #    possible responses: 202, 400, 403, 404, 422.
     try:
-        if (response.status_code == requests.codes.ok or
-            response.status_code == requests.codes.accepted):
+        if (
+            response.status_code == requests.codes.ok
+            or response.status_code == requests.codes.accepted
+        ):
             return response
-        elif (response.status_code == requests.codes.bad_request): # 400 error
-            response_json = json.loads(response.json()['detail'])
+        elif response.status_code == requests.codes.bad_request:  # 400 error
+            response_json = json.loads(response.json()["detail"])
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
                 f"{response_json['msg']} (HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
-        elif (response.status_code == requests.codes.unauthorized): # 401
+        elif response.status_code == requests.codes.unauthorized:  # 401
             raise AuthenticationError(
                 f"Could not complete the request to the URL: {url} \n"
                 "Authentication failed.  Check that the token in the "
                 f"{config['authentication']['oauth_token_file_location']} file "
                 f"is a valid token (HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
-        elif (response.status_code == requests.codes.forbidden):   # 403
+        elif response.status_code == requests.codes.forbidden:  # 403
             raise AuthenticationError(
                 f"Could not complete the request to the URL: {url} \n"
                 "Authentication failed.  Check that the token in the "
                 f"{config['authentication']['oauth_token_file_location']} file "
                 f"is a valid token (HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
-        elif (response.status_code == requests.codes.not_found):   # 404
-            response_msg = response.json()['detail']
+        elif response.status_code == requests.codes.not_found:  # 404
+            response_msg = response.json()["detail"]
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
                 f"{response_msg} (HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
-        elif (response.status_code == requests.codes.unprocessable): # 422
-            response_msg = response.json()['detail']
+        elif response.status_code == requests.codes.unprocessable:  # 422
+            response_msg = response.json()["detail"]
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
                 f"{response_msg} (HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
         else:
             raise RequestError(
                 f"Could not complete the request to the URL: {url} "
                 f"(HTTP_{response.status_code})",
-                response.status_code
+                response.status_code,
             )
     except KeyError:
         raise ServerError(
@@ -121,20 +133,19 @@ def process_transaction_response(response: requests.models.Response,
 
 
 def tag_to_string(tag: dict):
-    """Convert a dictionary of tags into comma delimited string of key:value 
+    """Convert a dictionary of tags into comma delimited string of key:value
     pairs."""
     # convert dict to string
     tag_str = ""
     for key in tag:
-        tag_str += key+":"+tag[key]+","
-    tag_str = tag_str.replace("'","")
+        tag_str += key + ":" + tag[key] + ","
+    tag_str = tag_str.replace("'", "")
     return tag_str[:-1]
-    
 
-def main_loop(url: str, 
-              input_params: dict={}, 
-              body_params: dict={},
-              method=requests.get):
+
+def main_loop(
+    url: str, input_params: dict = {}, body_params: dict = {}, method=requests.get
+):
     """Generalised main loop to make requests to the NLDS server
     :param url: the API URL to contact
     :type user: string
@@ -152,10 +163,10 @@ def main_loop(url: str,
     :rtype: Dict
     """
 
-    config = load_config()    
+    config = load_config()
     c_try = 0
     MAX_LOOPS = 2
-    
+
     while c_try < MAX_LOOPS:
         c_try += 1
         try:
@@ -169,19 +180,19 @@ def main_loop(url: str,
             continue
 
         token_headers = {
-            "Content-Type"  : "application/json",
-            "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
+            "Content-Type": "application/json",
+            "cache-control": "no-cache",
+            "Authorization": f"Bearer {auth_token['access_token']}",
         }
 
         # make the request
         try:
             response = method(
                 url,
-                headers = token_headers,
-                params = input_params,
-                json = body_params,
-                verify = get_option(config, 'verify_certificates')
+                headers=token_headers,
+                params=input_params,
+                json=body_params,
+                verify=get_option(config, "verify_certificates"),
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
@@ -199,30 +210,36 @@ def main_loop(url: str,
                 continue
             except (AuthenticationError, RequestError) as ae:
                 # delete the token file ready to try again!
-                if (ae.status_code == requests.codes.unauthorized or
-                    ae.status_code == requests.codes.bad_request):
-                    os.remove(os.path.expanduser(
-                        config['authentication']['oauth_token_file_location']
-                    ))
+                if (
+                    ae.status_code == requests.codes.unauthorized
+                    or ae.status_code == requests.codes.bad_request
+                ):
+                    os.remove(
+                        os.path.expanduser(
+                            config["authentication"]["oauth_token_file_location"]
+                        )
+                    )
                     continue
                 else:
                     raise ae
 
         response_dict = json.loads(response.json())
-        response_dict['success'] = True
+        response_dict["success"] = True
         return response_dict
 
     # If we get to this point then the transaction could not be processed
     return None
 
 
-def put_filelist(filelist: List[str]=[],
-                 user: str=None, 
-                 group: str=None,
-                 job_label: str=None,
-                 label: str=None, 
-                 holding_id: int=None, 
-                 tag: dict=None):
+def put_filelist(
+    filelist: List[str] = [],
+    user: str = None,
+    group: str = None,
+    job_label: str = None,
+    label: str = None,
+    holding_id: int = None,
+    tag: dict = None,
+):
     """Make a request to put a list of files into the NLDS.
     :param filelist: the list of filepaths to put into storage
     :type filelist: List[string]
@@ -276,15 +293,16 @@ def put_filelist(filelist: List[str]=[],
     #    tenancy: str (optional)
     # and the filelist in the body
 
-    input_params = {"transaction_id" : transaction_id,
-                    "user" : user,
-                    "group" : group,
-                    "access_key" : access_key,
-                    "secret_key" : secret_key,
-                    "tenancy" : tenancy
-                }
+    input_params = {
+        "transaction_id": transaction_id,
+        "user": user,
+        "group": group,
+        "access_key": access_key,
+        "secret_key": secret_key,
+        "tenancy": tenancy,
+    }
 
-    body_params = {"filelist" : filelist}
+    body_params = {"filelist": filelist}
     # add optional job_label.  If None then use first 8 characters of UUID
     if job_label is None:
         if label is None:
@@ -303,18 +321,15 @@ def put_filelist(filelist: List[str]=[],
         body_params["holding_id"] = holding_id
     # make the request
     response_dict = main_loop(
-        url=url,
-        input_params=input_params,
-        body_params=body_params,
-        method=requests.put
+        url=url, input_params=input_params, body_params=body_params, method=requests.put
     )
 
     if not response_dict:
         # If we get to this point then the transaction could not be processed
         response_dict = {
-            'uuid' : str(transaction_id),
-            'msg'  : f'PUT transaction with id {transaction_id} failed',
-            'success' : False
+            "uuid": str(transaction_id),
+            "msg": f"PUT transaction with id {transaction_id} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
@@ -323,15 +338,17 @@ def put_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def get_filelist(filelist: List[str]=[],
-                 user: str=None, 
-                 group: str=None, 
-                 groupall: bool=False,
-                 target: str = None,
-                 job_label: str = None,
-                 label: str=None, 
-                 holding_id: int=None, 
-                 tag: dict=None) -> Dict:
+def get_filelist(
+    filelist: List[str] = [],
+    user: str = None,
+    group: str = None,
+    groupall: bool = False,
+    target: str = None,
+    job_label: str = None,
+    label: str = None,
+    holding_id: int = None,
+    tag: dict = None,
+) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -348,15 +365,15 @@ def get_filelist(filelist: List[str]=[],
     :param job_label: an optional label for the transaction to aid user queries
     :type job_label: string, optional
 
-    :param label: the label of an existing holding that files are to be 
+    :param label: the label of an existing holding that files are to be
     retrieved from
     :type label: str, optional
 
-    :param holding_id: the integer id of a holding that files are to be 
+    :param holding_id: the integer id of a holding that files are to be
     retrieved from
     :type holding_id: int, optional
 
-    :param tag: a dictionary of key:value pairs to search for in a holding that 
+    :param tag: a dictionary of key:value pairs to search for in a holding that
     files are to be retrieved from
     :type tag: dict, optional
 
@@ -376,7 +393,7 @@ def get_filelist(filelist: List[str]=[],
     transaction_id = uuid.uuid4()
     url = construct_server_url(config, "files") + "getlist"
 
-    # If target given then we're operating in "mode 2" where we're downloading 
+    # If target given then we're operating in "mode 2" where we're downloading
     # the file to a new location
     if target:
         target_p = Path(target)
@@ -389,7 +406,7 @@ def get_filelist(filelist: List[str]=[],
         # here? or should we just error at this point?
         if not target_p.exists():
             os.makedirs(target)
-    # If no target given then we are operating in "mode 1", i.e. we're 
+    # If no target given then we are operating in "mode 1", i.e. we're
     # downloading files back to their original locations.
     else:
         # Resolve path to file (i.e. make absolute) if configured so
@@ -407,16 +424,17 @@ def get_filelist(filelist: List[str]=[],
     #    job_label          : str (optional)
     #    target             : str (optional - defaults to cwd)
     # and the filelist in the body
-    input_params = {"transaction_id" : transaction_id,
-                    "user" : user,
-                    "group" : group,
-                    "groupall" : groupall,
-                    "access_key" : access_key,
-                    "secret_key" : secret_key,
-                    "tenancy" : tenancy,
-                    "target": target,
-                }
-    body_params = {"filelist" : filelist}
+    input_params = {
+        "transaction_id": transaction_id,
+        "user": user,
+        "group": group,
+        "groupall": groupall,
+        "access_key": access_key,
+        "secret_key": secret_key,
+        "tenancy": tenancy,
+        "target": target,
+    }
+    body_params = {"filelist": filelist}
     # add optional job_label.  If None then use first 8 characters of UUID
     if job_label is None:
         if label is None:
@@ -434,17 +452,14 @@ def get_filelist(filelist: List[str]=[],
         body_params["holding_id"] = holding_id
     # make the request
     response_dict = main_loop(
-        url=url,
-        input_params=input_params,
-        body_params=body_params,
-        method=requests.put
+        url=url, input_params=input_params, body_params=body_params, method=requests.put
     )
     if not response_dict:
         # If we get to this point then the transaction could not be processed
         response_dict = {
-            "uuid" : str(transaction_id),
-            "msg"  : f"GET transaction with id {transaction_id} failed",
-            "success" : False
+            "uuid": str(transaction_id),
+            "msg": f"GET transaction with id {transaction_id} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
@@ -453,13 +468,15 @@ def get_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def del_filelist(filelist: List[str]=[],
-                 user: str=None,
-                 group: str=None,
-                 groupall: bool=False,
-                 job_label: str = None,
-                 label: str=None, 
-                 holding_id: int=None) -> Dict:
+def del_filelist(
+    filelist: List[str] = [],
+    user: str = None,
+    group: str = None,
+    groupall: bool = False,
+    job_label: str = None,
+    label: str = None,
+    holding_id: int = None,
+) -> Dict:
     """Make a request to delete a list of files from the NLDS.
     :param filelist: the list of filepaths to delete from the storage
     :type filelist: List[string]
@@ -477,11 +494,11 @@ def del_filelist(filelist: List[str]=[],
     :param job_label: an optional label for the transaction to aid user queries
     :type job_label: string, optional
 
-    :param label: the label of an existing holding that files are to be 
+    :param label: the label of an existing holding that files are to be
     deleted from
     :type label: str, optional
 
-    :param holding_id: the integer id of a holding that files are to be 
+    :param holding_id: the integer id of a holding that files are to be
     deleted from
     :type holding_id: int, optional
 
@@ -510,15 +527,16 @@ def del_filelist(filelist: List[str]=[],
     #    tenancy            : str (optional)
     #    job_label          : str (optional)
     # and the filelist in the body
-    input_params = {"transaction_id" : transaction_id,
-                    "user" : user,
-                    "group" : group,
-                    "groupall" : groupall,
-                    "access_key" : access_key,
-                    "secret_key" : secret_key,
-                    "tenancy" : tenancy,
-                }
-    body_params = {"filelist" : filelist}
+    input_params = {
+        "transaction_id": transaction_id,
+        "user": user,
+        "group": group,
+        "groupall": groupall,
+        "access_key": access_key,
+        "secret_key": secret_key,
+        "tenancy": tenancy,
+    }
+    body_params = {"filelist": filelist}
     # add optional job_label.  If None then use first 8 characters of UUID
     if job_label is None:
         if label is None:
@@ -537,14 +555,14 @@ def del_filelist(filelist: List[str]=[],
         url=url,
         input_params=input_params,
         body_params=body_params,
-        method=requests.delete
+        method=requests.delete,
     )
     if not response_dict:
         # If we get to this point then the transaction could not be processed
         response_dict = {
-            "uuid" : str(transaction_id),
-            "msg"  : f"DEL transaction with id {transaction_id} failed",
-            "success" : False
+            "uuid": str(transaction_id),
+            "msg": f"DEL transaction with id {transaction_id} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
@@ -553,13 +571,15 @@ def del_filelist(filelist: List[str]=[],
     return response_dict
 
 
-def list_holding(user: str, 
-                 group: str, 
-                 groupall: bool=False,
-                 label: str=None, 
-                 holding_id: int=None, 
-                 transaction_id: str=None,
-                 tag: dict=None):
+def list_holding(
+    user: str,
+    group: str,
+    groupall: bool = False,
+    label: str = None,
+    holding_id: int = None,
+    transaction_id: str = None,
+    tag: dict = None,
+):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
     :type user: string
@@ -577,7 +597,7 @@ def list_holding(user: str,
     :type holding_id: int, optional
 
     :param tag: a list of key:value pairs to search holdings for - return
-        holdings with these tags.  This will be converted to dictionary before 
+        holdings with these tags.  This will be converted to dictionary before
         calling the remote method.
     :type tag: dict, optional
 
@@ -597,9 +617,7 @@ def list_holding(user: str,
     # build the parameters.  holdings->get requires
     #    user: str
     #    group: str
-    input_params = {"user" : user,
-                    "group" : group,
-                    "groupall" : groupall}
+    input_params = {"user": user, "group": group, "groupall": groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -611,16 +629,12 @@ def list_holding(user: str,
     if transaction_id is not None:
         input_params["transaction_id"] = transaction_id
 
-    response_dict = main_loop(
-        url=url, 
-        input_params=input_params,
-        method=requests.get
-    )
+    response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
     if not response_dict:
         response_dict = {
-            "msg"  : f"LIST holdings for user {user} and group {group} failed",
-            "success" : False
+            "msg": f"LIST holdings for user {user} and group {group} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
@@ -629,14 +643,16 @@ def list_holding(user: str,
     return response_dict
 
 
-def find_file(user: str, 
-              group: str, 
-              groupall: bool=False,
-              label: str=None, 
-              holding_id: int=None,
-              transaction_id: str=None,
-              path: str=None,
-              tag: dict=None):
+def find_file(
+    user: str,
+    group: str,
+    groupall: bool = False,
+    label: str = None,
+    holding_id: int = None,
+    transaction_id: str = None,
+    path: str = None,
+    tag: dict = None,
+):
     """Make a request to find files in the NLDS for a user
     :param user: the username to get the holding(s) for
     :type user: string
@@ -654,7 +670,7 @@ def find_file(user: str,
     :type holding_id: int, optional
 
     :param tag: a list of key:value pairs to search holdings for - return
-        holdings with these tags.  This will be converted to dictionary before 
+        holdings with these tags.  This will be converted to dictionary before
         calling the remote method.
     :type tag: dict, optional
 
@@ -676,9 +692,7 @@ def find_file(user: str,
     # build the parameters.  holdings->get requires
     #    user: str
     #    group: str
-    input_params = {"user" : user,
-                    "group" : group,
-                    "groupall" : groupall}
+    input_params = {"user": user, "group": group, "groupall": groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -692,35 +706,33 @@ def find_file(user: str,
     if path is not None:
         input_params["path"] = path
 
-    response_dict = main_loop(
-        url=url, 
-        input_params=input_params,
-        method=requests.get
-    )
+    response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
     if not response_dict:
         response_dict = {
-            "msg"  : f"FIND files for user {user} and group {group} failed",
-            "success" : False
+            "msg": f"FIND files for user {user} and group {group} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
-    return response_dict    
+    return response_dict
 
 
-def monitor_transactions(user: str, 
-                         group: str, 
-                         groupall: bool=False,
-                         idd: int=None,
-                         transaction_id: str=None, 
-                         job_label: str=None,
-                         api_action: str=None,
-                         state: str=None, 
-                         sub_id: str=None,
-                         retry_count: int=None):
-    """Make a request to the monitoring database for a status update of ongoing 
+def monitor_transactions(
+    user: str,
+    group: str,
+    groupall: bool = False,
+    idd: int = None,
+    transaction_id: str = None,
+    job_label: str = None,
+    api_action: str = None,
+    state: str = None,
+    sub_id: str = None,
+    retry_count: int = None,
+):
+    """Make a request to the monitoring database for a status update of ongoing
     or finished transactions in the NLDS for, a user/group
 
     :param user: the username to get the transaction state(s) for
@@ -735,21 +747,21 @@ def monitor_transactions(user: str,
     :param idd: the numeric id (primary key) of the transaction
     :type idd: int
 
-    :param transaction_id: a specific transaction_id to get the status of 
+    :param transaction_id: a specific transaction_id to get the status of
     :type transaction_id: string, optional
 
-    :param job_label: a specific job_label to get the status of 
+    :param job_label: a specific job_label to get the status of
     :type transaction_id: string, optional
 
-    :param api_action: applies an api-action-specific filter to the status 
-        request, only transaction_records of the given api_action will be 
-        returned. 
+    :param api_action: applies an api-action-specific filter to the status
+        request, only transaction_records of the given api_action will be
+        returned.
     :type api_action: string, optional
-    
-    :param sub_id: a specific sub_id (of a sub_record) to get the status of 
+
+    :param sub_id: a specific sub_id (of a sub_record) to get the status of
     :type sub_id: string, optional
 
-    :param state: applies a state-specific filter to the status request, only 
+    :param state: applies a state-specific filter to the status request, only
         sub_records at the given state will be returned.
     :type state: string, optional
 
@@ -773,9 +785,7 @@ def monitor_transactions(user: str,
     # build the parameters.  monitoring->get requires
     #    user: str
     #    group: str
-    input_params = {"user" : user,
-                    "group" : group,
-                    "groupall" : groupall}
+    input_params = {"user": user, "group": group, "groupall": groupall}
 
     # add additional / optional components to input params
     if idd is not None:
@@ -793,17 +803,13 @@ def monitor_transactions(user: str,
     if retry_count is not None:
         input_params["retry_count"] = retry_count
 
-    response_dict = main_loop(
-        url=url,
-        input_params=input_params,
-        method=requests.get
-    )
+    response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
     # If we get to this point then the transaction could not be processed
     if not response_dict:
         response_dict = {
             "msg": f"STAT transaction for user {user} and group {group} failed",
-            "success": False
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
@@ -813,32 +819,32 @@ def monitor_transactions(user: str,
 
 
 def get_transaction_state(transaction: dict):
-    """Get the overall state of a transaction in a more convienent form by 
-    querying the sub-transactions and determining if the overall transaction 
+    """Get the overall state of a transaction in a more convienent form by
+    querying the sub-transactions and determining if the overall transaction
     is complete.
-    transaction: a dictionary for a single transaction.  Note that 
+    transaction: a dictionary for a single transaction.  Note that
       monitor_transactions returns a dictionary of transactions
     Transaction dictionary looks like this:
     {
-        'id': 2, 
-        'transaction_id': 'a06ec7b3-e83c-4ac7-97d8-2545a0b8d317', 
-        'user': 'nrmassey', 
-        'group': 'cedaproc', 
-        'api_action': 'getlist', 
-        'creation_time': '2022-12-06T15:45:43', 
+        'id': 2,
+        'transaction_id': 'a06ec7b3-e83c-4ac7-97d8-2545a0b8d317',
+        'user': 'nrmassey',
+        'group': 'cedaproc',
+        'api_action': 'getlist',
+        'creation_time': '2022-12-06T15:45:43',
         'sub_records': [
             {
-                'id': 2, 
-                'sub_id': '007075b2-8c79-4cfa-a1e5-0aaa65892454', 
-                'state': 'COMPLETE', 
-                'retry_count': 0, 
-                'last_updated': '2022-12-06T15:45:44', 
+                'id': 2,
+                'sub_id': '007075b2-8c79-4cfa-a1e5-0aaa65892454',
+                'state': 'COMPLETE',
+                'retry_count': 0,
+                'last_updated': '2022-12-06T15:45:44',
                 'failed_files': []
             }
         ]
     }
 
-    possible values of state are: 
+    possible values of state are:
             INITIALISING = -1
             ROUTING = 0
             SPLITTING = 1
@@ -875,21 +881,24 @@ def get_transaction_state(transaction: dict):
         "CATALOG_ARCHIVE_AGGREGATING": 21,
         "ARCHIVE_PUTTING": 22,
         "CATALOG_ARCHIVE_UPDATING": 23,
+        "CATALOG_DELETING": 30,
+        "ARCHIVE_DELETING": 31,
+        "TRANSFER_DELETING": 32,
         "CATALOG_ARCHIVE_ROLLBACK": 40,
         "COMPLETE": 100,
         "FAILED": 101,
-        "COMPLETE_WITH_ERRORS" : 102,
+        "COMPLETE_WITH_ERRORS": 102,
         "COMPLETE_WITH_WARNINGS": 103,
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 
     min_state = 200
-    min_time = datetime(1970,1,1)
+    min_time = datetime(1970, 1, 1)
     error_count = 0
     for sr in transaction["sub_records"]:
         sr_state = sr["state"]
         d = datetime.fromisoformat(sr["last_updated"])
-        if(d > min_time):
+        if d > min_time:
             min_time = d
         if state_mapping[sr_state] < min_state:
             min_state = state_mapping[sr_state]
@@ -912,14 +921,16 @@ def get_transaction_state(transaction: dict):
     return state_mapping_reverse[min_state], min_time
 
 
-def change_metadata(user: str, 
-                    group: str, 
-                    label: str=None, 
-                    holding_id: int=None,
-                    tag: dict=None,
-                    new_label: str=None,
-                    new_tag: dict=None,
-                    del_tag: dict=None):
+def change_metadata(
+    user: str,
+    group: str,
+    label: str = None,
+    holding_id: int = None,
+    tag: dict = None,
+    new_label: str = None,
+    new_tag: dict = None,
+    del_tag: dict = None,
+):
     """Make a request to change the metadata for a NLDS holding for a user
     :param user: the username to change the holding(s) for
     :type user: string
@@ -934,7 +945,7 @@ def change_metadata(user: str,
     :type holding_id: int, optional
 
     :param tag: a list of key:value pairs to search holdings for - return
-        holdings with these tags.  This will be converted to dictionary before 
+        holdings with these tags.  This will be converted to dictionary before
         calling the remote method.
     :type tag: dict, optional
 
@@ -962,8 +973,7 @@ def change_metadata(user: str,
     # build the parameters.  holdings->get requires
     #    user: str
     #    group: str
-    input_params = {"user" : user,
-                    "group" : group}
+    input_params = {"user": user, "group": group}
     body_params = {}
     # add additional / optional components to input params
     if label is not None:
@@ -981,16 +991,16 @@ def change_metadata(user: str,
         body_params["del_tag"] = del_tag
 
     response_dict = main_loop(
-        url=url, 
+        url=url,
         input_params=input_params,
         body_params=body_params,
-        method=requests.post        # post method as we are changing a resource
+        method=requests.post,  # post method as we are changing a resource
     )
 
     if not response_dict:
         response_dict = {
-            "msg"  : f"FIND files for user {user} and group {group} failed",
-            "success" : False
+            "msg": f"FIND files for user {user} and group {group} failed",
+            "success": False,
         }
     # mark as failed in RPC call
     elif "details" in response_dict and "failure" in response_dict["details"]:
