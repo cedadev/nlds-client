@@ -669,7 +669,6 @@ def monitor_transactions(user: str,
     group = get_group(config, group)
     url = construct_server_url(config, "status")
     MAX_LOOPS = 2
-    print(group, groupall)
 
     # build the parameters.  monitoring->get requires
     #    user: str
