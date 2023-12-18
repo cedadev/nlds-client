@@ -1,5 +1,7 @@
 #! /usr/bin/env python
 import click
+from json import dumps as json_dumps
+
 from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
                                                 list_holding, find_file,
                                                 monitor_transactions,
@@ -398,7 +400,7 @@ def put(filepath, user, group, job_label,
         response = put_filelist([filepath], user, group, job_label,
                                 label, holding_id, tag)
         if json:
-            click.echo(response)
+            click.echo(json_dumps(response))
         else:
             print_response(response)
     except ConnectionError as ce:
@@ -446,7 +448,7 @@ def get(filepath, user, group, groupall, target, job_label,
         response = get_filelist([filepath], user, group, groupall, target, 
                                 job_label, label, holding_id, tag)
         if json:
-            click.echo(response)
+            click.echo(json_dumps(response))
         else:
             print_response(response)
     except ConnectionError as ce:
@@ -499,7 +501,7 @@ def putlist(filelist, user, group, label, job_label,
         response = put_filelist(files, user, group, job_label,
                                 label, holding_id, tag)
         if json:
-            click.echo(response)
+            click.echo(json_dumps(response))
         else:
             print_response(response)
 
@@ -521,7 +523,7 @@ def putlist(filelist, user, group, label, job_label,
 @click.option("-A", "--groupall", default=False, is_flag=True,
               help="Get files that belong to a group, rather than a single "
                    "user")
-@click.option("-t", "--target", default=None, type=click.Path(exists=True),
+@click.option("-r", "--target", default=None, type=click.Path(exists=True),
               help="The target path for the retrieved files.  Default is to "
               "retrieve files to their original path.")
 @click.option("-l", "--label", default=None, type=str,
@@ -551,7 +553,7 @@ def getlist(filelist, user, group, groupall, target, job_label,
         response = get_filelist(files, user, group, groupall, target, job_label,
                                 label, holding_id, tag)
         if json:
-            click.echo(response)
+            click.echo(json_dumps(response))
         else:
             print_response(response)
     except ConnectionError as ce:
@@ -596,7 +598,7 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
         )
         if response['success']:
             if json:
-                click.echo(response)
+                click.echo(json_dumps(response))
             else:
                 print_list(response, req_details)
         else:
@@ -655,7 +657,7 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action,
         )
         if response['success']:
             if json:
-                click.echo(response)
+                click.echo(json_dumps(response))
             else:
                 print_stat(response, req_details)
         else:
@@ -714,7 +716,7 @@ def find(user, group, groupall, label, holding_id, transaction_id, path, tag,
         )
         if response['success']:
             if json:
-                click.echo(response)
+                click.echo(json_dumps(response))
             else:
                 print_find(response, req_details, simple, url)
         else:
@@ -763,7 +765,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
                                    new_label, new_tag, del_tag)
         if response['success'] > 0:
             if json:
-                click.echo(response)
+                click.echo(json_dumps(response))
             else:
                 print_meta(response, req_details)
         else:
