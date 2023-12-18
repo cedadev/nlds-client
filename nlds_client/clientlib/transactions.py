@@ -326,6 +326,7 @@ def put_filelist(filelist: List[str]=[],
 def get_filelist(filelist: List[str]=[],
                  user: str=None, 
                  group: str=None, 
+                 groupall: bool=False,
                  target: str = None,
                  job_label: str = None,
                  label: str=None, 
@@ -409,6 +410,7 @@ def get_filelist(filelist: List[str]=[],
     input_params = {"transaction_id" : transaction_id,
                     "user" : user,
                     "group" : group,
+                    "groupall" : groupall,
                     "access_key" : access_key,
                     "secret_key" : secret_key,
                     "tenancy" : tenancy,
@@ -453,6 +455,7 @@ def get_filelist(filelist: List[str]=[],
 
 def list_holding(user: str, 
                  group: str, 
+                 groupall: bool=False,
                  label: str=None, 
                  holding_id: int=None, 
                  transaction_id: str=None,
@@ -463,6 +466,9 @@ def list_holding(user: str,
 
     :param group: the group to get the holding(s) for
     :type group: string
+
+    :param groupall: list holdings for the entire group, not just the user
+    :type groupall: bool
 
     :param label: the label of an existing holding to get the details for
     :type label: str, optional
@@ -492,7 +498,8 @@ def list_holding(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -524,6 +531,7 @@ def list_holding(user: str,
 
 def find_file(user: str, 
               group: str, 
+              groupall: bool=False,
               label: str=None, 
               holding_id: int=None,
               transaction_id: str=None,
@@ -535,6 +543,9 @@ def find_file(user: str,
 
     :param group: the group to get the holding(s) for
     :type group: string
+
+    :param groupall: list files for the entire group, not just the user
+    :type groupall: bool
 
     :param label: the label of an existing holding to get the details for
     :type label: str, optional
@@ -566,7 +577,8 @@ def find_file(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if label is not None:
@@ -600,6 +612,7 @@ def find_file(user: str,
 
 def monitor_transactions(user: str, 
                          group: str, 
+                         groupall: bool=False,
                          idd: int=None,
                          transaction_id: str=None, 
                          job_label: str=None,
@@ -615,6 +628,9 @@ def monitor_transactions(user: str,
 
     :param group: the group to get the transaction state(s) for
     :type group: string
+
+    :param groupall: list transactions for the entire group, not just the user
+    :type groupall: bool
 
     :param idd: the numeric id (primary key) of the transaction
     :type idd: int
@@ -658,7 +674,8 @@ def monitor_transactions(user: str,
     #    user: str
     #    group: str
     input_params = {"user" : user,
-                    "group" : group}
+                    "group" : group,
+                    "groupall" : groupall}
 
     # add additional / optional components to input params
     if idd is not None:
@@ -722,52 +739,51 @@ def get_transaction_state(transaction: dict):
     }
 
     possible values of state are: 
-        INITIALISING = -1
-        ROUTING = 0
-        SPLITTING = 1
-        INDEXING = 2
-        TRANSFER_PUTTING = 3
-        CATALOG_PUTTING = 4
-        CATALOG_GETTING = 5
-        TRANSFER_GETTING = 6
-        COMPLETE = 8
-        FAILED = 9
-        COMPLETE_WITH_ERRORS = 10
-        COMPLETE_WITH_WARNINGS = 11
+            INITIALISING = -1
+            ROUTING = 0
+            SPLITTING = 1
+            INDEXING = 2
+            CATALOG_PUTTING = 3
+            TRANSFER_PUTTING = 4
+            CATALOG_ROLLBACK = 5
+            CATALOG_GETTING = 10
+            ARCHIVE_GETTING = 11
+            TRANSFER_GETTING = 12
+            ARCHIVE_INIT = 20
+            CATALOG_ARCHIVE_AGGREGATING = 21
+            ARCHIVE_PUTTING = 22
+            CATALOG_ARCHIVE_UPDATING = 23
+            CATALOG_ARCHIVE_ROLLBACK = 40
+            COMPLETE = 100
+            FAILED = 101
+            COMPLETE_WITH_ERRORS = 102
+            COMPLETE_WITH_WARNINGS = 103
     The overall state is the minimum of these
     """
     state_mapping = {
-        "INITIALISING" : -1,
-        "ROUTING" : 0,
-        "SPLITTING" : 1,
-        "INDEXING" : 2,
-        "CATALOG_PUTTING" : 3,
-        "TRANSFER_PUTTING" : 4,
+        "INITIALISING": -1,
+        "ROUTING": 0,
+        "SPLITTING": 1,
+        "INDEXING": 2,
+        "CATALOG_PUTTING": 3,
+        "TRANSFER_PUTTING": 4,
         "CATALOG_ROLLBACK": 5,
-        "CATALOG_GETTING" : 6,
-        "TRANSFER_GETTING" : 7,
-        "COMPLETE" : 8,
-        "FAILED" : 9,
-        "COMPLETE_WITH_ERRORS" : 10,
-        "COMPLETE_WITH_WARNINGS": 11,
+        "CATALOG_GETTING": 10,
+        "ARCHIVE_GETTING": 11,
+        "TRANSFER_GETTING": 12,
+        "ARCHIVE_INIT": 20,
+        "CATALOG_ARCHIVE_AGGREGATING": 21,
+        "ARCHIVE_PUTTING": 22,
+        "CATALOG_ARCHIVE_UPDATING": 23,
+        "CATALOG_ARCHIVE_ROLLBACK": 40,
+        "COMPLETE": 100,
+        "FAILED": 101,
+        "COMPLETE_WITH_ERRORS" : 102,
+        "COMPLETE_WITH_WARNINGS": 103,
     }
-    state_mapping_reverse = {
-        -1 : "INITIALISING",
-        0 : "ROUTING",
-        1 : "SPLITTING",
-        2 : "INDEXING",
-        3 : "CATALOG_PUTTING",
-        4 : "TRANSFER_PUTTING" ,
-        5 : "CATALOG_ROLLBACK",
-        6 : "CATALOG_GETTING",
-        7 : "TRANSFER_GETTING",
-        8 : "COMPLETE",
-        9 : "FAILED",
-        10: "COMPLETE_WITH_ERRORS",
-        11: "COMPLETE_WITH_WARNINGS"
-    }
+    state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 
-    min_state = 100
+    min_state = 200
     min_time = datetime(1970,1,1)
     error_count = 0
     for sr in transaction["sub_records"]:
@@ -780,7 +796,7 @@ def get_transaction_state(transaction: dict):
         if sr_state == "FAILED":
             error_count += 1
 
-    if min_state == 100:
+    if min_state == 200:
         return None, None
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
