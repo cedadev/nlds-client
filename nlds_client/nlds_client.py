@@ -21,6 +21,7 @@ json = False
 
 from json import dumps as json_dumps
 
+
 @click.group()
 def nlds_client():
     pass
