@@ -885,6 +885,8 @@ def get_transaction_state(transaction: dict):
         "ARCHIVE_DELETING": 31,
         "TRANSFER_DELETING": 32,
         "CATALOG_ARCHIVE_ROLLBACK": 40,
+        "CATALOG_DELETE_ROLLBACK": 41,
+        "CATALOG_RESTORING": 42,
         "COMPLETE": 100,
         "FAILED": 101,
         "COMPLETE_WITH_ERRORS": 102,
