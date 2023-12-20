@@ -15,6 +15,7 @@ from nlds_client.clientlib.exceptions import (
     RequestError,
     AuthenticationError,
 )
+
 from nlds_client.clientlib.config import get_user, get_group, load_config
 
 json = False
