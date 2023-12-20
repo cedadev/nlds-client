@@ -19,6 +19,7 @@ from nlds_client.clientlib.config import get_user, get_group, load_config
 
 json = False
 
+from json import dumps as json_dumps
 
 @click.group()
 def nlds_client():
@@ -544,7 +545,7 @@ def get(
             [filepath], user, group, groupall, target, job_label, label, holding_id, tag
         )
         if json:
-            click.echo(response)
+            click.echo(json_dumps(response))
         else:
             print_response(response)
     except ConnectionError as ce:
@@ -754,31 +755,6 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
 @click.option(
     "-j", "--json", default=False, type=bool, help="Output the result as JSON."
 )
-@nlds_client.command("getlist", 
-                     help=f"Get a number of files specified in a list.{user_help_text}")
-@click.option("-u", "--user", default=None, type=str,
-              help="The username to get files for.")
-@click.option("-g", "--group", default=None, type=str,
-              help="The group to get files for.")
-@click.option("-A", "--groupall", default=False, is_flag=True,
-              help="Get files that belong to a group, rather than a single "
-                   "user")
-@click.option("-r", "--target", default=None, type=click.Path(exists=True),
-              help="The target path for the retrieved files.  Default is to "
-              "retrieve files to their original path.")
-@click.option("-l", "--label", default=None, type=str,
-              help="The label of the holding(s) to retrieve files from.  This "
-              "can be a regular expression (regex).")
-@click.option("-b", "--job_label", default=None, type=str, 
-              help="An optional label for the GET job, that can be viewed when "
-              "using the stat command")
-@click.option("-i", "--holding_id", default=None, type=int,
-              help="The id of the holding to retrieve files from.")
-@click.option("-t", "--tag", default=None, type=TagParamType(),
-              help="The tag(s) of the holding(s) to retrieve files from.")
-@click.option("-j", "--json", default=False, type=bool,
-              help="Output the result as JSON.")
-@click.argument("filelist", type=str)
 def getlist(
     filelist, user, group, groupall, target, job_label, label, holding_id, tag, json
 ):
@@ -791,8 +767,9 @@ def getlist(
         raise click.UsageError(fe)
 
     try:
-        response = get_filelist(files, user, group, groupall, target, job_label,
-                                label, holding_id, tag)
+        response = get_filelist(
+            files, user, group, groupall, target, job_label, label, holding_id, tag
+        )
         if json:
             click.echo(json_dumps(response))
         else:
@@ -869,7 +846,7 @@ def dellist(filelist, user, group, groupall, job_label, label, holding_id, json)
         )
         if response["success"]:
             if json:
-                click.echo(response)
+                click.echo(json_dumps(response))
             else:
                 print_response(response)
         else:
