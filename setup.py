@@ -15,6 +15,7 @@ setup(
         'requests',
         'requests_oauthlib',
         'click',
+        "cryptography",
     ],
     include_package_data=True,
     package_data={
