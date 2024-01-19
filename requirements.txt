@@ -1,10 +1,7 @@
 certifi==2023.11.17
 charset-normalizer==3.3.2
 click==8.1.7
-<<<<<<< Updated upstream
-=======
 cryptography==41.0.7
->>>>>>> Stashed changes
 idna==3.6
 -e git+ssh://git@github.com/cedadev/nlds-client.git@91498130427e9d77885745b41f530d9cefcb0b50#egg=nlds_client
 oauthlib==3.2.2
