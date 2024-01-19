@@ -4,6 +4,9 @@ import os.path
 from click import option
 from nlds_client.clientlib.nlds_client_setup import get_config_file_location
 from nlds_client.clientlib.exceptions import ConfigError
+
+TEMPLATE_FILE_LOCATION = os.path.join(os.path.dirname(__file__), 
+                                      '../templates/nlds-config.j2')
 CONFIG_FILE_LOCATION = get_config_file_location()
 
 def validate_config_file(json_config):
@@ -135,6 +138,40 @@ def load_config():
     return json_config
 
 
+def create_config(url: str):
+    # Read contents of template file 
+    with open(os.path.expanduser(f"{TEMPLATE_FILE_LOCATION}"), 'r') as f_templ:
+        template_contents = json.load(f_templ)
+
+    # Change the default server to something useable
+    template_contents['server']['url'] = url
+
+    # Delete the tenancy option from the config so the user doesn't 
+    # accidentally leave it empty
+    del template_contents["object_storage"]["tenancy"]
+
+    # Location of config file should be {CONFIG_FILE_LOCATION}. Create it and 
+    # fail if it already exists 
+    with open(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"), 'x') as f:
+        json.dump(template_contents, f, indent=4)
+
+    # Lastly, validate the config file to make sure we're not missing anyhting
+    validate_config_file(template_contents)
+
+    return template_contents
+
+
+def write_auth_section(config, auth_config, url: str = None):
+    # Second, validate the config again and make sure we're not missing anything
+    validate_config_file(config)
+
+    # Overwrite the authentication block with the one given and write it back to 
+    # the file
+    config['authentication'] |= auth_config
+    with open(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"), 'w') as f:
+        json.dump(config, f, indent=4)
+
+
 def get_user(config, user):
     """Get the user from either the function parameter or the config."""
     user = user
@@ -191,6 +228,7 @@ def get_access_key(config):
         "access_key" in config["object_storage"]):
         access_key = config["object_storage"]["access_key"]
     return access_key
+
 
 def get_secret_key(config):
     """Get the object storage secret key from the config file. """
