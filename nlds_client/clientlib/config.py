@@ -138,13 +138,14 @@ def load_config():
     return json_config
 
 
-def create_config(url: str):
+def create_config(url: str, verify_certificates: bool):
     # Read contents of template file 
     with open(os.path.expanduser(f"{TEMPLATE_FILE_LOCATION}"), 'r') as f_templ:
         template_contents = json.load(f_templ)
 
     # Change the default server to something useable
     template_contents['server']['url'] = url
+    template_contents['options']['verify_certificates'] = verify_certificates
 
     # Delete the tenancy option from the config so the user doesn't 
     # accidentally leave it empty
@@ -161,7 +162,7 @@ def create_config(url: str):
     return template_contents
 
 
-def write_auth_section(config, auth_config, url: str = None):
+def write_auth_section(config, auth_config):
     # Second, validate the config again and make sure we're not missing anything
     validate_config_file(config)
 
