@@ -791,18 +791,21 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
           "config file if one doesn't exist or fill the 'authentication' "
           "section with appropriate values if it does.")
 )
-@click.option("-u", "--url", default=None, type=str, 
-              help=("Url to use for getting config info. Must start with "
-                    "http(s)://"))
-@click.option("-k", "--verify", default=True, type=bool,
-              help="Boolean flag to control whether to verify ssl certificates "
-                   "during request. Defaults to true, only needs to be False "
-                   "for the staging/test version of the nlds.")
-def init(url: str = None, verify: bool = True):
+@click.option(
+    "-u", "--url", default=None, type=str, 
+    help=("Url to use for getting config info. Must start with http(s)://"),
+)
+@click.option(
+    "-k", "--insecure", is_flag=True, default=False,
+    help="Boolean flag to control whether to turn off verification of ssl "
+         "certificates during request. Defaults to true, only needs to be False"
+         " for the staging/test version of the nlds."
+)
+def init(url: str = None, insecure: bool = False):
     click.echo(click.style("Initiating the Near-line Data Store...\n", 
                            fg="yellow"))
     try:
-        response = init_client(url, verify_certificates=verify)
+        response = init_client(url, verify_certificates=(not insecure))
         if (("success" in response and not response['success']) 
             or "new_config" not in response):
             raise RequestError(f"Could not init NLDS, something has gone wrong")
