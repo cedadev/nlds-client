@@ -1,0 +1,28 @@
+@startuml userview
+left to right direction
+
+package Local {
+    together {
+        actor user as "User"
+        agent client as "Client API / CLI" #MediumPurple
+    }
+}
+
+package Remote {
+    agent API_server as "API server" #DodgerBlue
+    queue nq as "NLDS Queue" #lightgrey
+    agent proc as "File Processor" #lightblue
+    cloud object_storage as "Object Storage"
+    database catalogdb as "Catalog" #SpringGreen
+    component tape as "Tape"
+}
+
+user-->client
+client-->API_server
+API_server-->nq
+nq-->proc
+proc->catalogdb
+proc-->object_storage
+object_storage->tape
+
+@enduml

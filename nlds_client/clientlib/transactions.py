@@ -1,23 +1,37 @@
-import requests
 import json
 import uuid
 import urllib.parse
 import os
 from pathlib import Path
 from datetime import datetime
+from base64 import b64decode
+from typing import List, Dict, Any
 
-from typing import List, Dict
+import requests
 
-from nlds_client.clientlib.config import load_config, get_user, get_group, \
-                            get_option, \
-                            get_tenancy, get_access_key, get_secret_key
-from nlds_client.clientlib.authentication import load_token,\
-                                     get_username_password,\
-                                     fetch_oauth2_token,\
-                                     fetch_oauth2_token_from_refresh
+from nlds_client.clientlib.config import (
+    load_config,
+    create_config, 
+    write_auth_section,
+    get_user, 
+    get_group, 
+    get_option, 
+    get_tenancy, 
+    get_access_key, 
+    get_secret_key
+)
+from nlds_client.clientlib.authentication import (
+    load_token,
+    get_username_password,
+    fetch_oauth2_token,
+    fetch_oauth2_token_from_refresh
+)
 from nlds_client.clientlib.exceptions import *
 
-from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
+from nlds_client.clientlib.nlds_client_setup import (
+    CONFIG_FILE_LOCATION,
+    DEFAULT_SERVER_URL,
+)
 
 
 def construct_server_url(config: Dict, method=""):
@@ -134,7 +148,9 @@ def tag_to_string(tag: dict):
 def main_loop(url: str, 
               input_params: dict={}, 
               body_params: dict={},
-              method=requests.get):
+              authenticate_fl: bool = True,
+              method=requests.get,
+              **kwargs):
     """Generalised main loop to make requests to the NLDS server
     :param url: the API URL to contact
     :type user: string
@@ -155,24 +171,40 @@ def main_loop(url: str,
     config = load_config()    
     c_try = 0
     MAX_LOOPS = 2
+
+    # Prioritise kwarg over config file value
+    if "verify" in kwargs:
+        verify = kwargs.pop("verify")
+    else:
+        verify = get_option(config, 'verify_certificates')
+
+    # If we're not verifying the certificate we can turn off the warnings about 
+    # it
+    if not verify:
+        pass
+        from urllib3.connectionpool import InsecureRequestWarning
+        import warnings
+        warnings.filterwarnings("ignore", category=InsecureRequestWarning)
     
     while c_try < MAX_LOOPS:
         c_try += 1
-        try:
-            auth_token = load_token(config)
-        except FileNotFoundError:
-            # we need the username and password to get the OAuth2 token in
-            # the password flow
-            username, password = get_username_password(config)
-            auth_token = fetch_oauth2_token(config, username, password)
-            # we don't want to do the rest of the loop!
-            continue
-
         token_headers = {
             "Content-Type"  : "application/json",
             "cache-control" : "no-cache",
-            "Authorization" : f"Bearer {auth_token['access_token']}"
         }
+        
+        # Attempt to do authentication if flag set
+        if authenticate_fl:
+            try:
+                auth_token = load_token(config)
+            except FileNotFoundError:
+                # we need the username and password to get the OAuth2 token in
+                # the password flow
+                username, password = get_username_password(config)
+                auth_token = fetch_oauth2_token(config, username, password)
+                # we don't want to do the rest of the loop!
+                continue
+            token_headers["Authorization"] = f"Bearer {auth_token['access_token']}"
 
         # make the request
         try:
@@ -181,7 +213,8 @@ def main_loop(url: str,
                 headers = token_headers,
                 params = input_params,
                 json = body_params,
-                verify = get_option(config, 'verify_certificates')
+                verify = verify,
+                **kwargs,
             )
         except requests.exceptions.ConnectionError:
             raise ConnectionError(
@@ -896,3 +929,72 @@ def change_metadata(user: str,
     elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
     return response_dict
+
+
+def init_client(
+        url: str = None, 
+        verify_certificates: bool = True,
+    ) -> Dict[str, Any]:
+    """Make two requests to the API to get some secret, encrypted configuration 
+    information and then the token to help decrypt it.  
+
+    :param url: The url to request initiation details from. Must start with 
+                'http://' or 'https://'.
+    :type url:  str, optional
+
+    :param verify_certificates: Boolean flag controlling whether to verify ssl 
+                                certificates during the get request.
+    :type verify_certificates:  bool, optional 
+
+    :return: A dict containing information about the outcome of the initiation, 
+             i.e. whether it succeeded and whether a file was created.
+    :rtype: Dict
+    """
+    from cryptography.fernet import Fernet
+
+    # Use the default NLDS url if none provided
+    if url is None:
+        url = DEFAULT_SERVER_URL
+    cli_response = {"success": True, "new_config": False}
+
+    try:
+        # get the config, if it exists, and change the url to that provided
+        config = load_config()
+        config['server']['url'] = url
+    except FileNotFoundError:
+        # If the file doesn't exist then create it
+        config = create_config(url, verify_certificates)
+        cli_response["new_config"] = True
+
+    responses = {}
+    for endpoint in ['init', 'init/token']:
+        url = construct_server_url(config, endpoint)
+        response_dict = main_loop(
+            url=url,
+            input_params=None,
+            method=requests.get,
+            allow_redirects=True,
+            verify=verify_certificates,
+        )
+
+        # If we get to this point then the transaction could not be processed
+        if not response_dict:
+            raise RequestError(f"Could not init NLDS, empty response")
+        responses[endpoint] = response_dict
+
+    try:
+        key = b64decode(responses["init/token"]["token"])
+        auth_config_enc = responses["init"]["encrypted_keys"]
+    except (KeyError, AttributeError) as e:
+        raise RequestError("Malformed init response from api, could not create "
+                           f"config file {type(e).__name__}:{e}", 
+                           requests.codes.unprocessable)
+    
+    # Decrypt the encrypted keys
+    f = Fernet(key)
+    auth_config = json.loads(f.decrypt(auth_config_enc))
+
+    # Write auth_config to config file
+    write_auth_section(config, auth_config)
+
+    return cli_response
