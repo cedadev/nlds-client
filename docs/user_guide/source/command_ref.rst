@@ -1,3 +1,5 @@
+.. _command-ref:
+
 Command Line Reference
 ======================
 
@@ -15,6 +17,7 @@ Commands:
   | ``find     Find and list files.``
   | ``get      Get a single file.``
   | ``getlist  Get a number of files specified in a list.``
+  | ``init     Set up the nlds client with a config file on first use.``   
   | ``list     List holdings.``
   | ``meta     Alter metadata for a holding.``
   | ``put      Put a single file.``

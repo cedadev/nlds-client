@@ -75,12 +75,17 @@ the ``authentication`` section.
 Running the NLDS client for the first time
 --------------------------------------------------------------
 
-Once the NLDS client is successfully installed, the user can run it.  On JASMIN,
-the first time ``nlds`` is run, the user will be asked for their user name and
-password.  These are the JASMIN user name and password, which the user
-usually uses to login into JASMIN via the ``loginx.jasmin.ac.uk`` servers.
+Once the NLDS client is successfully installed, the user can run it. It is 
+recommended that you run the ``init`` command first, which will fill in the url 
+and authentication sections of the ``.nlds-config`` file for you - see the 
+:ref:`relevant seciton<init>` for details.
 
-The following message is displayed:
+Once initialised, the first time ``nlds`` is run on JASMIN the user will be 
+asked for their user name and password. These are the JASMIN user name and 
+password, which the user usually uses to login into JASMIN via the 
+``loginx.jasmin.ac.uk`` servers.
+
+The following message will be displayed:
 
 .. code-block:: text
 
