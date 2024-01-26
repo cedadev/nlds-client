@@ -1,6 +1,16 @@
 #! /usr/bin/env python
-import click
+"""
+
+"""
+__author__ = 'Neil Massey and Jack Leland'
+__date__ = '29 Jan 2024'
+__copyright__ = 'Copyright 2024 United Kingdom Research and Innovation'
+__license__ = 'BSD - see LICENSE file in top-level package directory'
+__contact__ = 'neil.massey@stfc.ac.uk'
+
 from json import dumps as json_dumps
+
+import click
 
 from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
                                                 list_holding, find_file,
