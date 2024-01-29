@@ -9,14 +9,18 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='nlds_client',
-    version='0.0.2',
+    version='0.2.1',
     packages=find_packages(),
     install_requires=[
         'requests',
         'requests_oauthlib',
         'click',
+        "cryptography",
     ],
     include_package_data=True,
+    package_data={
+        'nlds_client': ['templates/*'],
+    },
     license='LICENSE.txt',  # example license
     description=('Client libary and command line for CEDA Near-Line Data Store'),
     long_description=README,

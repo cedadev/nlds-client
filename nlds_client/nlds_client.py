@@ -5,9 +5,17 @@ from nlds_client.clientlib.transactions import (
     monitor_transactions, get_transaction_state, change_metadata
 )
 
-from nlds_client.clientlib.exceptions import ConnectionError, RequestError, \
-                                             AuthenticationError
+from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
+                                                list_holding, find_file,
+                                                monitor_transactions,
+                                                get_transaction_state,
+                                                change_metadata,
+                                                init_client)
+from nlds_client.clientlib.exceptions import (ConnectionError, 
+                                              RequestError, 
+                                              AuthenticationError)
 from nlds_client.clientlib.config import get_user, get_group, load_config
+from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 json=False
 
@@ -876,6 +884,61 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     except RequestError as re:
         raise click.UsageError(re)
 
+@nlds_client.command(  
+    "init", 
+    help=(f"Set up the nlds client on first use. Will either create a new "
+          "config file if one doesn't exist or fill the 'authentication' "
+          "section with appropriate values if it does.")
+)
+@click.option(
+    "-u", "--url", default=None, type=str, 
+    help=("Url to use for getting config info. Must start with http(s)://"),
+)
+@click.option(
+    "-k", "--insecure", is_flag=True, default=False,
+    help="Boolean flag to control whether to turn off verification of ssl "
+         "certificates during request. Defaults to true, only needs to be False"
+         " for the staging/test version of the nlds."
+)
+def init(url: str = None, insecure: bool = False):
+    click.echo(click.style("Initiating the Near-line Data Store...\n", 
+                           fg="yellow"))
+    try:
+        response = init_client(url, verify_certificates=(not insecure))
+        if (("success" in response and not response['success']) 
+            or "new_config" not in response):
+            raise RequestError(f"Could not init NLDS, something has gone wrong")
+        success_msg = f"Successfully initiated, "
+        path_str = click.style(CONFIG_FILE_LOCATION, fg='black')
+        if response["new_config"]:
+            success_msg += (f"a template config file has been created at "
+                            f"{path_str} with some of the information necessary"
+                            " to use the NLDS.")
+        else:
+            success_msg += (f"the config file at {path_str} has been updated "
+                            "with some of the necessary information to start "
+                            "using the NLDS.")
+            
+        link_str = click.style('https://s3-portal.jasmin.ac.uk/', fg="blue")
+        success_msg += ("\n\nYou may still need to manually update the fields:"
+                        "\n - user.default_user \n - user.default_group "
+                        "\n - object_storage.access_key"
+                        "\n - object_storage.secret_key"
+                        "\n - object_storage.tenancy "
+                        + click.style(
+                            '(will default to nlds-cache-02 if not set)',
+                            fg='yellow') +
+                        "\n\nThe latter three values can be obtained from the "
+                        "object store portal for any object stores you have "
+                        f"access to ({link_str}).")
+        click.echo(success_msg)
+
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except RequestError as re:
+        raise click.UsageError(re)
+    except Exception as e:
+        raise click.UsageError(e)
 
 def main():
     nlds_client(prog_name="nlds")
