@@ -5,11 +5,11 @@
 
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-
-project = 'Near-Line Data Store client'
-copyright = '2023, Neil Massey and Jack Leland'
+project = 'Near-Line Data Store'
+copyright = '2023, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation'
 author = 'Neil Massey and Jack Leland'
-release = '0.1.0'
+version = '0.1.1'
+release = '0.1.1-RC1'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -24,5 +24,5 @@ exclude_patterns = []
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
 
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']

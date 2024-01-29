@@ -740,8 +740,12 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
 @click.option("-s", "--state", default=None, type=str,
               help="The state of the transactions to list.  Options: "
               "INITIALISING | ROUTING | SPLITTING | INDEXING | "
-              "TRANSFER_PUTTING | CATALOG_PUTTING | CATALOG_GETTING | "
-              "TRANSFER_GETTING | COMPLETE | FAILED")
+              "CATALOG_PUTTING | TRANSFER_PUTTING | CATLOG_ROLLBACK | "
+              "CATALOG_GETTING | ARCHIVE_GETTING | TRANSFER_GETTING | "
+              "ARCHIVE_INIT | CATALOG_ARCHIVE_AGGREGATING | ARCHIVE_PUTTING | "
+              "CATALOG_ARCHIVE_UPDATING | CATALOG_ARCHIVE_ROLLBACK | "
+              "COMPLETE | FAILED | COMPLETE_WITH_ERRORS | "
+              "COMPLETE_WITH_WARNINGS")
 @click.option("-j", "--json", default=False, type=bool, is_flag=True,
               help="Output the result as JSON.")
 def stat(user, group, groupall, id, transaction_id, job_label, api_action, 
@@ -886,7 +890,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
 
 @nlds_client.command(  
     "init", 
-    help=(f"Set up the nlds client on first use. Will either create a new "
+    help=(f"Set up the NLDS client on first use. Will either create a new "
           "config file if one doesn't exist or fill the 'authentication' "
           "section with appropriate values if it does.")
 )
@@ -898,17 +902,17 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "-k", "--insecure", is_flag=True, default=False,
     help="Boolean flag to control whether to turn off verification of ssl "
          "certificates during request. Defaults to true, only needs to be False"
-         " for the staging/test version of the nlds."
+         " for the staging/test version of the NLDS."
 )
 def init(url: str = None, insecure: bool = False):
-    click.echo(click.style("Initiating the Near-line Data Store...\n", 
+    click.echo(click.style("Initialising the Near-line Data Store...\n", 
                            fg="yellow"))
     try:
         response = init_client(url, verify_certificates=(not insecure))
         if (("success" in response and not response['success']) 
             or "new_config" not in response):
             raise RequestError(f"Could not init NLDS, something has gone wrong")
-        success_msg = f"Successfully initiated, "
+        success_msg = f"Successfully initialised, "
         path_str = click.style(CONFIG_FILE_LOCATION, fg='black')
         if response["new_config"]:
             success_msg += (f"a template config file has been created at "

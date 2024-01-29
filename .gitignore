@@ -3,4 +3,7 @@
 *egg-info
 .venv/
 tests/test_dir*
+**/.DS_Store
+
 build/
+docs/user_guide/build/
