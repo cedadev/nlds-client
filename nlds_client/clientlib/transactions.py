@@ -984,6 +984,7 @@ def init_client(
             method=requests.get,
             allow_redirects=True,
             verify=verify_certificates,
+            authenticate_fl=False,
         )
 
         # If we get to this point then the transaction could not be processed
