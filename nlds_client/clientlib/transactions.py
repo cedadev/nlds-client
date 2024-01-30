@@ -190,7 +190,6 @@ def main_loop(url: str,
     # If we're not verifying the certificate we can turn off the warnings about 
     # it
     if not verify:
-        pass
         from urllib3.connectionpool import InsecureRequestWarning
         import warnings
         warnings.filterwarnings("ignore", category=InsecureRequestWarning)
