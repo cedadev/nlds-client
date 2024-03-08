@@ -18,6 +18,7 @@ extensions = ['sphinx_click']
 
 templates_path = ['_templates']
 exclude_patterns = []
+html_favicon = '_images/icon-black.png'
 
 
 
@@ -26,3 +27,9 @@ exclude_patterns = []
 
 html_theme = 'sphinx_rtd_theme'
 html_static_path = ['_static']
+
+html_logo = "_images/nlds.png"
+html_theme_options = {
+    'logo_only': False,
+    'display_version': True,
+}
