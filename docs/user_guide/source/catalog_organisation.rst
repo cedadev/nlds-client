@@ -80,7 +80,7 @@ Transactions
 ------------
 
 **Transactions** record the user's action when PUTting a file into the NLDS.
-As alluded to above, in the :ref:`_holding` section, each **holding** can contain
+As alluded to above, in the :ref:`holding` section, each **holding** can contain
 numerous **transactions**.  A **transaction** is created every time a user PUTs
 a single file, or list of files, into the NLDS.  This **transaction** is assigned
 to a holding based on the **label** supplied by the user.  If a **label** is

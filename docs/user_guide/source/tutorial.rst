@@ -878,7 +878,7 @@ label for the ``-i`` (holding id) or ``-l`` (existing label) options can be used
                 label   : SmallHolding
                 tags    : {}
 
-.. _tags:
+.. _tutorial_tags:
 
 Adding tags to a file collection (META)
 --------------------------------------------------------------
