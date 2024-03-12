@@ -3,13 +3,22 @@
 # For the full list of built-in configuration values, see the documentation:
 # https://www.sphinx-doc.org/en/master/usage/configuration.html
 
+
+
+import os
+import sys
+sys.path.insert(0, os.path.abspath('../../'))
+
+from nlds_client import __version__
+
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
-project = 'Near-Line Data Store'
+project = 'Near-Line Data Store Client'
 copyright = '2024, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation'
-author = 'Neil Massey and Jack Leland'
-version = '1.0.0'
-release = '1.0.0-RC1'
+author = 'Neil Massey & Jack Leland'
+
+version = __version__
+release = __version__
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
