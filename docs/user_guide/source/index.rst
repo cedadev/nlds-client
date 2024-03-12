@@ -3,12 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Near-Line Data Store documentation
-==================================
+Near-Line Data Store - Client documentation
+===========================================
 
 The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses 
-Object Storage as a front end to a tape library. It catalogs the data as it is
-ingested and permits multiple versions of files. It has a microservice 
+Object Storage as a front end cache to a tape library. It catalogs the data as 
+it is ingested and permits multiple versions of files. It has a microservice 
 architecture using a message broker to communicate between the parts.
 Interaction with NLDS is via a HTTP API, with a Python library and command-line 
 client provided to users for programmatic or interactive use.
