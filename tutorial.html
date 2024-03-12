@@ -4,18 +4,19 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; Near-Line Data Store 1.0.0-RC1 documentation</title>
+  <title>Tutorial &mdash; Near-Line Data Store Client 1.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
+    <link rel="shortcut icon" href="_static/icon-black.png"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=98692dfe"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0b546569"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,10 +35,11 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Near-Line Data Store
+            Near-Line Data Store Client
+              <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.0
+                1.0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -80,7 +82,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Near-Line Data Store</a>
+          <a href="index.html">Near-Line Data Store Client</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -113,22 +115,24 @@
 <li><p><a class="reference internal" href="#list"><span class="std std-ref">Querying the file collections the user holds on the NLDS (LIST)</span></a></p></li>
 <li><p><a class="reference internal" href="#find"><span class="std std-ref">Querying the files the user holds on the NLDS (FIND)</span></a></p></li>
 <li><p><a class="reference internal" href="#label"><span class="std std-ref">Changing the label of a file collection (META)</span></a></p></li>
-<li><p><a class="reference internal" href="#tags"><span class="std std-ref">Adding tags to a file collection (META)</span></a></p></li>
+<li><p><a class="reference internal" href="catalog_organisation.html#tags"><span class="std std-ref">Adding tags to a file collection (META)</span></a></p></li>
 </ul>
 <section id="introduction-to-the-nlds">
 <span id="intro"></span><h2>Introduction to the NLDS<a class="headerlink" href="#introduction-to-the-nlds" title="Permalink to this heading"></a></h2>
 <p>The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses
-Object Storage as a front end to a tape library.  Interaction with NLDS is via
+Object Storage as a front end cache to a tape library.  Interaction with NLDS is via
 a HTTP API, with a Python library and command-line client provided to users for
 programmatic or interactive use.</p>
 <p>When a user ingests files to the NLDS, the files are first written to the
-Object Storage, and a backup is made to tape.
-When the Object Storage is approaching capacity, a set of policies is
-interrogated to determine which files will be removed from the Object Storage.
-When a user GETs a file, the NLDS may have to first transfer the file from
-tape to the Object Storage, if it has been deleted by the policies.  This in
-effect creates a multitier of hot (disk), warm (Object Storage) and cold (Tape)
-storage, with a common interface to all.</p>
+cache, and a backup is made to tape. When the cache is approaching capacity, a
+set of policies is interrogated to determine which files will be removed from
+the cache. When a user GETs a file, the NLDS may have to first transfer the file
+from tape to the cache, if it has been deleted by the policies. This, in effect,
+creates a multi-tiered system of hot (disk), warm (cache) and cold (Tape)
+storage, with a common interface to all. Additionally, and more importantly, it
+takes the decision of storage location out of the user’s hands; the user only
+needs to interact with the service itself rather than manually specifying the
+movement of data between disk, cache, and tape.</p>
 <p>The NLDS also provides a searchable catalog of files, with the user able to
 assign a label and tags to a collection of files.</p>
 <figure class="align-default" id="id1">
@@ -143,9 +147,9 @@ assign a label and tags to a collection of files.</p>
 <p>Before using the NLDS, a user must install and set-up the NLDS client.  For the
 NLDS installation on JASMIN, the user must also:</p>
 <ol class="arabic simple">
-<li><p>Have access to the Object Storage tenancy they wish to write files to</p></li>
-<li><p>Be a member of the GroupWorkspace they wish to use for writing to tape</p></li>
-<li><p>Have access to a GroupWorkspace to read and write files to</p></li>
+<li><p>Have access to the Object Storage tenancy (cache) they wish to write files to</p></li>
+<li><p>Be a member of, and have read/write access to, the GroupWorkspace they wish
+to use for writing to tape</p></li>
 </ol>
 <p>The NLDS client is a command-line program with the name <cite>nlds</cite>.
 To install this, refer to the page <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a>.</p>
@@ -155,11 +159,11 @@ needed to connect the client to the NLDS server.  For more information, refer
 to the page <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">configuration</span></a>.</p>
 <p>On JASMIN, the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">user_gws</span></code> fields can be filled in by the
 user.  However, all of the fields in the <code class="docutils literal notranslate"><span class="pre">server</span></code> section of the file, and the
-<code class="docutils literal notranslate"><span class="pre">authentication</span></code> section will need to be provided by the JASMIN system
-adminstrators.  Fields in the <code class="docutils literal notranslate"><span class="pre">object_storage</span></code> section will need to match
-those generated by the Object Storage portal on JASMIN.
-Users can freely change the value of the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> field in
-the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section.</p>
+<code class="docutils literal notranslate"><span class="pre">authentication</span></code> section will need to be provided by the <code class="docutils literal notranslate"><span class="pre">init</span></code> command - see the
+<a class="reference internal" href="configuration.html#init"><span class="std std-ref">relevant seciton</span></a> for details. Fields in the <code class="docutils literal notranslate"><span class="pre">object_storage</span></code>
+section will need to match those generated by the <a class="reference external" href="https://s3-portal.jasmin.ac.uk/login">Object Store portal</a>
+on JASMIN. Users can freely change the value of the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code>
+field in the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section.</p>
 </section>
 <section id="running-the-nlds-client-for-the-first-time">
 <span id="first"></span><h2>Running the NLDS client for the first time<a class="headerlink" href="#running-the-nlds-client-for-the-first-time" title="Permalink to this heading"></a></h2>
@@ -168,9 +172,9 @@ recommended that you run the <code class="docutils literal notranslate"><span cl
 and authentication sections of the <code class="docutils literal notranslate"><span class="pre">.nlds-config</span></code> file for you - see the
 <a class="reference internal" href="configuration.html#init"><span class="std std-ref">relevant seciton</span></a> for details.</p>
 <p>Once initialised, the first time <code class="docutils literal notranslate"><span class="pre">nlds</span></code> is run on JASMIN the user will be
-asked for their user name and password. These are the JASMIN user name and
-password, which the user usually uses to login into JASMIN via the
-<code class="docutils literal notranslate"><span class="pre">loginx.jasmin.ac.uk</span></code> servers.</p>
+asked for their username and password. These are the JASMIN username and
+password, which the user usually uses to login into JASMIN via
+<a class="reference external" href="https://help.jasmin.ac.uk/docs/interactive-computing/login-servers/">one of the login servers</a>.</p>
 <p>The following message will be displayed:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>This application uses OAuth2 to authenticate with the server on your behalf.
 To do this it needs your username and password.
@@ -179,7 +183,7 @@ Username:
 Password:
 </pre></div>
 </div>
-<p>After entering your JASMIN user name and password, the OAuth2 token is created
+<p>After entering your JASMIN username and password, the OAuth2 token is created
 at the path pointed to by <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>
 file.  The NLDS authorisation system uses refresh tokens to fetch a new token
 when the current one has expired</p>
@@ -268,7 +272,7 @@ for the user to allow them to group multiple transactions under a single
 <p>To get the return output from the <code class="docutils literal notranslate"><span class="pre">put</span></code> command in JSON format, specify the
 <code class="docutils literal notranslate"><span class="pre">-j</span></code> option.</p>
 <p>When a command is invoked, NLDS will return a summary of the command, including
-the transaction_id.</p>
+the <code class="docutils literal notranslate"><span class="pre">transaction_id</span></code>.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds put -l SheepPen /Users/frjohn/sheep.txt -u frjohn -g farmers -b SheepHerding -t sheepdog:skye
 PUT transaction accepted for processing.
     user            : frjohn
@@ -855,7 +859,7 @@ Changed metadata for holding for user:frjohn, group:farmers, label:Farm
 </div>
 </section>
 <section id="adding-tags-to-a-file-collection-meta">
-<span id="tags"></span><h2>Adding tags to a file collection (META)<a class="headerlink" href="#adding-tags-to-a-file-collection-meta" title="Permalink to this heading"></a></h2>
+<span id="tutorial-tags"></span><h2>Adding tags to a file collection (META)<a class="headerlink" href="#adding-tags-to-a-file-collection-meta" title="Permalink to this heading"></a></h2>
 <p>In addition to allowing the user to change the label of a holding, the <code class="docutils literal notranslate"><span class="pre">meta</span></code>
 command also allows the user to add or alter the holding’s tags.
 Tags are specified as <code class="docutils literal notranslate"><span class="pre">key:value</span></code> pairs, and using the <code class="docutils literal notranslate"><span class="pre">-T</span></code> (new tags) option.
@@ -942,7 +946,35 @@ Changed metadata for holding for user:frjohn, group:farmers, tag:{&#39;type&#39;
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #A6C36F;
+    }
+
+    .caption-text {
+        color: #828C51
+    }
+
+    .wy-nav-side {
+        background: #1E352F;
+    }
+
+    a {
+        color: #828C51
+    }
+
+    .note {
+        background: #BEEF9E
+    }
+    .admonition-title {
+        background: #335145
+    }
+
+  </style>
+
 
 </body>
 </html>

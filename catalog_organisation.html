@@ -4,18 +4,19 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Catalog Organisation &mdash; Near-Line Data Store 1.0.0-RC1 documentation</title>
+  <title>Catalog Organisation &mdash; Near-Line Data Store Client 1.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
+    <link rel="shortcut icon" href="_static/icon-black.png"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=98692dfe"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0b546569"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -34,10 +35,11 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Near-Line Data Store
+            Near-Line Data Store Client
+              <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.0
+                1.0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -71,7 +73,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Near-Line Data Store</a>
+          <a href="index.html">Near-Line Data Store Client</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -108,7 +110,7 @@ the information relevant to the user remaining.</p>
 <ol class="arabic simple">
 <li><p><a class="reference internal" href="#holding"><span class="std std-ref">Holdings</span></a></p></li>
 <li><p><a class="reference internal" href="#transaction"><span class="std std-ref">Transactions</span></a></p></li>
-<li><p><a class="reference internal" href="tutorial.html#tags"><span class="std std-ref">Tags</span></a></p></li>
+<li><p><a class="reference internal" href="#tags"><span class="std std-ref">Tags</span></a></p></li>
 <li><p><a class="reference internal" href="#file"><span class="std std-ref">File</span></a></p></li>
 <li><p><a class="reference internal" href="#location"><span class="std std-ref">Location</span></a></p></li>
 </ol>
@@ -155,7 +157,7 @@ files, while leaving the older files still accessible by specifying the
 <section id="transactions">
 <span id="transaction"></span><h2>Transactions<a class="headerlink" href="#transactions" title="Permalink to this heading"></a></h2>
 <p><strong>Transactions</strong> record the user’s action when PUTting a file into the NLDS.
-As alluded to above, in the <span class="xref std std-ref">_holding</span> section, each <strong>holding</strong> can contain
+As alluded to above, in the <a class="reference internal" href="#holding"><span class="std std-ref">Holdings</span></a> section, each <strong>holding</strong> can contain
 numerous <strong>transactions</strong>.  A <strong>transaction</strong> is created every time a user PUTs
 a single file, or list of files, into the NLDS.  This <strong>transaction</strong> is assigned
 to a holding based on the <strong>label</strong> supplied by the user.  If a <strong>label</strong> is
@@ -212,23 +214,23 @@ be associated with a single file.</p>
 (or caring) where those <strong>files</strong> are stored.  From a user view, the <strong>files</strong> are
 stored in the NLDS.  In reality the NLDS first writes the <strong>files</strong> to <em>object
 storage</em>.  Later the <strong>files</strong> are backed up to <em>tape storage</em>.  When the NLDS
-<em>object storage</em> approaches capacity, <strong>files</strong> will be removed from the
-<em>object storage</em> depending on a policy which takes into account several variables,
+<em>cache</em> approaches capacity, <strong>files</strong> will be removed from the
+<em>cache</em> depending on a policy which takes into account several variables,
 including when they were last accessed.  If a user subsequently GETs a <strong>file</strong>
-that has removed from the <em>object storage</em> then the NLDS will first retrive
-the <strong>file</strong> from the <em>tape storage</em> to the <em>object storage</em> before copying it
+that has removed from the <em>cache</em> then the NLDS will first retrieve
+the <strong>file</strong> from the <em>tape storage</em> to the <em>cache</em> before copying it
 to the user specified target.</p>
 <p>The <strong>location</strong> object in the Catalog database is associated to a file, and
 can have one of three states:</p>
-<p>1.  The <strong>file</strong> is held on the <em>object storage</em> only.  It will be backed up
-to the <em>tape storage</em> later.</p>
-<p>2.  The <strong>file</strong> is held on both the <em>object storage</em> and <em>tape storage</em>.  Users
-can access the file without any staging required by the NLDS.</p>
+<p>1.  The <strong>file</strong> is held on the <em>cache</em> only.  It will be backed up to the
+<em>tape storage</em> later.</p>
+<p>2.  The <strong>file</strong> is held on both the <em>cache</em> and <em>tape storage</em>.  Users can
+access the file without any staging required by the NLDS.</p>
 <p>3.  The <strong>file</strong> is held on the <em>tape storage</em> only.  If a user accesses the
 <strong>file</strong> then the NLDS will <em>stage</em> it to the <em>tape storage</em>, before completing
 the GET on behalf of the user.  The user does not need to concern themselves
 with the details of this.  However, accessing a file that is stored only on
-<em>tape</em> will take longer than if it was held on <em>object storage</em>.</p>
+<em>tape</em> will take longer than if it was held on <em>cache</em>.</p>
 </section>
 </section>
 
@@ -260,7 +262,35 @@ with the details of this.  However, accessing a file that is stored only on
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #A6C36F;
+    }
+
+    .caption-text {
+        color: #828C51
+    }
+
+    .wy-nav-side {
+        background: #1E352F;
+    }
+
+    a {
+        color: #828C51
+    }
+
+    .note {
+        background: #BEEF9E
+    }
+    .admonition-title {
+        background: #335145
+    }
+
+  </style>
+
 
 </body>
 </html>

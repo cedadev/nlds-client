@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Index &mdash; Near-Line Data Store 1.0.0-RC1 documentation</title>
+  <title>Index &mdash; Near-Line Data Store Client 1.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
+    <link rel="shortcut icon" href="_static/icon-black.png"/>
   <!--[if lt IE 9]>
     <script src="_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=98692dfe"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0b546569"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -31,10 +32,11 @@
           
           
           <a href="index.html" class="icon icon-home">
-            Near-Line Data Store
+            Near-Line Data Store Client
+              <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.0
+                1.0.1
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -61,7 +63,7 @@
 
     <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
           <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
-          <a href="index.html">Near-Line Data Store</a>
+          <a href="index.html">Near-Line Data Store Client</a>
       </nav>
 
       <div class="wy-nav-content">
@@ -82,8 +84,869 @@
 <h1 id="index">Index</h1>
 
 <div class="genindex-jumpbox">
+ <a href="#Symbols"><strong>Symbols</strong></a>
+ | <a href="#F"><strong>F</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  
 </div>
+<h2 id="Symbols">Symbols</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    --api_action
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-a">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --del_tag
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-D">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --group
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-g">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-g">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-g">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-g">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-g">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-g">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-g">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-g">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --groupall
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-A">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-A">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-A">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-A">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-A">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --holding_id
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-i">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-i">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-i">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-i">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-i">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-i">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-i">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --id
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-i">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --insecure
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-init-k">nlds-init command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --job_label
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-b">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-b">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-b">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-b">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-b">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --json
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-j">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-j">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-j">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-j">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-j">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-j">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-j">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-j">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --label
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-l">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-l">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-l">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-l">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-l">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-l">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-l">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --new_label
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-L">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --new_tag
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-T">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --path
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-p">nlds-find command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --simple
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-1">nlds-find command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --state
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-s">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --tag
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-t">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-t">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-t">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-t">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-t">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-t">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-t">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --target
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-r">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-r">nlds-getlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --transaction_id
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-n">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-n">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-n">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --url
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-U">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-init-u">nlds-init command line option</a>
+</li>
+      </ul></li>
+      <li>
+    --user
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-u">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-u">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-u">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-u">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-u">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-u">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-u">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-u">nlds-stat command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    -1
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-1">nlds-find command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -A
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-A">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-A">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-A">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-A">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-A">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -a
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-a">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -b
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-b">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-b">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-b">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-b">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-b">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -D
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-D">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -g
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-g">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-g">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-g">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-g">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-g">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-g">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-g">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-g">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -i
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-i">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-i">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-i">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-i">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-i">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-i">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-i">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-i">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -j
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-j">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-j">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-j">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-j">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-j">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-j">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-j">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-j">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -k
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-init-k">nlds-init command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -L
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-L">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -l
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-l">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-l">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-l">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-l">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-l">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-l">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-l">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -n
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-n">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-n">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-n">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -p
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-p">nlds-find command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -r
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-r">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-r">nlds-getlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -s
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-s">nlds-stat command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -T
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-T">nlds-meta command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -t
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-t">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-t">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-t">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-t">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-t">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-t">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-t">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -U
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-U">nlds-find command line option</a>
+</li>
+      </ul></li>
+      <li>
+    -u
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-u">nlds-find command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-u">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-u">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-init-u">nlds-init command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-u">nlds-list command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-u">nlds-meta command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-u">nlds-put command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-u">nlds-putlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-u">nlds-stat command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="F">F</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    FILELIST
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-arg-FILELIST">nlds-getlist command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-arg-FILELIST">nlds-putlist command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    FILEPATH
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-arg-FILEPATH">nlds-get command line option</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-arg-FILEPATH">nlds-put command line option</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    nlds-find command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-find-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-A">--groupall</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-p">--path</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-1">--simple</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-n">--transaction_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-U">--url</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-1">-1</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-A">-A</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-n">-n</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-p">-p</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-u">-u</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-find-U">-U</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-get command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-get-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-A">--groupall</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-b">--job_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-r">--target</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-A">-A</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-b">-b</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-r">-r</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-u">-u</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-get-arg-FILEPATH">FILEPATH</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-getlist command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-A">--groupall</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-b">--job_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-r">--target</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-A">-A</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-b">-b</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-r">-r</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-u">-u</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-getlist-arg-FILELIST">FILELIST</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-init command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-init-k">--insecure</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-init-u">--url</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-init-k">-k</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-init-u">-u</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-list command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-list-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-A">--groupall</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-n">--transaction_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-A">-A</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-n">-n</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-list-u">-u</a>
+</li>
+      </ul></li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li>
+    nlds-meta command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-D">--del_tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-L">--new_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-T">--new_tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-D">-D</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-L">-L</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-T">-T</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-meta-u">-u</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-put command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-put-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-b">--job_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-b">-b</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-u">-u</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-put-arg-FILEPATH">FILEPATH</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-putlist command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-i">--holding_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-b">--job_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-l">--label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-t">--tag</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-b">-b</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-l">-l</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-t">-t</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-u">-u</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-putlist-arg-FILELIST">FILELIST</a>
+</li>
+      </ul></li>
+      <li>
+    nlds-stat command line option
+
+      <ul>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-a">--api_action</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-g">--group</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-A">--groupall</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-i">--id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-b">--job_label</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-j">--json</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-s">--state</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-n">--transaction_id</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-u">--user</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-A">-A</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-a">-a</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-b">-b</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-g">-g</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-i">-i</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-j">-j</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-n">-n</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-s">-s</a>
+</li>
+        <li><a href="command_ref.html#cmdoption-nlds-stat-u">-u</a>
+</li>
+      </ul></li>
+  </ul></td>
+</tr></table>
+
 
 
            </div>
@@ -110,7 +973,35 @@
       jQuery(function () {
           SphinxRtdTheme.Navigation.enable(true);
       });
-  </script> 
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #A6C36F;
+    }
+
+    .caption-text {
+        color: #828C51
+    }
+
+    .wy-nav-side {
+        background: #1E352F;
+    }
+
+    a {
+        color: #828C51
+    }
+
+    .note {
+        background: #BEEF9E
+    }
+    .admonition-title {
+        background: #335145
+    }
+
+  </style>
+
 
 </body>
 </html>

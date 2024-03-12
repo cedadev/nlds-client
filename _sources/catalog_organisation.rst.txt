@@ -80,7 +80,7 @@ Transactions
 ------------
 
 **Transactions** record the user's action when PUTting a file into the NLDS.
-As alluded to above, in the :ref:`_holding` section, each **holding** can contain
+As alluded to above, in the :ref:`holding` section, each **holding** can contain
 numerous **transactions**.  A **transaction** is created every time a user PUTs
 a single file, or list of files, into the NLDS.  This **transaction** is assigned
 to a holding based on the **label** supplied by the user.  If a **label** is
@@ -150,26 +150,26 @@ The user interacts with the NLDS by PUTting and GETting **files**, without knowi
 (or caring) where those **files** are stored.  From a user view, the **files** are
 stored in the NLDS.  In reality the NLDS first writes the **files** to *object
 storage*.  Later the **files** are backed up to *tape storage*.  When the NLDS
-*object storage* approaches capacity, **files** will be removed from the 
-*object storage* depending on a policy which takes into account several variables,
+*cache* approaches capacity, **files** will be removed from the 
+*cache* depending on a policy which takes into account several variables,
 including when they were last accessed.  If a user subsequently GETs a **file**
-that has removed from the *object storage* then the NLDS will first retrive
-the **file** from the *tape storage* to the *object storage* before copying it
+that has removed from the *cache* then the NLDS will first retrieve
+the **file** from the *tape storage* to the *cache* before copying it
 to the user specified target.
 
 The **location** object in the Catalog database is associated to a file, and
 can have one of three states:
 
-1.  The **file** is held on the *object storage* only.  It will be backed up
-to the *tape storage* later.
+1.  The **file** is held on the *cache* only.  It will be backed up to the 
+*tape storage* later.
 
-2.  The **file** is held on both the *object storage* and *tape storage*.  Users
-can access the file without any staging required by the NLDS.
+2.  The **file** is held on both the *cache* and *tape storage*.  Users can 
+access the file without any staging required by the NLDS.
 
 3.  The **file** is held on the *tape storage* only.  If a user accesses the 
 **file** then the NLDS will *stage* it to the *tape storage*, before completing
 the GET on behalf of the user.  The user does not need to concern themselves
 with the details of this.  However, accessing a file that is stored only on 
-*tape* will take longer than if it was held on *object storage*.
+*tape* will take longer than if it was held on *cache*.
 
 
