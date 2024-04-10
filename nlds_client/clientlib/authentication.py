@@ -1,5 +1,4 @@
 import requests
-from requests_oauthlib import OAuth2Session
 import json
 import os.path
 import getpass
