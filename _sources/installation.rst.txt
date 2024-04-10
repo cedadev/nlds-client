@@ -19,5 +19,8 @@ user space or home directory.
 #. Activate your new virtual environment: |br|
    ``source ~/nlds-client/bin/activate``
 
+#. It is a good idea to upgrade your version of pip - otherwise some modules may fail to install: |br|
+   ``pip install --upgrade pip``
+
 #. Install the nlds-client package from github: |br|
    ``pip install git+https://github.com/cedadev/nlds-client.git``
