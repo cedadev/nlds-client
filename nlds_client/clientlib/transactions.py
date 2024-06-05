@@ -3,7 +3,7 @@
 """
 __author__ = 'Neil Massey and Jack Leland'
 __date__ = '29 Jan 2024'
-__copyright__ = 'Copyright 2021 United Kingdom Research and Innovation'
+__copyright__ = 'Copyright 2024 United Kingdom Research and Innovation'
 __license__ = 'BSD - see LICENSE file in top-level package directory'
 __contact__ = 'neil.massey@stfc.ac.uk'
 
@@ -372,7 +372,7 @@ def get_filelist(filelist: List[str]=[],
                  job_label: str = None,
                  label: str=None, 
                  holding_id: int=None, 
-                 tag: dict=None) -> Dict:
+                 tag: dict=None) -> dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
     :type filelist: List[string]
@@ -659,8 +659,7 @@ def monitor_transactions(user: str,
                          job_label: str=None,
                          api_action: str=None,
                          state: str=None, 
-                         sub_id: str=None,
-                         retry_count: int=None):
+                         sub_id: str=None):
     """Make a request to the monitoring database for a status update of ongoing 
     or finished transactions in the NLDS for, a user/group
 
@@ -693,9 +692,6 @@ def monitor_transactions(user: str,
     :param state: applies a state-specific filter to the status request, only 
         sub_records at the given state will be returned.
     :type state: string, optional
-
-    :param retry_count: returns sub_records at the given retry_count value
-    :type retry_count: int, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -731,8 +727,6 @@ def monitor_transactions(user: str,
         input_params["sub_id"] = sub_id
     if state is not None:
         input_params["state"] = state
-    if retry_count is not None:
-        input_params["retry_count"] = retry_count
 
     response_dict = main_loop(
         url=url,
@@ -772,7 +766,6 @@ def get_transaction_state(transaction: dict):
                 'id': 2, 
                 'sub_id': '007075b2-8c79-4cfa-a1e5-0aaa65892454', 
                 'state': 'COMPLETE', 
-                'retry_count': 0, 
                 'last_updated': '2022-12-06T15:45:44', 
                 'failed_files': []
             }
@@ -817,6 +810,8 @@ def get_transaction_state(transaction: dict):
         "ARCHIVE_PUTTING": 22,
         "CATALOG_ARCHIVE_UPDATING": 23,
         "CATALOG_ARCHIVE_ROLLBACK": 40,
+        "CATALOG_DELETE_ROLLBACK": 41,
+        "CATALOG_RESTORING": 42,
         "COMPLETE": 100,
         "FAILED": 101,
         "COMPLETE_WITH_ERRORS" : 102,
