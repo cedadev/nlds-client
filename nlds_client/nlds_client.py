@@ -87,7 +87,7 @@ def pretty_size(size):
 def format_request_details(user, group, groupall=False, label=None, 
                            holding_id=None, tag=None, id=None, 
                            transaction_id=None, sub_id=None, state=None, 
-                           retry_count=None, api_action=None, job_label=None):
+                           api_action=None, job_label=None):
     config = load_config()
     out = ""
     user = get_user(config, user)
@@ -114,8 +114,6 @@ def format_request_details(user, group, groupall=False, label=None,
         out += f"sub_id:{sub_id}, "
     if state:
         out += f"state:{state}, "
-    if retry_count:
-        out += f"retry_count:{retry_count}, "
     if api_action:
         out += f"api-action:{api_action}, "
     return out[:-2]
@@ -191,7 +189,6 @@ def print_single_stat(response: dict, req_details):
             click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
             click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
             click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
-            click.echo(f"{'':<9}{'retries':<13}: {sr['retry_count']}")
             click.echo(f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')}")
         
             if len(sr['failed_files']) > 0:
