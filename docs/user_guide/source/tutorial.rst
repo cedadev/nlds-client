@@ -377,9 +377,7 @@ can also be used with the transaction id, if you know it.
 
 In these last examples, the ``sub records`` are present as the NLDS will split
 large transactions (with many files, or large files) into smaller units of work,
-and create a ``sub record`` for each one of them.  Additionally, if a file (or
-number of files) cannot be transferred, then the NLDS will retry, up to a 
-maximum of 5 times, and create a ``sub record`` for each retry attempt.
+and create a ``sub record`` for each one of them.
 
 Being able to easily check the progress of transactions in the NLDS is a key 
 design idea.  To enable a program to check the progress, the ``-j`` option can
