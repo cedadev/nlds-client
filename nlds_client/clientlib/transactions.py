@@ -842,7 +842,7 @@ def get_transaction_state(transaction: dict):
 
     if min_state == 200:
         return None, None
-
+    
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
 
@@ -852,7 +852,7 @@ def get_transaction_state(transaction: dict):
         warning_count = len(transaction["warnings"])
     if min_state == state_mapping["COMPLETE"] and warning_count > 0:
         min_state = state_mapping["COMPLETE_WITH_WARNINGS"]
-
+        
     return state_mapping_reverse[min_state], min_time
 
 
