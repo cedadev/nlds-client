@@ -158,10 +158,10 @@ def print_list(response: dict, req_details):
     if n_holdings == 1:
         h = response["data"]["holdings"][0]
         click.echo(f"{'':<4}{'user':<16}: {h['user']}")
+        click.echo(f"{'':<4}{'group':<16}: {h['group']}")
         click.echo(f"{'':<4}{'id':<16}: {h['id']}")
         click.echo(f"{'':<4}{'label':<16}: {h['label']}")
         click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')}")
-        # click.echo(f"{'':<4}{'group':<16}: {h['group']}")
         if "transactions" in h:
             trans_str = ""
             for t in h["transactions"]:
@@ -500,7 +500,7 @@ user_help_text = (
     "--groupall",
     default=False,
     is_flag=True,
-    help="Get a file that belongs to a group, rather than a single " "user",
+    help="Get a file that belongs to a group, rather than a single user",
 )
 @click.option(
     "-r",
@@ -664,7 +664,7 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
     "--groupall",
     default=False,
     is_flag=True,
-    help="Get files that belong to a group, rather than a single " "user",
+    help="Get files that belong to a group, rather than a single user",
 )
 @click.option(
     "-r",
@@ -750,7 +750,7 @@ def getlist(
     "--groupall",
     default=False,
     is_flag=True,
-    help="List holdings that belong to a group, rather than a single " "user",
+    help="List holdings that belong to a group, rather than a single user",
 )
 @click.option(
     "-l",
@@ -838,7 +838,7 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
     "--groupall",
     default=False,
     is_flag=True,
-    help="List transactions that belong to a group, rather than a " "single user",
+    help="List transactions that belong to a group, rather than a single user",
 )
 @click.option(
     "-i",
@@ -946,7 +946,7 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action, state
     "--groupall",
     default=False,
     is_flag=True,
-    help="Find files that belong to a group, rather than a single " "user",
+    help="Find files that belong to a group, rather than a single user",
 )
 @click.option(
     "-l",
@@ -975,7 +975,7 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action, state
     "--path",
     default=None,
     type=str,
-    help="The path of the files to find.  This can be a regular " "expression (regex)",
+    help="The path of the files to find.  This can be a regular expression (regex)",
 )
 @click.option(
     "-t",
