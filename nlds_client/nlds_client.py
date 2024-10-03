@@ -631,7 +631,7 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
         files[i] = v.strip()
         if len(files[i]) == 0:
             files.pop(i)
-    
+
     try:
         response = put_filelist(files, user, group, job_label, label, holding_id, tag)
         if json:
