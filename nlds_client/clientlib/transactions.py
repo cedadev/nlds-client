@@ -60,8 +60,7 @@ def construct_server_url(config: Dict, method=""):
         urllib.parse.urljoin(
             config["server"]["url"], "/".join([config["server"]["api"], method])
         )
-        + "/"
-    )
+    ) + "/"
     return url
 
 
@@ -125,7 +124,7 @@ def process_transaction_response(
             response_msg = response.json()["detail"]
             raise RequestError(
                 f"Could not complete the request to the URL: {url} \n"
-                f"{response_msg} (HTTP_{response.status_code})",
+                f"Response was: {response_msg} (HTTP_{response.status_code})",
                 response.status_code,
             )
         elif response.status_code == requests.codes.unprocessable:  # 422
@@ -325,10 +324,9 @@ def put_filelist(
     secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
 
-    # Resolve path to file (i.e. make absolute) if configured so
-    if get_option(config, "resolve_filenames"):
-        # Convert to a pathlib.Path and then back to a string
-        filelist = [str(Path(fp).resolve()) for fp in filelist]
+    # Resolve the path to the file (i.e. make absolute)
+    # Convert to a pathlib.Path and then back to a string
+    filelist = [str(Path(fp).resolve()) for fp in filelist]
 
     # build the parameters.  files/put requires (for a filelist):
     #    transaction_id: UUID
@@ -437,28 +435,31 @@ def get_filelist(
     access_key = get_access_key(config)
     secret_key = get_secret_key(config)
     transaction_id = uuid.uuid4()
-    url = construct_server_url(config, "files") + "getlist"
 
-    # If target given then we're operating in "mode 2" where we're downloading
-    # the file to a new location
+    # If target given then we're downloading the file to a new location
     if target:
         target_p = Path(target)
-        # Resolve path to target (i.e. make absolute) if configured so
-        if get_option(config, "resolve_filenames"):
-            # Convert to a pathlib.Path to resolve and then back to a string
-            target = str(target_p.resolve())
+        # Convert to a pathlib.Path to resolve and then back to a string
+        target = str(target_p.resolve())
         # Recursively create the target path if it doesn't exist
         # NOTE: what permissions should be on this? Should _we_ be creating it
         # here? or should we just error at this point?
         if not target_p.exists():
             os.makedirs(target)
-    # If no target given then we are operating in "mode 1", i.e. we're
-    # downloading files back to their original locations.
+    # If no target given then we're downloading files back to their original locations.
     else:
-        # Resolve path to file (i.e. make absolute) if configured so
-        if get_option(config, "resolve_filenames"):
-            # Convert to a pathlib.Path to resolve, and then back to a string
-            filelist = [str(Path(fp).resolve()) for fp in filelist]
+        # Resolve path to file (i.e. make absolute)
+        # Convert to a pathlib.Path to resolve, and then back to a string
+        filelist = [str(Path(fp).resolve()) for fp in filelist]
+
+    # if there is only one file then call "get" HTTP API method
+    if len(filelist) == 1:
+        # have to remove the extra ["/"] from the end of construct_server_url for get
+        url = construct_server_url(config, f"files?filepath={filelist[0]}")[:-1]
+        call_method = requests.get
+    else:
+        url = construct_server_url(config, "files/getlist")
+        call_method = requests.put
 
     # build the parameters.  files/getlist/put requires:
     #    transaction_id     : UUID
@@ -498,7 +499,7 @@ def get_filelist(
         body_params["holding_id"] = holding_id
     # make the request
     response_dict = main_loop(
-        url=url, input_params=input_params, body_params=body_params, method=requests.put
+        url=url, input_params=input_params, body_params=body_params, method=call_method
     )
     if not response_dict:
         # If we get to this point then the transaction could not be processed
@@ -810,7 +811,7 @@ def get_transaction_state(transaction: dict):
         "CATALOG_PUTTING": 3,
         "TRANSFER_PUTTING": 4,
         "CATALOG_ROLLBACK": 5,
-        "CATALOG_UPDATE": 6,
+        "CATALOG_UPDATING": 6,
         "CATALOG_GETTING": 10,
         "ARCHIVE_GETTING": 11,
         "TRANSFER_GETTING": 12,
@@ -818,7 +819,7 @@ def get_transaction_state(transaction: dict):
         "CATALOG_ARCHIVE_AGGREGATING": 21,
         "ARCHIVE_PUTTING": 22,
         "CATALOG_ARCHIVE_UPDATING": 23,
-        "CATALOG_ARCHIVE_ROLLBACK": 40,
+        "CATALOG_ARCHIVE_REMOVING": 40,
         "CATALOG_DELETE_ROLLBACK": 41,
         "CATALOG_RESTORING": 42,
         "COMPLETE": 100,
@@ -843,7 +844,7 @@ def get_transaction_state(transaction: dict):
 
     if min_state == 200:
         return None, None
-    
+
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
 
@@ -853,7 +854,7 @@ def get_transaction_state(transaction: dict):
         warning_count = len(transaction["warnings"])
     if min_state == state_mapping["COMPLETE"] and warning_count > 0:
         min_state = state_mapping["COMPLETE_WITH_WARNINGS"]
-        
+
     return state_mapping_reverse[min_state], min_time
 
 
