@@ -203,7 +203,6 @@ def get_group(config, group):
 
 _DEFAULT_OPTIONS = {
     "verify_certificates": True,
-    "resolve_filenames": True
 }
 def get_option(config, option_name, section_name='options'):
     """Get an option from either the config or the DEFAULT_OPTIONS dict."""
