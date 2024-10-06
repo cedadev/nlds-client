@@ -789,6 +789,7 @@ def get_transaction_state(transaction: dict):
             CATALOG_PUTTING = 3
             TRANSFER_PUTTING = 4
             CATALOG_ROLLBACK = 5
+            CATALOG_UPDATING = 6
             CATALOG_GETTING = 10
             ARCHIVE_GETTING = 11
             TRANSFER_GETTING = 12
