@@ -16,7 +16,7 @@ from nlds_client.clientlib.transactions import (get_filelist, put_filelist,
                                                 list_holding, find_file,
                                                 monitor_transactions,
                                                 get_transaction_state,
-                                                change_metadata,
+                                                change_metadata, get_quota,
                                                 init_client)
 from nlds_client.clientlib.exceptions import (ConnectionError, 
                                               RequestError, 
@@ -738,6 +738,55 @@ def find(user, group, groupall, label, holding_id, transaction_id, path, tag,
                 print_find(response, req_details, simple, url)
         else:
             fail_string = "Failed to list files with "
+            fail_string += req_details
+            if response['details']['failure']:
+                fail_string += "\n" + response['details']['failure']
+            raise click.UsageError(fail_string)
+
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except AuthenticationError as ae:
+        raise click.UsageError(ae)
+    except RequestError as re:
+        raise click.UsageError(re)
+
+"""Quota command"""
+@nlds_client.command("quota", 
+                     help=f"Get the quota for a particular service.{user_help_text}")
+@click.option("-T", "--token", default=None, type=str,
+              help="The token used to get the quota information.")
+@click.option("-u", "--user", default=None, type=str,
+              help="The username of the user getting the quota.")
+@click.option("-g", "--group", default=None, type=str,
+              help="The group to get the quota for.")
+@click.option("-l", "--label", default=None, type=str,
+              help="The label of the holding which the files belong to.  This "
+              "can be a regular expression (regex).")
+@click.option("-i", "--holding_id", default=None, type=int,
+              help="The numeric id of the holding which the files belong to.")
+@click.option("-n", "--transaction_id", default=None, type=str,
+              help="The UUID transaction id of the transaction to list.")
+@click.option("-t", "--tag", default=None, type=TagParamType(),
+              help="The tag(s) of the holding(s) to find files within.")
+@click.option("-j", "--json", default=False, type=bool, is_flag=True,
+              help="Output the result as JSON.")
+
+def quota(token, user, group, label, holding_id, transaction_id, tag, 
+         json):
+    # 
+    try:
+        response = get_quota(token, user, group, label, holding_id, transaction_id, tag)
+        req_details = format_request_details(
+            user, group, label=label, 
+            holding_id=holding_id, tag=tag, transaction_id=transaction_id
+        )
+        if response['success']:
+            if json:
+                click.echo(json_dumps(response))
+            else:
+                print_find(response, req_details)
+        else:
+            fail_string = "Failed to get quota with "
             fail_string += req_details
             if response['details']['failure']:
                 fail_string += "\n" + response['details']['failure']
