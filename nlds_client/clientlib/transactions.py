@@ -448,18 +448,17 @@ def get_filelist(
             os.makedirs(target)
     # If no target given then we're downloading files back to their original locations.
     else:
-        # Resolve path to file (i.e. make absolute)
-        # Convert to a pathlib.Path to resolve, and then back to a string
-        filelist = [str(Path(fp).resolve()) for fp in filelist]
+        # Need to strip any empty file names from the list, otherwise they will be
+        # expanded to the current directory, which will create a FAILED file on the
+        # server as it will not be found in the database
+        clean_filelist = []
+        for fp in filelist:
+            fp = fp.strip()
+            if len(fp) > 0:
+                clean_filelist.append(fp)
 
-    # if there is only one file then call "get" HTTP API method
-    if len(filelist) == 1:
-        # have to remove the extra ["/"] from the end of construct_server_url for get
-        url = construct_server_url(config, f"files?filepath={filelist[0]}")[:-1]
-        call_method = requests.get
-    else:
-        url = construct_server_url(config, "files/getlist")
-        call_method = requests.put
+        # Convert to a pathlib.Path to resolve, and then back to a string
+        filelist = [str(Path(fp).resolve()) for fp in clean_filelist]
 
     # build the parameters.  files/getlist/put requires:
     #    transaction_id     : UUID
@@ -481,7 +480,34 @@ def get_filelist(
         "tenancy": tenancy,
         "target": target,
     }
-    body_params = {"filelist": filelist}
+
+    # if there is only one file then call "get" HTTP API method
+    if len(filelist) == 1:
+        # empty body params
+        body_params = {}
+        # have to remove the extra ["/"] from the end of construct_server_url for get
+        input_params["filepath"] = filelist[0]
+        # add optional components to header: label, tags, holding_id
+        if label is not None:
+            input_params["label"] = label
+        if tag is not None:
+            input_params["tag"] = tag_to_string(tag)
+        if holding_id is not None:
+            input_params["holding_id"] = holding_id
+        url = construct_server_url(config, f"files")
+        call_method = requests.get
+    else:
+        body_params = {"filelist": filelist}
+        # add optional components to body: label, tags, holding_id
+        if label is not None:
+            body_params["label"] = label
+        if tag is not None:
+            body_params["tag"] = tag
+        if holding_id is not None:
+            body_params["holding_id"] = holding_id
+        url = construct_server_url(config, "files/getlist")
+        call_method = requests.put
+
     # add optional job_label.  If None then use first 8 characters of UUID
     if job_label is None:
         if label is None:
@@ -490,13 +516,6 @@ def get_filelist(
             input_params["job_label"] = label
     else:
         input_params["job_label"] = job_label
-    # add optional components to body: label, tags, holding_id
-    if label is not None:
-        body_params["label"] = label
-    if tag is not None:
-        body_params["tag"] = tag_to_string(tag)
-    if holding_id is not None:
-        body_params["holding_id"] = holding_id
     # make the request
     response_dict = main_loop(
         url=url, input_params=input_params, body_params=body_params, method=call_method

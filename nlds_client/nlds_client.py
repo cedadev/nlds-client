@@ -255,7 +255,9 @@ def print_stat(response: dict, req_details):
     """Print out the response from the list command"""
     L = len(response["data"]["records"])
     if L == 0:
-        click.echo("No transactions found")
+        user = response["details"]["user"]
+        group = response["details"]["group"]
+        click.echo(f"No transactions found for user: {user}, group: {group}")
     elif L == 1:
         print_single_stat(response, req_details)
     else:
