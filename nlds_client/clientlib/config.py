@@ -1,7 +1,15 @@
+"""
+
+"""
+__author__ = 'Neil Massey and Jack Leland'
+__date__ = '29 Jan 2024'
+__copyright__ = 'Copyright 2024 United Kingdom Research and Innovation'
+__license__ = 'BSD - see LICENSE file in top-level package directory'
+__contact__ = 'neil.massey@stfc.ac.uk'
+
 import json
 import os.path
 
-from click import option
 from nlds_client.clientlib.nlds_client_setup import get_config_file_location
 from nlds_client.clientlib.exceptions import ConfigError
 
@@ -195,9 +203,8 @@ def get_group(config, group):
 
 _DEFAULT_OPTIONS = {
     "verify_certificates": True,
-    "resolve_filenames": True
 }
-def get_option(config, option_name, section_name='option'):
+def get_option(config, option_name, section_name='options'):
     """Get an option from either the config or the DEFAULT_OPTIONS dict."""
     if (section_name in config and
         # Get value from config if option section and option present

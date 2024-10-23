@@ -13,7 +13,7 @@ This configuration file is JSON formatted and contains the authentication
 credentials required by:
 
   * The OAuth server
-  * The Object Storage
+  * The Object Storage cache
 
 It also contains the default user and group to use when issuing a request to the
 NLDS.  These can be overriden by the ``-u|--user`` and ``-g|--group`` command
@@ -48,9 +48,6 @@ An example configuration file is shown below.
             "access_key" : "{{ object_store_access_key }}",
             "secret_key" : "{{ object_store_secret_key }}"
 
-        },
-        "option" : {
-            "resolve_filenames" : "false"
         }
     }
 
