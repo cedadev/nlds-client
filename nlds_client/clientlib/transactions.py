@@ -801,51 +801,49 @@ def get_transaction_state(transaction: dict):
     }
 
     possible values of state are:
-            INITIALISING = -1
-            ROUTING = 0
-            SPLITTING = 1
-            INDEXING = 2
-            CATALOG_PUTTING = 3
-            TRANSFER_PUTTING = 4
-            CATALOG_ROLLBACK = 5
-            CATALOG_UPDATING = 6
-            CATALOG_GETTING = 10
-            ARCHIVE_GETTING = 11
-            TRANSFER_GETTING = 12
-            ARCHIVE_INIT = 20
-            CATALOG_ARCHIVE_AGGREGATING = 21
-            ARCHIVE_PUTTING = 22
-            CATALOG_ARCHIVE_UPDATING = 23
-            CATALOG_ARCHIVE_ROLLBACK = 40
-            COMPLETE = 100
-            FAILED = 101
-            COMPLETE_WITH_ERRORS = 102
-            COMPLETE_WITH_WARNINGS = 103
+        INITIALISING = -1
+        ROUTING = 0
+        SPLITTING = 1
+        INDEXING = 2
+        CATALOG_PUTTING = 3
+        TRANSFER_PUTTING = 4
+        CATALOG_GETTING = 10
+        ARCHIVE_GETTING = 11
+        TRANSFER_GETTING = 12
+        ARCHIVE_INIT = 20
+        ARCHIVE_PUTTING = 21
+        CATALOG_DELETING = 30
+        CATALOG_UPDATING = 31
+        CATALOG_ARCHIVE_UPDATING = 32
+        CATALOG_REMOVING = 33
+        COMPLETE = 100
+        FAILED = 101
+        COMPLETE_WITH_ERRORS = 102
+        COMPLETE_WITH_WARNINGS = 103
+        SEARCHING = 1000
     The overall state is the minimum of these
     """
     state_mapping = {
-        "INITIALISING": -1,
-        "ROUTING": 0,
-        "SPLITTING": 1,
-        "INDEXING": 2,
-        "CATALOG_PUTTING": 3,
-        "TRANSFER_PUTTING": 4,
-        "CATALOG_ROLLBACK": 5,
-        "CATALOG_UPDATING": 6,
-        "CATALOG_GETTING": 10,
-        "ARCHIVE_GETTING": 11,
-        "TRANSFER_GETTING": 12,
-        "ARCHIVE_INIT": 20,
-        "CATALOG_ARCHIVE_AGGREGATING": 21,
-        "ARCHIVE_PUTTING": 22,
-        "CATALOG_ARCHIVE_UPDATING": 23,
-        "CATALOG_ARCHIVE_REMOVING": 40,
-        "CATALOG_DELETE_ROLLBACK": 41,
-        "CATALOG_RESTORING": 42,
-        "COMPLETE": 100,
-        "FAILED": 101,
-        "COMPLETE_WITH_ERRORS": 102,
-        "COMPLETE_WITH_WARNINGS": 103,
+        "INITIALISING" : -1,
+        "ROUTING" : 0,
+        "SPLITTING" : 1,
+        "INDEXING" : 2,
+        "CATALOG_PUTTING" : 3,
+        "TRANSFER_PUTTING" : 4,
+        "CATALOG_GETTING" : 10,
+        "ARCHIVE_GETTING" : 11,
+        "TRANSFER_GETTING" : 12,
+        "ARCHIVE_INIT" : 20,
+        "ARCHIVE_PUTTING" : 21,
+        "CATALOG_DELETING" : 30,
+        "CATALOG_UPDATING" : 31,
+        "CATALOG_ARCHIVE_UPDATING" : 32,
+        "CATALOG_REMOVING" : 33,
+        "COMPLETE" : 100,
+        "FAILED" : 101,
+        "COMPLETE_WITH_ERRORS" : 102,
+        "COMPLETE_WITH_WARNINGS" : 103,
+        "SEARCHING" : 1000,
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 

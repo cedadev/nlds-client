@@ -5,15 +5,15 @@ Value,State,Description
 ``2``,``'INDEXING'``,Scanning the files and directories in the PUT transaction.
 ``3``,``'CATALOG_PUTTING'``,Recording the scanned files into the catalog entry for the transaction.
 ``4``,``'TRANSFER_PUTTING'``,"Putting the files to the NLDS, actually transferring the data. "
-``5``,``'CATALOG_ROLLBACK'``,"Remove, from the catalog, any inaccessible files in the transaction."
 ``10``,``'CATALOG_GETTING'``,Get a catalog entry.
 ``11``,``'ARCHIVE_GETTING'``,Getting the files from the NLDS tape store.
-``12``,``'TRANSFER_GETTING'``,Getting the files from the NLDS cache.
+``12``,``'TRANSFER_GETTING'``,Getting the files from the NLDS object store cache.
 ``20``,``'ARCHIVE_INIT'``,Archive transaction is starting.
-``21``,``'CATALOG_ARCHIVE_AGGREGATING'``,Aggregating files for a tape write.
-``22``,``'ARCHIVE_PUTTING'``,Putting the aggregated files into the tape store from the NLDS cache.
-``23``,``'CATALOG_ARCHIVE_UPDATING'``,Updating the catalog with post-tape-write information.
-``40``,``'CATALOG_ARCHIVE_ROLLBACK'``,Remove tape entries from the catalog if something went wrong during tape-write. 
+``21``,``'ARCHIVE_PUTTING'``,Putting the aggregated files into the tape store from the NLDS cache.
+``30``,``'CATALOG_DELETING'``,"Remove, from the catalog, any inaccessible files in the transaction."
+``31``,``'CATALOG_UPDATING``,Updating the catalog with post object store write
+``32``,``'CATALOG_ARCHIVE_UPDATING'``,Updating the catalog with post tape write information.
+``33``,``'CATALOG_REMOVING'``,"Remove, from the catalog, any empty storage locations.  This occurs if a write to tape or restore to object store fails.
 ``100``,``'COMPLETE'``,Transaction has completed successfully.
 ``101``,``'FAILED'``,Transaction has failed completely.
 ``102``,``'COMPLETE_WITH_ERRORS'``,"Transaction has completed, but with some errors."
