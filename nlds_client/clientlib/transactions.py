@@ -810,8 +810,10 @@ def get_transaction_state(transaction: dict):
         CATALOG_GETTING = 10
         ARCHIVE_GETTING = 11
         TRANSFER_GETTING = 12
+        TRANSFER_INIT = 13
         ARCHIVE_INIT = 20
         ARCHIVE_PUTTING = 21
+        ARCHIVE_PREPARING = 22
         CATALOG_DELETING = 30
         CATALOG_UPDATING = 31
         CATALOG_ARCHIVE_UPDATING = 32
@@ -833,8 +835,10 @@ def get_transaction_state(transaction: dict):
         "CATALOG_GETTING" : 10,
         "ARCHIVE_GETTING" : 11,
         "TRANSFER_GETTING" : 12,
+        "TRANSFER_INIT" : 13,
         "ARCHIVE_INIT" : 20,
         "ARCHIVE_PUTTING" : 21,
+        "ARCHIVE_PREPARING" : 22,
         "CATALOG_DELETING" : 30,
         "CATALOG_UPDATING" : 31,
         "CATALOG_ARCHIVE_UPDATING" : 32,
