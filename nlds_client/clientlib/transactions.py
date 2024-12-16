@@ -1006,7 +1006,7 @@ def get_quota(token: str,
 
     if not response_dict:
         response_dict = {
-            "msg"  : f"FIND files for user {user} and group {group} failed",
+            "msg"  : f"GET QUOTA for user {user} and group {group} failed",
             "success" : False
         }
     # mark as failed in RPC call

@@ -357,6 +357,15 @@ def print_meta(response:dict, req_details:str):
         click.echo(f"{'':<12}{'label':<8}: {h['new_meta']['label']}")
         click.echo(f"{'':<12}{'tags':<8}: {h['new_meta']['tags']}")
 
+def print_quota(response: dict, req_details:str):
+    """Print out the response from the client command"""
+    quota_string = "The allocated quota for the group "
+    quota_string += response['details']['group']
+    quota_string += " is "
+    quota_string += str(response['data']['holdings'])
+    quota_string += " GB."
+    click.echo(quota_string)
+
 
 def print_response(tr:dict):
     if 'msg' in tr and len(tr['msg']) > 0:
@@ -784,7 +793,7 @@ def quota(token, user, group, label, holding_id, transaction_id, tag,
             if json:
                 click.echo(json_dumps(response))
             else:
-                print_find(response, req_details)
+                print_quota(response, req_details)
         else:
             fail_string = "Failed to get quota with "
             fail_string += req_details
