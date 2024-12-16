@@ -236,7 +236,7 @@ def main_loop(
                 verify=verify,
                 **kwargs,
             )
-        except requests.exceptions.ConnectionError:
+        except requests.exceptions.ConnectionError as e:
             raise ConnectionError(
                 f"Could not connect to the URL: {url}\n"
                 "Check the ['server']['url'] and ['server']['api'] setting in "

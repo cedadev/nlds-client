@@ -1345,7 +1345,7 @@ def init(url: str = None, insecure: bool = False):
         ) or "new_config" not in response:
             raise RequestError(f"Could not init NLDS, something has gone wrong")
         success_msg = f"Successfully initialised, "
-        path_str = click.style(CONFIG_FILE_LOCATION, fg="black")
+        path_str = click.style(CONFIG_FILE_LOCATION, fg="yellow")
         if response["new_config"]:
             success_msg += (
                 f"a template config file has been created at "
