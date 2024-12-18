@@ -361,8 +361,11 @@ def print_quota(response: dict, req_details:str):
     """Print out the response from the quota command"""
     try:
         group = response['details']['group']
-        quota = response['data']['holdings']
-        quota_string = f"The allocated quota for the group {group} is {quota} GB."
+        quota = response['data']['quota']
+        if quota == 0:
+            quota_string = f"There is no allocated quota for the group {group}."
+        else:
+            quota_string = f"The allocated quota for the group {group} is {quota} GB."
         click.echo(f"Checking quota for {req_details}:")
         click.echo(quota_string)
     except KeyError as e:
