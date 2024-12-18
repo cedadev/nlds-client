@@ -358,13 +358,15 @@ def print_meta(response:dict, req_details:str):
         click.echo(f"{'':<12}{'tags':<8}: {h['new_meta']['tags']}")
 
 def print_quota(response: dict, req_details:str):
-    """Print out the response from the client command"""
-    quota_string = "The allocated quota for the group "
-    quota_string += response['details']['group']
-    quota_string += " is "
-    quota_string += str(response['data']['holdings'])
-    quota_string += " GB."
-    click.echo(quota_string)
+    """Print out the response from the quota command"""
+    try:
+        group = response['details']['group']
+        quota = response['data']['holdings']
+        quota_string = f"The allocated quota for the group {group} is {quota} GB."
+        click.echo(f"Checking quota for {req_details}:")
+        click.echo(quota_string)
+    except KeyError as e:
+        click.echo(f"Error: Missing key in response data - {e}")
 
 
 def print_response(tr:dict):
@@ -762,32 +764,16 @@ def find(user, group, groupall, label, holding_id, transaction_id, path, tag,
 """Quota command"""
 @nlds_client.command("quota", 
                      help=f"Get the quota for a particular service.{user_help_text}")
-@click.option("-T", "--token", default=None, type=str,
-              help="The token used to get the quota information.")
 @click.option("-u", "--user", default=None, type=str,
               help="The username of the user getting the quota.")
 @click.option("-g", "--group", default=None, type=str,
               help="The group to get the quota for.")
-@click.option("-l", "--label", default=None, type=str,
-              help="The label of the holding which the files belong to.  This "
-              "can be a regular expression (regex).")
-@click.option("-i", "--holding_id", default=None, type=int,
-              help="The numeric id of the holding which the files belong to.")
-@click.option("-n", "--transaction_id", default=None, type=str,
-              help="The UUID transaction id of the transaction to list.")
-@click.option("-t", "--tag", default=None, type=TagParamType(),
-              help="The tag(s) of the holding(s) to find files within.")
-@click.option("-j", "--json", default=False, type=bool, is_flag=True,
-              help="Output the result as JSON.")
 
-def quota(token, user, group, label, holding_id, transaction_id, tag, 
-         json):
-    # 
+def quota(user, group, ):
     try:
-        response = get_quota(token, user, group, label, holding_id, transaction_id, tag)
+        response = get_quota(user, group, )
         req_details = format_request_details(
-            user, group, label=label, 
-            holding_id=holding_id, tag=tag, transaction_id=transaction_id
+            user, group,
         )
         if response['success']:
             if json:

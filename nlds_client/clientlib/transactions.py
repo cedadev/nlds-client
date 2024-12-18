@@ -939,33 +939,16 @@ def change_metadata(user: str,
     return response_dict
 
 
-def get_quota(token: str,
-              user: str, 
+def get_quota(user: str, 
               group: str, 
-              label: str=None, 
-              holding_id: int=None,
-              transaction_id: str=None,
-              tag: dict=None):
+            ):
     """Make a request to get the quota for a particular group in the NLDS
-    :param token: the auth token needed to get the quota
-    :type token: string
 
     :param user: the username to get the quota
     :type user: string
 
     :param group: the group to get the quota for
     :type group: string
-
-    :param label: the label of an existing holding to get the details for
-    :type label: str, optional
-
-    :param holding_id: the integer id of an existing holding to get the details
-    :type holding_id: int, optional
-
-    :param tag: a list of key:value pairs to search holdings for - return
-        holdings with these tags.  This will be converted to dictionary before 
-        calling the remote method.
-    :type tag: dict, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -987,16 +970,6 @@ def get_quota(token: str,
     input_params = {"user" : user,
                     "group" : group,
                     "token": token,}
-
-    # add additional / optional components to input params
-    if label is not None:
-        input_params["label"] = label
-    if tag is not None:
-        input_params["tag"] = tag_to_string(tag)
-    if holding_id is not None:
-        input_params["holding_id"] = holding_id
-    if transaction_id is not None:
-        input_params["transaction_id"] = transaction_id
 
     response_dict = main_loop(
         url=url, 
