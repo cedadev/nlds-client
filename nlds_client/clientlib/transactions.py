@@ -239,6 +239,7 @@ def main_loop(
         except requests.exceptions.ConnectionError as e:
             raise ConnectionError(
                 f"Could not connect to the URL: {url}\n"
+                f"Reason {e}\n"
                 "Check the ['server']['url'] and ['server']['api'] setting in "
                 f"the {CONFIG_FILE_LOCATION} file."
             )
