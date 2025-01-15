@@ -4,8 +4,8 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial &mdash; Near-Line Data Store Client 1.0.1 documentation</title>
-      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+  <title>Tutorial &mdash; Near-Line Data Store Client 1.0.5 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
   
@@ -16,13 +16,13 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=0b546569"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=f7257fce"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Status Codes" href="status_codes.html" />
+    <link rel="next" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" />
     <link rel="prev" title="Catalog Organisation" href="catalog_organisation.html" /> 
 </head>
 
@@ -39,7 +39,7 @@
               <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.1
+                1.0.5
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -71,6 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#adding-tags-to-a-file-collection-meta">Adding tags to a file collection (META)</a></li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">NLDS License</a></li>
@@ -150,20 +151,53 @@ NLDS installation on JASMIN, the user must also:</p>
 <li><p>Have access to the Object Storage tenancy (cache) they wish to write files to</p></li>
 <li><p>Be a member of, and have read/write access to, the GroupWorkspace they wish
 to use for writing to tape</p></li>
+<li><p>The NLDS client is a command-line program with the name <code class="docutils literal notranslate"><span class="pre">nlds</span></code>, which requires
+installation into the users homespace, preferably into a Python virtual-environment.
+To install <code class="docutils literal notranslate"><span class="pre">nlds</span></code>, refer to the page <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a>.</p></li>
 </ol>
-<p>The NLDS client is a command-line program with the name <cite>nlds</cite>.
-To install this, refer to the page <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">nlds</span></code> client program relies on a configuration file stored in the user’s
 home directory with the path <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>.  This contains information
-needed to connect the client to the NLDS server.  For more information, refer
+needed to connect the client to the NLDS server.  For more in-depth information, refer
 to the page <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">configuration</span></a>.</p>
-<p>On JASMIN, the <code class="docutils literal notranslate"><span class="pre">user_name</span></code> and <code class="docutils literal notranslate"><span class="pre">user_gws</span></code> fields can be filled in by the
-user.  However, all of the fields in the <code class="docutils literal notranslate"><span class="pre">server</span></code> section of the file, and the
-<code class="docutils literal notranslate"><span class="pre">authentication</span></code> section will need to be provided by the <code class="docutils literal notranslate"><span class="pre">init</span></code> command - see the
-<a class="reference internal" href="configuration.html#init"><span class="std std-ref">relevant seciton</span></a> for details. Fields in the <code class="docutils literal notranslate"><span class="pre">object_storage</span></code>
-section will need to match those generated by the <a class="reference external" href="https://s3-portal.jasmin.ac.uk/login">Object Store portal</a>
-on JASMIN. Users can freely change the value of the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code>
-field in the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section.</p>
+<p>The configuration file has the contents:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;user&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;default_user&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ user_name }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;default_group&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ user_gws }}&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;server&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;url&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ nlds_api_url }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;api&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ nlds_api_version }}&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;authentication&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;oauth_client_id&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_client_id }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;oauth_client_secret&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_client_secret }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;oauth_token_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_token_url }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;oauth_scopes&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_scopes }}&quot;&quot;,</span>
+        <span class="s2">&quot;oauth_token_file_location&quot;</span> <span class="p">:</span> <span class="s2">&quot;~/.nlds-token&quot;</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;object_storage&quot;</span> <span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;tenancy&quot;</span>    <span class="p">:</span> <span class="s2">&quot;{{ object_store_tenancy }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;access_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_access_key }}&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;secret_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_secret_key }}&quot;</span>
+
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+<p>After installing the client, the <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">init</span></code> command can be used to fill in the
+majority of this file.  The <code class="docutils literal notranslate"><span class="pre">init</span></code> command will fill in:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">server</span></code> section.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section.</p></li>
+</ol>
+<p>The user will have to fill in the following sections:</p>
+<ol class="arabic simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">user_name</span></code>.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">user_gws</span></code>.</p></li>
+<li><p>The value of the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> field in the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section can be changed to a location of the user’s choosing.</p></li>
+<li><p>Fields in the <code class="docutils literal notranslate"><span class="pre">object_storage</span></code> section are generated by the user interacting with the object storage portal to generate the <code class="docutils literal notranslate"><span class="pre">access_key</span></code> and <code class="docutils literal notranslate"><span class="pre">secret_key</span></code> values.</p></li>
+</ol>
 </section>
 <section id="running-the-nlds-client-for-the-first-time">
 <span id="first"></span><h2>Running the NLDS client for the first time<a class="headerlink" href="#running-the-nlds-client-for-the-first-time" title="Permalink to this heading"></a></h2>
@@ -421,9 +455,7 @@ State of transaction for user:frjohn, group:farmers, transaction_id:41d412e2-1c1
 </div>
 <p>In these last examples, the <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">records</span></code> are present as the NLDS will split
 large transactions (with many files, or large files) into smaller units of work,
-and create a <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">record</span></code> for each one of them.  Additionally, if a file (or
-number of files) cannot be transferred, then the NLDS will retry, up to a
-maximum of 5 times, and create a <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">record</span></code> for each retry attempt.</p>
+and create a <code class="docutils literal notranslate"><span class="pre">sub</span> <span class="pre">record</span></code> for each one of them.</p>
 <p>Being able to easily check the progress of transactions in the NLDS is a key
 design idea.  To enable a program to check the progress, the <code class="docutils literal notranslate"><span class="pre">-j</span></code> option can
 be used to return a JSON formatted version of the status.</p>
@@ -923,7 +955,7 @@ Changed metadata for holding for user:frjohn, group:farmers, tag:{&#39;type&#39;
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="catalog_organisation.html" class="btn btn-neutral float-left" title="Catalog Organisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="status_codes.html" class="btn btn-neutral float-right" title="Status Codes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

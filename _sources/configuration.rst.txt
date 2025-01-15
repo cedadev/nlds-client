@@ -48,9 +48,6 @@ An example configuration file is shown below.
             "access_key" : "{{ object_store_access_key }}",
             "secret_key" : "{{ object_store_secret_key }}"
 
-        },
-        "option" : {
-            "resolve_filenames" : "false"
         }
     }
 
