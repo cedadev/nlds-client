@@ -1,3 +1,5 @@
+.. _tutorial:
+
 Tutorial
 ========
 
@@ -113,7 +115,7 @@ Running the NLDS client for the first time
 Once the NLDS client is successfully installed, the user can run it. It is 
 recommended that you run the ``init`` command first, which will fill in the url 
 and authentication sections of the ``.nlds-config`` file for you - see the 
-:ref:`relevant seciton<init>` for details.
+:ref:`relevant section<init>` for details.
 
 Once initialised, the first time ``nlds`` is run on JASMIN the user will be 
 asked for their username and password. These are the JASMIN username and 

@@ -22,8 +22,8 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" />
-    <link rel="prev" title="Catalog Organisation" href="catalog_organisation.html" /> 
+    <link rel="next" title="Catalog Organisation" href="catalog_organisation.html" />
+    <link rel="prev" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,7 +53,7 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
-<li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Tutorial</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#introduction-to-the-nlds">Introduction to the NLDS</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#setting-up-the-nlds-client">Setting up the NLDS client</a></li>
@@ -71,7 +71,7 @@
 <li class="toctree-l2"><a class="reference internal" href="#adding-tags-to-a-file-collection-meta">Adding tags to a file collection (META)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">NLDS License</a></li>
@@ -102,7 +102,7 @@
            <div itemprop="articleBody">
              
   <section id="tutorial">
-<h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
+<span id="id1"></span><h1>Tutorial<a class="headerlink" href="#tutorial" title="Permalink to this heading"></a></h1>
 <p>This page is a tutorial on NLDS covering:</p>
 <ul class="simple">
 <li><p><a class="reference internal" href="#intro"><span class="std std-ref">Introduction to the NLDS</span></a></p></li>
@@ -136,10 +136,10 @@ needs to interact with the service itself rather than manually specifying the
 movement of data between disk, cache, and tape.</p>
 <p>The NLDS also provides a searchable catalog of files, with the user able to
 assign a label and tags to a collection of files.</p>
-<figure class="align-default" id="id1">
+<figure class="align-default" id="id2">
 <img alt="_images/userview.png" src="_images/userview.png" />
 <figcaption>
-<p><span class="caption-text">Figure 1: User view of the Near-Line Data Store</span><a class="headerlink" href="#id1" title="Permalink to this image"></a></p>
+<p><span class="caption-text">Figure 1: User view of the Near-Line Data Store</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>
@@ -204,7 +204,7 @@ majority of this file.  The <code class="docutils literal notranslate"><span cla
 <p>Once the NLDS client is successfully installed, the user can run it. It is
 recommended that you run the <code class="docutils literal notranslate"><span class="pre">init</span></code> command first, which will fill in the url
 and authentication sections of the <code class="docutils literal notranslate"><span class="pre">.nlds-config</span></code> file for you - see the
-<a class="reference internal" href="configuration.html#init"><span class="std std-ref">relevant seciton</span></a> for details.</p>
+<a class="reference internal" href="configuration.html#init"><span class="std std-ref">relevant section</span></a> for details.</p>
 <p>Once initialised, the first time <code class="docutils literal notranslate"><span class="pre">nlds</span></code> is run on JASMIN the user will be
 asked for their username and password. These are the JASMIN username and
 password, which the user usually uses to login into JASMIN via
@@ -230,10 +230,10 @@ with the ability to add metadata to the <em>Holdings</em> in the form of <em>Tag
 <em>Labels</em>.</p>
 <p>Figure 2 shows a simplified view of the NLDS data-catalog.  This is covered in
 much more depth in the <a class="reference internal" href="catalog_organisation.html#catalog-organisation"><span class="std std-ref">Catalog Organisation</span></a> section.</p>
-<figure class="align-default" id="id2">
+<figure class="align-default" id="id3">
 <img alt="_images/simple_catalog.png" src="_images/simple_catalog.png" />
 <figcaption>
-<p><span class="caption-text">Figure 2: Simplified view of the NLDS data-catalog</span><a class="headerlink" href="#id2" title="Permalink to this image"></a></p>
+<p><span class="caption-text">Figure 2: Simplified view of the NLDS data-catalog</span><a class="headerlink" href="#id3" title="Permalink to this image"></a></p>
 </figcaption>
 </figure>
 </section>
@@ -954,8 +954,8 @@ Changed metadata for holding for user:frjohn, group:farmers, tag:{&#39;type&#39;
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="catalog_organisation.html" class="btn btn-neutral float-left" title="Catalog Organisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="step_by_step.html" class="btn btn-neutral float-left" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="catalog_organisation.html" class="btn btn-neutral float-right" title="Catalog Organisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

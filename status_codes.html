@@ -23,7 +23,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Command Line Reference" href="command_ref.html" />
-    <link rel="prev" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" /> 
+    <link rel="prev" title="Catalog Organisation" href="catalog_organisation.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -53,9 +53,9 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
-<li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Status Codes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#transaction-states">Transaction states</a></li>
 </ul>
@@ -96,6 +96,101 @@ The state of a transaction can be queried by using the <code class="docutils lit
 in the <code class="docutils literal notranslate"><span class="pre">nlds_client</span></code>.</p>
 <section id="transaction-states">
 <h2>Transaction states<a class="headerlink" href="#transaction-states" title="Permalink to this heading"></a></h2>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 10.0%" />
+<col style="width: 30.0%" />
+<col style="width: 60.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Value</p></th>
+<th class="head"><p>State</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">-1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'INITIALISING'</span></code></p></td>
+<td><p>Transaction is starting.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">0</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'ROUTING'</span></code></p></td>
+<td><p>Transaction is in the message queue.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">1</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'SPLITTING'</span></code></p></td>
+<td><p>Transaction is being split into smaller transactions. The user doesn’t have to worry about this.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">2</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'INDEXING'</span></code></p></td>
+<td><p>Scanning the files and directories in the PUT transaction.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">3</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_PUTTING'</span></code></p></td>
+<td><p>Recording the scanned files into the catalog entry for the transaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">4</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'TRANSFER_PUTTING'</span></code></p></td>
+<td><p>Putting the files to the NLDS. Actually transferring the data.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">10</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_GETTING'</span></code></p></td>
+<td><p>Get a catalog entry.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">11</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_GETTING'</span></code></p></td>
+<td><p>Getting the files from the NLDS tape store.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">12</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'TRANSFER_GETTING'</span></code></p></td>
+<td><p>Getting the files from the NLDS object store cache.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">20</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_INIT'</span></code></p></td>
+<td><p>Archive transaction is starting.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">21</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_PUTTING'</span></code></p></td>
+<td><p>Putting the aggregated files into the tape store from the NLDS cache.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">22</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_PREPARING'</span></code></p></td>
+<td><p>Requesting the files from the tape system when they have to be fetched from tape.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">30</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_DELETING'</span></code></p></td>
+<td><p>Remove from the catalog any inaccessible files in the transaction.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">31</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_UPDATING</span></code></p></td>
+<td><p>Updating the catalog with post object store write</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">32</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_ARCHIVE_UPDATING'</span></code></p></td>
+<td><p>Updating the catalog with post tape write information.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">33</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_REMOVING'</span></code></p></td>
+<td><p>Remove from the catalog any empty storage locations.  This occurs if a write to tape or restore to object store fails.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE'</span></code></p></td>
+<td><p>Transaction has completed successfully.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">101</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'FAILED'</span></code></p></td>
+<td><p>Transaction has failed completely.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">102</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE_WITH_ERRORS'</span></code></p></td>
+<td><p>Transaction has completed but with some errors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">103</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE_WITH_WARNINGS'</span></code></p></td>
+<td><p>Transaction has completed but with some warnings.</p></td>
+</tr>
+</tbody>
+</table>
 </section>
 </section>
 
@@ -103,7 +198,7 @@ in the <code class="docutils literal notranslate"><span class="pre">nlds_client<
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="step_by_step.html" class="btn btn-neutral float-left" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="catalog_organisation.html" class="btn btn-neutral float-left" title="Catalog Organisation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
         <a href="command_ref.html" class="btn btn-neutral float-right" title="Command Line Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
