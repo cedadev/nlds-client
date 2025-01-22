@@ -4,18 +4,18 @@ Value,State,Description
 ``1``,``'SPLITTING'``,Transaction is being split into smaller transactions. The user doesn't have to worry about this.
 ``2``,``'INDEXING'``,Scanning the files and directories in the PUT transaction.
 ``3``,``'CATALOG_PUTTING'``,Recording the scanned files into the catalog entry for the transaction.
-``4``,``'TRANSFER_PUTTING'``,"Putting the files to the NLDS, actually transferring the data. "
+``4``,``'TRANSFER_PUTTING'``,Putting the files to the NLDS. Actually transferring the data.
 ``10``,``'CATALOG_GETTING'``,Get a catalog entry.
 ``11``,``'ARCHIVE_GETTING'``,Getting the files from the NLDS tape store.
 ``12``,``'TRANSFER_GETTING'``,Getting the files from the NLDS object store cache.
 ``20``,``'ARCHIVE_INIT'``,Archive transaction is starting.
 ``21``,``'ARCHIVE_PUTTING'``,Putting the aggregated files into the tape store from the NLDS cache.
-``22``,``'ARCHIVE_PREPARING'``,Requesting the files from the tape system, when they have to be fetched from tape.
-``30``,``'CATALOG_DELETING'``,"Remove, from the catalog, any inaccessible files in the transaction."
+``22``,``'ARCHIVE_PREPARING'``,Requesting the files from the tape system when they have to be fetched from tape.
+``30``,``'CATALOG_DELETING'``,Remove from the catalog any inaccessible files in the transaction.
 ``31``,``'CATALOG_UPDATING``,Updating the catalog with post object store write
 ``32``,``'CATALOG_ARCHIVE_UPDATING'``,Updating the catalog with post tape write information.
-``33``,``'CATALOG_REMOVING'``,"Remove, from the catalog, any empty storage locations.  This occurs if a write to tape or restore to object store fails.
+``33``,``'CATALOG_REMOVING'``,Remove from the catalog any empty storage locations.  This occurs if a write to tape or restore to object store fails.
 ``100``,``'COMPLETE'``,Transaction has completed successfully.
 ``101``,``'FAILED'``,Transaction has failed completely.
-``102``,``'COMPLETE_WITH_ERRORS'``,"Transaction has completed, but with some errors."
-``103``,``'COMPLETE_WITH_WARNINGS'``,"Transaction has completed, but with some warnings."
+``102``,``'COMPLETE_WITH_ERRORS'``,Transaction has completed but with some errors.
+``103``,``'COMPLETE_WITH_WARNINGS'``,Transaction has completed but with some warnings.

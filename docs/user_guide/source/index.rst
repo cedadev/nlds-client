@@ -19,9 +19,9 @@ client provided to users for programmatic or interactive use.
 
    installation.rst
    configuration.rst
-   catalog_organisation.rst
-   tutorial.rst
    step_by_step.rst
+   tutorial.rst
+   catalog_organisation.rst
    status_codes.rst
    command_ref.rst
    license.rst
