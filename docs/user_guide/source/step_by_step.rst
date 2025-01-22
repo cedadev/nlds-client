@@ -17,8 +17,8 @@ The following sections will deal with each of these in turn.
 Getting a JASMIN user account
 -----------------------------
 
-This is covered extensively in the "Getting Started" section of the JASMIN help docs.
-`JASMIN : Docs : Getting Started <https://help.jasmin.ac.uk/docs/getting-started/>`_
+This is covered extensively in the "Getting Started" section of the JASMIN help docs:
+`JASMIN : Docs : Getting Started <https://help.jasmin.ac.uk/docs/getting-started/>`_.
 
 .. image:: ./jasmin_help.png
     :width: 50 %
@@ -32,7 +32,7 @@ Getting access to a Group Workspace
 Before proceeding, please read the JASMIN introduction to Group Workspaces:
 `JASMIN : Docs : What is a Group Workspace? <https://help.jasmin.ac.uk/docs/short-term-project-storage/introduction-to-group-workspaces/>`_
 
-Once you have access to JASMIN, you will need to apply for access to the Group Workspace that you wish to put files into the NLDS from, and also as a location to retrieve files from the NLDS to.
+Once you have access to JASMIN, you will need to apply for access to the Group Workspace (GWS) that you wish to put files into the NLDS from, and also as a location to retrieve files from the NLDS to.
 This is done via the JASMIN accounts portal:
 
 1. Log into the JASMIN accounts portal: `accounts.jasmin.ac.uk <https://accounts.jasmin.ac.uk>`_
@@ -54,7 +54,7 @@ This is done via the JASMIN accounts portal:
     :width: 50 %
     :align: center
 
-5. Click ``Apply for Access``, fill out the form and click ``Apply``.  This will make a request to the JASMIN team, who will answer your request and either confirm or deny your access to the GWS.  You need to await an email detailing the outcome of this decision before proceeding to the next step.
+5. Click ``Apply for Access``, fill out the form and click ``Apply``.  This will make a request to the GWS Manager, who will answer your request and either confirm or deny your access to the GWS.  You need to await an email detailing the outcome of this decision before proceeding to the next step.
 
 .. _object_store_access:
 
@@ -62,30 +62,30 @@ Access to the Object Store
 --------------------------
 
 Before proceeding, please read the JASMIN help documentation on the Object Store:
-`JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_
+`JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_.
 
 You will require access to the Object Store that is used by NLDS to store files before they are put to tape, and after they are retrieved from tape.  To gain access two keys are required: the ``access key`` and the ``secret key``.  These are obtained by interacting with the Object Store portal but, before that, you must apply for access to the NLDS tenancy on the Object Store.  A tenancy is the name of an allocated area of space on the Object Store.
 
-1. Follow steps ``1`` & ``2`` in :ref:`gws_access`
+1. Follow steps ``1`` & ``2`` in :ref:`gws_access`.
 2. Click on ``My services`` and click on ``Object Store`` in the left-hand gray column.  You will see this screen:
 
 .. image:: ./obj_store.png
     :width: 50 %
     :align: center
 
-3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  As before, this will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
+3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
 
 .. note::
-    If you are taking part in the ``nlds`` beta testing program, then you will have to apply for the tenancy ``cedadev-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``cedadev-o``.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to apply for the tenancy ``cedadev-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``cedadev-o``.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
 
-4. Log into the JASMIN Object Store portal: `s3-portal.jasmin.ac.uk <https://s3-portal.jasmin.ac.uk>`_ using your web-browser.  Use your regular JASMIN account username and password.
+4. Log into the `JASMIN Object Store portal <https://s3-portal.jasmin.ac.uk>`_ using your web-browser.  Use your regular JASMIN account username and password.
 5. Click on the ``Object Stores`` blue button.  You will be presented with a list of your Object Store tenancies.  
 
 .. image:: ./jasmin_obj_store_01.png
     :width: 50 %
     :align: center
 
-6. Click on the ``Manage Object Store`` blue button for the `nlds-cache-01-o` tenancy.  You may have to re-enter your JASMIN accounts password.
+6. Click on the ``Manage Object Store`` blue button for the ``nlds-cache-01-o`` tenancy.  You may have to re-enter your JASMIN accounts password.
 
 You will be presented with this screen:
 
@@ -95,7 +95,7 @@ You will be presented with this screen:
 
 Click on the ``Create Key`` tab at the top of the table.
 
-7. Fill in the Description and an expiry-date and click ``Create Access Key``
+7. Fill in the Description and an expiry-date and click ``Create Access Key``.
 
 .. image:: ./jasmin_obj_store_03.png
     :width: 50 %
@@ -104,7 +104,7 @@ Click on the ``Create Key`` tab at the top of the table.
 8. You will be presented with a pop-up declaring **Successfully created Secret and Access Keys**.  Carefully copy the ``Access Key`` and the ``S3 Secret Key`` and store them somewhere safe, preferably in a password manager.  **Heed the warning** - you will not be able to see the ``S3 Secret Key`` again.
 
 .. note::
-    If you are taking part in the ``nlds`` beta testing program, then you will have to create keys for the ``cedadev-o`` tenancy. Once the beta test has concluded, you will be able to createkeys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to create keys for the ``cedadev-o`` tenancy. Once the beta test has concluded, you will be able to create keys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
 
 You now have access to the Object Store tenancy for NLDS, and have generated a pair of keys that will allow you to access it from the NLDS client.
 
@@ -113,7 +113,7 @@ You now have access to the Object Store tenancy for NLDS, and have generated a p
 Installing the NLDS client on a JASMIN scientific analysis server
 -----------------------------------------------------------------
 
-First, please familiarise yourself with the JASMIN documentation on the scientific analysis servers: `JASMIN : Docs : Scientific analysis servers <https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/>`_
+First, please familiarise yourself with the JASMIN documentation on the scientific analysis servers: `JASMIN : Docs : Scientific analysis servers <https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/>`_.
 We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the NLDS client.
 
 1.  Log into your chosen scientific analysis server:
@@ -139,17 +139,17 @@ We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the N
 Configuring the NLDS client
 ---------------------------
 
-1.  First make sure your are running the ``nlds-client`` virtual-environmentthat you created above.  If you are not running it then issue the command:
+1.  First make sure your are running the ``nlds-client`` virtual-environment that you created above.  If you are not running it then issue the command:
 
 .. code-block:: bash
 
     > source ~/nlds-client/bin/activate
 
-2.  Run NLDS with the init command to create your NLDS config file.  This file will be in your home directory with the name ``.nlds-config``.  The full path is ``~/.nlds-config``, also ``$HOME/.nlds-config``
+2.  Run NLDS with the init command to create your NLDS config file.  This file will be in your home directory with the name ``.nlds-config``.  The full path is ``~/.nlds-config``, also ``$HOME/.nlds-config``.
 
 .. code-block:: bash
 
-    nlds init
+    > nlds init
 
 This produces the output:
 
@@ -170,13 +170,13 @@ This produces the output:
 
 .. note::
 
-    If you are taking part in the nlds beta testing program, you will also need to specify a url with the -u switch and turn off ssl verification with the -k flag, so your init command will look a bit like this:
+    If you are taking part in the NLDS beta testing program, you will also need to specify a URL with the ``-u`` switch and turn off SSL verification with the ``-k`` flag, so your init command will look a bit like this:
 
     .. code-block:: bash
 
         > nlds init -u {{ nlds-testing-url }} -k
             
-    but with the ``{{ nlds-testing-url }}`` replaced with the url provided to you by in the invitation email.
+    but with the ``{{ nlds-testing-url }}`` replaced with the URL provided to you by in the invitation email.
 
 3.  Edit the file at ``<your home directory>/.nlds-config`` to add some extra information.  The file looks like this:
 
@@ -215,7 +215,7 @@ The fields marked ``<redacted>`` will have values in your file, we have removed 
     * ``secret_key`` : replace ``{{ os_secret_key }}`` with the value of ``S3 Secret Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
 
 .. note::
-    If you are taking part in the ``nlds`` beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``cedadev-o``.  i.e.:
+    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``cedadev-o``.  i.e.:
 
     .. code-block:: json
 
@@ -227,15 +227,23 @@ The fields marked ``<redacted>`` will have values in your file, we have removed 
 
     (Don't forget the extra comma after ``group``!)
 
+    You also need to change the ``verify_certificates`` option to ``false``:
+
+    .. code-block:: json
+
+        "options": {
+            "verify_certificates": false
+        }
+
 Running the NLDS client for the first time
 ------------------------------------------
 
-You should now have a fully configured and functioning NLDS client.  You can now run the NLDS client for the first time.  Make sure the python virtual-environment you created in :ref:`Installing the NLDS client<installing_nlds_client>` is activated first, and then run ``nlds`` with the command ``stat``.
+You should now have a fully configured and functioning NLDS client.  You can now run the NLDS client for the first time.  Make sure the Python virtual-environment you created in :ref:`Installing the NLDS client<installing_nlds_client>` is activated first, and then run ``nlds`` with the command ``stat``.
 
 .. code-block:: bash
 
-    source ~/nlds-client/bin/activate
-    nlds stat
+    > source ~/nlds-client/bin/activate
+    > nlds stat
 
 You will see the following output:
 
