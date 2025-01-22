@@ -178,7 +178,7 @@ This is done via the JASMIN accounts portal:</p>
 <section id="installing-the-nlds-client-on-a-jasmin-scientific-analysis-server">
 <span id="installing-nlds-client"></span><h2>Installing the NLDS client on a JASMIN scientific analysis server<a class="headerlink" href="#installing-the-nlds-client-on-a-jasmin-scientific-analysis-server" title="Permalink to this heading"></a></h2>
 <p>First, please familiarise yourself with the JASMIN documentation on the scientific analysis servers: <a class="reference external" href="https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/">JASMIN : Docs : Scientific analysis servers</a>
-We suggest that you use one of the <code class="docutils literal notranslate"><span class="pre">sci-vm-0x</span></code> servers to set up and use the NLDS client.</p>
+We suggest that you use one of the <code class="docutils literal notranslate"><span class="pre">sci-vm-0x</span></code> servers to set up and use the NLDS client.  An alternative is to use the JASMIN transfer servers, if it suits your workflow more.  Details of these are here: <cite>JASMIN : Docs : Transfer servers &lt;https://help.jasmin.ac.uk/docs/interactive-computing/transfer-servers/&gt;</cite>.  Creating the virtual-evironment in your home directory means that it is available from both the scientific analysis servers or the transfer servers.</p>
 <ol class="arabic simple">
 <li><p>Log into your chosen scientific analysis server:</p></li>
 </ol>
@@ -216,7 +216,7 @@ We suggest that you use one of the <code class="docutils literal notranslate"><s
 <p>This produces the output:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Initialising the Near-line Data Store...
 
-Successfully initialised, the config file at &lt;your home directory&gt;/.nlds-config has been updated with some of the necessary information to start using the NLDS.
+Successfully initialised, the config file at ~/.nlds-config has been updated with some of the necessary information to start using the NLDS.
 
 You may still need to manually update the fields:
 - user.default_user
@@ -237,7 +237,7 @@ The latter three values can be obtained from the object store portal for any obj
 <p>but with the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">nlds-testing-url</span> <span class="pre">}}</span></code> replaced with the url provided to you by in the invitation email.</p>
 </div>
 <ol class="arabic simple" start="3">
-<li><p>Edit the file at <code class="docutils literal notranslate"><span class="pre">&lt;your</span> <span class="pre">home</span> <span class="pre">directory&gt;/.nlds-config</span></code> to add some extra information.  The file looks like this:</p></li>
+<li><p>Edit the file at <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code> to add some extra information.  The file looks like this:</p></li>
 </ol>
 <div class="highlight-json notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
 <span class="w">    </span><span class="nt">&quot;server&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
@@ -322,7 +322,7 @@ Password:
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 5, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
+    <p>&#169; Copyright 2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
