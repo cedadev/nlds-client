@@ -139,7 +139,7 @@ We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the N
 Configuring the NLDS client
 ---------------------------
 
-1.  First make sure your are running the ``nlds-client`` virtual-environmentthat you created above.  If you are not running it then issue the command:
+1.  First make sure your are running the ``nlds-client`` virtual-environment that you created above.  If you are not running it then issue the command:
 
 .. code-block:: bash
 
