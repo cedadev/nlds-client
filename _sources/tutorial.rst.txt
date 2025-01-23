@@ -261,6 +261,10 @@ the ``transaction_id``.
         label           : SheepPen
         tags            : sheepdog : skye
 
+.. note::
+
+    On JASMIN, NLDS cannot transfer data from the user's home directory (``$HOME`` or ``~/``), as only the user has permission to read or write to their own home directory.  NLDS can be used with a Group Workspace (GWS), and with the transfer cache (XFC).
+
 .. _putlist:
 
 Copying a list of files (PUTLIST) to the NLDS
@@ -614,6 +618,10 @@ current directory, invoke the command:
 
 This will also recreate the directory structure in the current directory, i.e.
 the file will be written to ``<current_directory>/Users/frjohn/sheep.txt``.
+
+.. note::
+
+    On JASMIN, NLDS cannot retrieve data to the user's home directory (``$HOME`` or ``~/``), as only the user has permission to read or write to their own home directory.  NLDS can be used to retrieve data to a Group Workspace (GWS), and with the transfer cache (XFC).
 
 Using this method of retrieval, no holding is specified.  If more than one file
 with the filepath is held in the NLDS (in different holdings), then the latest

@@ -320,6 +320,10 @@ PUT transaction accepted for processing.
     tags            : sheepdog : skye
 </pre></div>
 </div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On JASMIN, NLDS cannot transfer data from the user’s home directory (<code class="docutils literal notranslate"><span class="pre">$HOME</span></code> or <code class="docutils literal notranslate"><span class="pre">~/</span></code>), as only the user has permission to read or write to their own home directory.  NLDS can be used with a Group Workspace (GWS), and with the transfer cache (XFC).</p>
+</div>
 </section>
 <section id="copying-a-list-of-files-putlist-to-the-nlds">
 <span id="putlist"></span><h2>Copying a list of files (PUTLIST) to the NLDS<a class="headerlink" href="#copying-a-list-of-files-putlist-to-the-nlds" title="Permalink to this heading"></a></h2>
@@ -626,6 +630,10 @@ GETLIST transaction accepted for processing.
 </div>
 <p>This will also recreate the directory structure in the current directory, i.e.
 the file will be written to <code class="docutils literal notranslate"><span class="pre">&lt;current_directory&gt;/Users/frjohn/sheep.txt</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>On JASMIN, NLDS cannot retrieve data to the user’s home directory (<code class="docutils literal notranslate"><span class="pre">$HOME</span></code> or <code class="docutils literal notranslate"><span class="pre">~/</span></code>), as only the user has permission to read or write to their own home directory.  NLDS can be used to retrieve data to a Group Workspace (GWS), and with the transfer cache (XFC).</p>
+</div>
 <p>Using this method of retrieval, no holding is specified.  If more than one file
 with the filepath is held in the NLDS (in different holdings), then the latest
 ingested file will be returned.  See <strong>3. A holding id</strong> or

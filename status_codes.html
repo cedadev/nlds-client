@@ -145,49 +145,57 @@ in the <code class="docutils literal notranslate"><span class="pre">nlds_client<
 <td><p><code class="docutils literal notranslate"><span class="pre">'TRANSFER_GETTING'</span></code></p></td>
 <td><p>Getting the files from the NLDS object store cache.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">20</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">13</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'TRANSFER_INIT'</span></code></p></td>
+<td><p>Transfer transaction is starting.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">20</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_INIT'</span></code></p></td>
 <td><p>Archive transaction is starting.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">21</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">21</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_PUTTING'</span></code></p></td>
 <td><p>Putting the aggregated files into the tape store from the NLDS cache.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">22</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">22</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'ARCHIVE_PREPARING'</span></code></p></td>
 <td><p>Requesting the files from the tape system when they have to be fetched from tape.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">30</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">30</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_DELETING'</span></code></p></td>
 <td><p>Remove from the catalog any inaccessible files in the transaction.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">31</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">31</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_UPDATING</span></code></p></td>
 <td><p>Updating the catalog with post object store write</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">32</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">32</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_ARCHIVE_UPDATING'</span></code></p></td>
 <td><p>Updating the catalog with post tape write information.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">33</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">33</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'CATALOG_REMOVING'</span></code></p></td>
 <td><p>Remove from the catalog any empty storage locations.  This occurs if a write to tape or restore to object store fails.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">100</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE'</span></code></p></td>
 <td><p>Transaction has completed successfully.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">101</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">101</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'FAILED'</span></code></p></td>
 <td><p>Transaction has failed completely.</p></td>
 </tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">102</span></code></p></td>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">102</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE_WITH_ERRORS'</span></code></p></td>
 <td><p>Transaction has completed but with some errors.</p></td>
 </tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">103</span></code></p></td>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">103</span></code></p></td>
 <td><p><code class="docutils literal notranslate"><span class="pre">'COMPLETE_WITH_WARNINGS'</span></code></p></td>
 <td><p>Transaction has completed but with some warnings.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'SEARCHING'</span></code></p></td>
+<td><p>NLDS is searching for the state of a request.  The user should not see this state!</p></td>
 </tr>
 </tbody>
 </table>
