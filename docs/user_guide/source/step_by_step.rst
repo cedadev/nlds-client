@@ -210,7 +210,7 @@ This produces the output:
 The fields marked ``<redacted>`` will have values in your file, we have removed them from this document for security reasons.  The information you need to add is the values for ``default_user``, ``default_group``, ``access_key`` and ``secret_key``.
 
     * ``default_user`` : replace ``{{ user }}`` with your JASMIN username.  This can be overriden by using the ``-u`` command line option with the ``nlds`` client.
-    * ``default_group`` : replace ``{{ group }}`` with the name of the Group Workspace you will be using most often.  This can be overriden by using the ``-g`` option with the ``nlds`` client.
+    * ``default_group`` : replace ``{{ group }}`` with the name of the Group Workspace you will be using most often.  This can be overriden by using the ``-g`` option with the ``nlds`` client.  This is the name as it appears in the path of the Group Workspace.  **It does not include the ``gws_``** part.
     * ``access_key`` : replace ``{{ os_access_key }}`` with the value of ``Access Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
     * ``secret_key`` : replace ``{{ os_secret_key }}`` with the value of ``S3 Secret Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
 
