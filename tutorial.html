@@ -121,7 +121,7 @@
 <section id="introduction-to-the-nlds">
 <span id="intro"></span><h2>Introduction to the NLDS<a class="headerlink" href="#introduction-to-the-nlds" title="Permalink to this heading"></a></h2>
 <p>The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses
-Object Storage as a front end cache to a tape library.  Interaction with NLDS is via
+Object Storage as a front-end cache to a tape library.  Interaction with NLDS is via
 a HTTP API, with a Python library and command-line client provided to users for
 programmatic or interactive use.</p>
 <p>When a user ingests files to the NLDS, the files are first written to the
@@ -148,17 +148,17 @@ assign a label and tags to a collection of files.</p>
 <p>Before using the NLDS, a user must install and set-up the NLDS client.  For the
 NLDS installation on JASMIN, the user must also:</p>
 <ol class="arabic simple">
-<li><p>Have access to the Object Storage tenancy (cache) they wish to write files to</p></li>
-<li><p>Be a member of, and have read/write access to, the GroupWorkspace they wish
-to use for writing to tape</p></li>
+<li><p>Have access to the Object Storage tenancy (cache) they wish to write files to.</p></li>
+<li><p>Be a member of, and have read/write access to, the Group Workspace they wish
+to use for writing to tape.</p></li>
 <li><p>The NLDS client is a command-line program with the name <code class="docutils literal notranslate"><span class="pre">nlds</span></code>, which requires
 installation into the users homespace, preferably into a Python virtual-environment.
-To install <code class="docutils literal notranslate"><span class="pre">nlds</span></code>, refer to the page <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a>.</p></li>
+To install <code class="docutils literal notranslate"><span class="pre">nlds</span></code>, refer to the <a class="reference internal" href="installation.html#installation"><span class="std std-ref">installation</span></a> page.</p></li>
 </ol>
 <p>The <code class="docutils literal notranslate"><span class="pre">nlds</span></code> client program relies on a configuration file stored in the user’s
 home directory with the path <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>.  This contains information
 needed to connect the client to the NLDS server.  For more in-depth information, refer
-to the page <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">configuration</span></a>.</p>
+to the <a class="reference internal" href="configuration.html#configuration"><span class="std std-ref">configuration</span></a> page.</p>
 <p>The configuration file has the contents:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
     <span class="s2">&quot;user&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -180,7 +180,9 @@ to the page <a class="reference internal" href="configuration.html#configuration
         <span class="s2">&quot;tenancy&quot;</span>    <span class="p">:</span> <span class="s2">&quot;{{ object_store_tenancy }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;access_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_access_key }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;secret_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_secret_key }}&quot;</span>
-
+    <span class="p">},</span>
+    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;verify_certificates&quot;</span><span class="p">:</span> <span class="n">true</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
@@ -220,7 +222,7 @@ Password:
 <p>After entering your JASMIN username and password, the OAuth2 token is created
 at the path pointed to by <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code>
 file.  The NLDS authorisation system uses refresh tokens to fetch a new token
-when the current one has expired</p>
+when the current one has expired.</p>
 </section>
 <section id="how-the-nlds-data-catalog-is-organised">
 <span id="catalog"></span><h2>How the NLDS data catalog is organised<a class="headerlink" href="#how-the-nlds-data-catalog-is-organised" title="Permalink to this heading"></a></h2>
@@ -377,7 +379,7 @@ listed on the <a class="reference internal" href="status_codes.html#status-codes
 <ul class="simple">
 <li><p><code class="docutils literal notranslate"><span class="pre">-b</span></code> : filter on the user-specified <code class="docutils literal notranslate"><span class="pre">job</span> <span class="pre">label</span></code>.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">-s</span></code> : filter on the <code class="docutils literal notranslate"><span class="pre">state</span></code>.  See <a class="reference internal" href="status_codes.html#status-codes"><span class="std std-ref">Status Codes</span></a> for a list of possible values.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code> : filter on the api action. Options are <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> <code class="docutils literal notranslate"><span class="pre">getlist</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">-a</span></code> : filter on the API action. Options are <code class="docutils literal notranslate"><span class="pre">get</span></code>, <code class="docutils literal notranslate"><span class="pre">put</span></code> <code class="docutils literal notranslate"><span class="pre">getlist</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code>.</p></li>
 </ul>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -s COMPLETE
 State of transactions for user:frjohn, group:farmers, state:COMPLETE
@@ -464,7 +466,7 @@ be used to return a JSON formatted version of the status.</p>
 <span id="list"></span><h2>Querying the file collections the user holds on the NLDS (LIST)<a class="headerlink" href="#querying-the-file-collections-the-user-holds-on-the-nlds-list" title="Permalink to this heading"></a></h2>
 <p>The <code class="docutils literal notranslate"><span class="pre">put</span></code> and <code class="docutils literal notranslate"><span class="pre">putlist</span></code> commands above create holdings in the NLDS
 catalog.  Holdings can be thought of as collections of transactions
-which, in themselves, are collections of files  Therefore, a holding
+which, in themselves, are collections of files.  Therefore, a holding
 can also be thought of as a collection of files.</p>
 <p>To see the holdings that are assigned to a user in NLDS, use the <code class="docutils literal notranslate"><span class="pre">list</span></code>
 command.  Invoke the <code class="docutils literal notranslate"><span class="pre">list</span></code> command on its own to see all of the holdings
@@ -519,12 +521,15 @@ Listing files for holdings for user:frjohn, group:farmers
     2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 </pre></div>
 </div>
-<p><strong>Warning</strong> : issuing the <code class="docutils literal notranslate"><span class="pre">find</span></code> command like this, with no filters, will
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Issuing the <code class="docutils literal notranslate"><span class="pre">find</span></code> command like this, with no filters, will
 make an attempt to list <em>all</em> of a user’s files.  When a user has many files in
 the NLDS, this is likely to end in a <code class="docutils literal notranslate"><span class="pre">gateway</span> <span class="pre">timeout</span></code>, as the request will
 take too long to process.  It is much better to use the options to the <code class="docutils literal notranslate"><span class="pre">find</span></code>
 command to limit the number of files that will be returned.  This can be done
 in a number of ways, which will be illustrated below.</p>
+</div>
 <p>To list the files in a holding, use <code class="docutils literal notranslate"><span class="pre">-i</span></code> with the holding id (<code class="docutils literal notranslate"><span class="pre">h-id</span></code>) or
 <code class="docutils literal notranslate"><span class="pre">-l</span></code> with the holding label (<code class="docutils literal notranslate"><span class="pre">h-label</span></code>).</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -i 1
@@ -690,7 +695,7 @@ State of transaction for user:frjohn, group:farmers, id:13
             reason   : File:/Users/frjohn/albatross.txt not found in holding:SheepPen for user:frjohn in group:farmers.
 </pre></div>
 </div>
-<p><strong>4.</strong> Similary to <strong>3</strong>, a label can be used to fetch a particular file from a
+<p><strong>4.</strong> Similarly to <strong>3</strong>, a label can be used to fetch a particular file from a
 holding.</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -l SheepPen /Users/frjohn/sheep.txt -r ./
 GETLIST transaction accepted for processing.
@@ -759,8 +764,8 @@ example:</p>
 /Users/frjohn/rabbit.txt
 </pre></div>
 </div>
-<p>The command and response then becomes (where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name of the
-above file).  Here give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
+<p>The command and response then becomes the following, where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name of the
+above file and we give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist test_list -r ./ -b getlisttest
 GETLIST transaction accepted for processing.
     user            : frjohn

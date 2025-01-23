@@ -24,7 +24,7 @@ Introduction to the NLDS
 ------------------------
 
 The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses 
-Object Storage as a front end cache to a tape library.  Interaction with NLDS is via 
+Object Storage as a front-end cache to a tape library.  Interaction with NLDS is via 
 a HTTP API, with a Python library and command-line client provided to users for 
 programmatic or interactive use.  
 
@@ -54,17 +54,17 @@ Setting up the NLDS client
 Before using the NLDS, a user must install and set-up the NLDS client.  For the
 NLDS installation on JASMIN, the user must also:
 
-#. Have access to the Object Storage tenancy (cache) they wish to write files to
-#. Be a member of, and have read/write access to, the GroupWorkspace they wish 
-   to use for writing to tape
+#. Have access to the Object Storage tenancy (cache) they wish to write files to.
+#. Be a member of, and have read/write access to, the Group Workspace they wish 
+   to use for writing to tape.
 #. The NLDS client is a command-line program with the name ``nlds``, which requires
    installation into the users homespace, preferably into a Python virtual-environment.
-   To install ``nlds``, refer to the page :ref:`installation<Installation>`.
+   To install ``nlds``, refer to the :ref:`installation<Installation>` page.
 
 The ``nlds`` client program relies on a configuration file stored in the user's
 home directory with the path ``~/.nlds-config``.  This contains information
 needed to connect the client to the NLDS server.  For more in-depth information, refer
-to the page :ref:`configuration<Configuration>`.
+to the :ref:`configuration<Configuration>` page.
 
 The configuration file has the contents:
 
@@ -90,7 +90,9 @@ The configuration file has the contents:
             "tenancy"    : "{{ object_store_tenancy }}",
             "access_key" : "{{ object_store_access_key }}",
             "secret_key" : "{{ object_store_secret_key }}"
-
+        },
+        "options": {
+            "verify_certificates": true
         }
     }
 
@@ -135,7 +137,7 @@ The following message will be displayed:
 After entering your JASMIN username and password, the OAuth2 token is created
 at the path pointed to by ``oauth_token_file_location`` in the ``~/.nlds-config``
 file.  The NLDS authorisation system uses refresh tokens to fetch a new token
-when the current one has expired
+when the current one has expired.
 
 .. _catalog:
 
@@ -330,7 +332,7 @@ Results for the ``stat`` command can be filtered using the following options:
 
 * ``-b`` : filter on the user-specified ``job label``.
 * ``-s`` : filter on the ``state``.  See :ref:`status_codes` for a list of possible values.
-* ``-a`` : filter on the api action. Options are ``get``, ``put`` ``getlist`` and ``putlist``.
+* ``-a`` : filter on the API action. Options are ``get``, ``put`` ``getlist`` and ``putlist``.
 
 .. code-block:: text
 
@@ -425,7 +427,7 @@ Querying the file collections the user holds on the NLDS (LIST)
 
 The ``put`` and ``putlist`` commands above create holdings in the NLDS 
 catalog.  Holdings can be thought of as collections of transactions
-which, in themselves, are collections of files  Therefore, a holding
+which, in themselves, are collections of files.  Therefore, a holding
 can also be thought of as a collection of files.
 
 To see the holdings that are assigned to a user in NLDS, use the ``list``
@@ -492,12 +494,14 @@ To view which files the user holds in the NLDS, use the ``find`` command:
         2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
         2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
 
-**Warning** : issuing the ``find`` command like this, with no filters, will 
-make an attempt to list *all* of a user's files.  When a user has many files in
-the NLDS, this is likely to end in a ``gateway timeout``, as the request will
-take too long to process.  It is much better to use the options to the ``find``
-command to limit the number of files that will be returned.  This can be done
-in a number of ways, which will be illustrated below.
+.. warning::
+
+    Issuing the ``find`` command like this, with no filters, will 
+    make an attempt to list *all* of a user's files.  When a user has many files in
+    the NLDS, this is likely to end in a ``gateway timeout``, as the request will
+    take too long to process.  It is much better to use the options to the ``find``
+    command to limit the number of files that will be returned.  This can be done
+    in a number of ways, which will be illustrated below.
 
 To list the files in a holding, use ``-i`` with the holding id (``h-id``) or
 ``-l`` with the holding label (``h-label``).
@@ -688,7 +692,7 @@ of the transaction.
             +    filepath : /Users/frjohn/albatross.txt
                 reason   : File:/Users/frjohn/albatross.txt not found in holding:SheepPen for user:frjohn in group:farmers.
 
-**4.** Similary to **3**, a label can be used to fetch a particular file from a 
+**4.** Similarly to **3**, a label can be used to fetch a particular file from a 
 holding.
 
 .. code-block:: text
@@ -765,8 +769,8 @@ example:
     /Users/frjohn/albatross.txt
     /Users/frjohn/rabbit.txt
 
-The command and response then becomes (where ``test_getlist`` is the name of the 
-above file).  Here give the retrieval a *job_label* of ``getlisttest``:
+The command and response then becomes the following, where ``test_getlist`` is the name of the 
+above file and we give the retrieval a *job_label* of ``getlisttest``:
 
 .. code-block:: text
 
