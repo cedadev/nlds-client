@@ -76,7 +76,7 @@ You will require access to the Object Store that is used by NLDS to store files 
 3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to apply for the tenancy ``nlds-staging-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``nlds-staging-o```.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to apply for the tenancy ``nlds-staging-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``nlds-staging-o``.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
 
 4. Log into the `JASMIN Object Store portal <https://s3-portal.jasmin.ac.uk>`_ using your web-browser.  Use your regular JASMIN account username and password.
 5. Click on the ``Object Stores`` blue button.  You will be presented with a list of your Object Store tenancies.  
