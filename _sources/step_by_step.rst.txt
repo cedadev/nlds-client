@@ -104,7 +104,7 @@ Click on the ``Create Key`` tab at the top of the table.
 8. You will be presented with a pop-up declaring **Successfully created Secret and Access Keys**.  Carefully copy the ``Access Key`` and the ``S3 Secret Key`` and store them somewhere safe, preferably in a password manager.  **Heed the warning** - you will not be able to see the ``S3 Secret Key`` again.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to create keys for the ``nlds-staging-o``` tenancy. Once the beta test has concluded, you will be able to create keys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to create keys for the ``nlds-staging-o`` tenancy. Once the beta test has concluded, you will be able to create keys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
 
 You now have access to the Object Store tenancy for NLDS, and have generated a pair of keys that will allow you to access it from the NLDS client.
 
@@ -215,14 +215,14 @@ The fields marked ``<redacted>`` will have values in your file, we have removed 
     * ``secret_key`` : replace ``{{ os_secret_key }}`` with the value of ``S3 Secret Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``nlds-staging-o```.  i.e.:
+    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``nlds-staging-o``.  i.e.:
 
     .. code-block:: json
 
         "user": {
             "default_user": "{{ user }}",
             "default_group": "{{ group }}",
-            "tenancy": "nlds-staging-o`"
+            "tenancy": "nlds-staging-o"
         },
 
     (Don't forget the extra comma after ``group``!)
