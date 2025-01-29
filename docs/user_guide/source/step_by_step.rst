@@ -76,7 +76,7 @@ You will require access to the Object Store that is used by NLDS to store files 
 3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to apply for the tenancy ``cedadev-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``cedadev-o``.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to apply for the tenancy ``nlds-staging-o``.  In subsequent instructions, replace ``nlds-cache-01-o`` with ``nlds-staging-o```.  Once the beta test has concluded, you will be able to create your access to the ``nlds-cache-01-o`` Object Storage, and edit your configuration files to reflect this.
 
 4. Log into the `JASMIN Object Store portal <https://s3-portal.jasmin.ac.uk>`_ using your web-browser.  Use your regular JASMIN account username and password.
 5. Click on the ``Object Stores`` blue button.  You will be presented with a list of your Object Store tenancies.  
@@ -104,7 +104,7 @@ Click on the ``Create Key`` tab at the top of the table.
 8. You will be presented with a pop-up declaring **Successfully created Secret and Access Keys**.  Carefully copy the ``Access Key`` and the ``S3 Secret Key`` and store them somewhere safe, preferably in a password manager.  **Heed the warning** - you will not be able to see the ``S3 Secret Key`` again.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to create keys for the ``cedadev-o`` tenancy. Once the beta test has concluded, you will be able to create keys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
+    If you are taking part in the NLDS beta testing program, then you will have to create keys for the ``nlds-staging-o``` tenancy. Once the beta test has concluded, you will be able to create keys for the ``nlds-cache-01-o`` tenancy, and edit your configuration files to reflect this.
 
 You now have access to the Object Store tenancy for NLDS, and have generated a pair of keys that will allow you to access it from the NLDS client.
 
@@ -215,14 +215,14 @@ The fields marked ``<redacted>`` will have values in your file, we have removed 
     * ``secret_key`` : replace ``{{ os_secret_key }}`` with the value of ``S3 Secret Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``cedadev-o``.  i.e.:
+    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``nlds-staging-o```.  i.e.:
 
     .. code-block:: json
 
         "user": {
             "default_user": "{{ user }}",
             "default_group": "{{ group }}",
-            "tenancy": "cedadev-o"
+            "tenancy": "nlds-staging-o`"
         },
 
     (Don't forget the extra comma after ``group``!)
