@@ -468,7 +468,7 @@ user_help_text = (
     "guarantee uniqueness of the holding.",
 )
 @click.option(
-    "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+    "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
 @click.argument("filepath", type=str)
 def put(filepath, user, group, label, job_label, holding_id, tag, json):
@@ -550,7 +550,7 @@ user_help_text = (
     help="The tag(s) of the holding to retrieve the file from.",
 )
 @click.option(
-    "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+    "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
 @click.argument("filepath", type=str)
 def get(
@@ -613,7 +613,7 @@ def get(
 #     help="The id of the holding to delete the file from.",
 # )
 # @click.option(
-#     "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+#     "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 # )
 # @click.argument("filepath", type=str)
 # def delete(filepath, user, group, groupall, job_label, label, holding_id, json):
@@ -685,7 +685,7 @@ def get(
     "guarantee uniqueness of the holding.",
 )
 @click.option(
-    "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+    "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
 def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
     # read the filelist from the file
@@ -775,7 +775,7 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
     help="The tag(s) of the holding(s) to retrieve files from.",
 )
 @click.option(
-    "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+    "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
 @click.argument("filelist", type=str)
 def getlist(
@@ -848,7 +848,7 @@ def getlist(
 #     help="The id of the holding to delete the file from.",
 # )
 # @click.option(
-#     "-j", "--json", default=False, type=bool, help="Output the result as JSON."
+#     "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 # )
 # @click.argument("filelist", type=str)
 # def dellist(filelist, user, group, groupall, job_label, label, holding_id, json):
@@ -1321,7 +1321,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     ),
 )
 @click.option(
-    "-u",
+    "-U",
     "--url",
     default=None,
     type=str,
