@@ -215,14 +215,14 @@ The fields marked ``<redacted>`` will have values in your file, we have removed 
     * ``secret_key`` : replace ``{{ os_secret_key }}`` with the value of ``S3 Secret Key`` you created in step 8 of :ref:`Access to the Object Store<object_store_access>`.
 
 .. note::
-    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``nlds-staging-o``.  i.e.:
+    If you are taking part in the NLDS beta testing program, then you will have to add an extra line in the ``user`` part of the config.  This is for the ``tenancy``, which should be set to ``nlds-staging-o.s3.jc.rl.ac.uk``.  i.e.:
 
     .. code-block:: json
 
         "user": {
             "default_user": "{{ user }}",
             "default_group": "{{ group }}",
-            "tenancy": "nlds-staging-o"
+            "tenancy": "nlds-staging-o.jc.rl.ac.uk"
         },
 
     (Don't forget the extra comma after ``group``!)
