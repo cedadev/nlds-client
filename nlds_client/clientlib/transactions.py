@@ -246,11 +246,15 @@ def main_loop(
         # process the returned response
         try:
             process_transaction_response(response, url, config)
-        except AuthenticationError:
+        except AuthenticationError as ae:
             # try to get a new token via the refresh method
             try:
-                auth_token = fetch_oauth2_token_from_refresh(config)
-                continue
+                # first loop fetch a new oauth token
+                if c_try < MAX_LOOPS:
+                    auth_token = fetch_oauth2_token_from_refresh(config)
+                    continue
+                else:
+                    raise ae
             except (AuthenticationError, RequestError) as ae:
                 # delete the token file ready to try again!
                 if (
