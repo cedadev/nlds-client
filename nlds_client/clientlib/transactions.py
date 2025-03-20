@@ -1,6 +1,4 @@
-"""
-
-"""
+""" """
 
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
@@ -547,6 +545,7 @@ def list_holding(
     holding_id: int = None,
     transaction_id: str = None,
     tag: Dict = None,
+    regex: bool = False,
 ):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
@@ -568,6 +567,9 @@ def list_holding(
         holdings with these tags.  This will be converted to dictionary before
         calling the remote method.
     :type tag: dict, optional
+
+    :param regex: whether the job label is a regular expression
+    :type regex: bool, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -596,6 +598,8 @@ def list_holding(
         input_params["holding_id"] = holding_id
     if transaction_id is not None:
         input_params["transaction_id"] = transaction_id
+    if regex:
+        input_params["regex"] = regex
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
@@ -620,6 +624,7 @@ def find_file(
     transaction_id: str = None,
     path: str = None,
     tag: Dict = None,
+    regex: bool = False,
 ):
     """Make a request to find files in the NLDS for a user
     :param user: the username to get the holding(s) for
@@ -644,6 +649,9 @@ def find_file(
 
     :param path: path to search for, can be a substring, regex or wildcard
     :type path: str, optional
+
+    :param regex: whether the label and the path are regular expressions
+    :type regex: bool, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -673,6 +681,8 @@ def find_file(
         input_params["transaction_id"] = transaction_id
     if path is not None:
         input_params["path"] = path
+    if regex:
+        input_params["regex"] = regex
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
@@ -698,6 +708,7 @@ def monitor_transactions(
     api_action: str = None,
     state: str = None,
     sub_id: str = None,
+    regex: bool = False,
 ):
     """Make a request to the monitoring database for a status update of ongoing
     or finished transactions in the NLDS for, a user/group
@@ -732,6 +743,9 @@ def monitor_transactions(
         sub_records at the given state will be returned.
     :type state: string, optional
 
+    :param regex: whether the job label is a regular expression
+    :type regex: bool, optional
+
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
 
@@ -764,6 +778,8 @@ def monitor_transactions(
         input_params["sub_id"] = sub_id
     if state is not None:
         input_params["state"] = state
+    if regex:
+        input_params["regex"] = regex
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
@@ -831,28 +847,28 @@ def get_transaction_state(transaction: dict):
     The overall state is the minimum of these
     """
     state_mapping = {
-        "INITIALISING" : -1,
-        "ROUTING" : 0,
-        "SPLITTING" : 1,
-        "INDEXING" : 2,
-        "CATALOG_PUTTING" : 3,
-        "TRANSFER_PUTTING" : 4,
-        "CATALOG_GETTING" : 10,
-        "ARCHIVE_GETTING" : 11,
-        "TRANSFER_GETTING" : 12,
-        "TRANSFER_INIT" : 13,
-        "ARCHIVE_INIT" : 20,
-        "ARCHIVE_PUTTING" : 21,
-        "ARCHIVE_PREPARING" : 22,
-        "CATALOG_DELETING" : 30,
-        "CATALOG_UPDATING" : 31,
-        "CATALOG_ARCHIVE_UPDATING" : 32,
-        "CATALOG_REMOVING" : 33,
-        "COMPLETE" : 100,
-        "FAILED" : 101,
-        "COMPLETE_WITH_ERRORS" : 102,
-        "COMPLETE_WITH_WARNINGS" : 103,
-        "SEARCHING" : 1000,
+        "INITIALISING": -1,
+        "ROUTING": 0,
+        "SPLITTING": 1,
+        "INDEXING": 2,
+        "CATALOG_PUTTING": 3,
+        "TRANSFER_PUTTING": 4,
+        "CATALOG_GETTING": 10,
+        "ARCHIVE_GETTING": 11,
+        "TRANSFER_GETTING": 12,
+        "TRANSFER_INIT": 13,
+        "ARCHIVE_INIT": 20,
+        "ARCHIVE_PUTTING": 21,
+        "ARCHIVE_PREPARING": 22,
+        "CATALOG_DELETING": 30,
+        "CATALOG_UPDATING": 31,
+        "CATALOG_ARCHIVE_UPDATING": 32,
+        "CATALOG_REMOVING": 33,
+        "COMPLETE": 100,
+        "FAILED": 101,
+        "COMPLETE_WITH_ERRORS": 102,
+        "COMPLETE_WITH_WARNINGS": 103,
+        "SEARCHING": 1000,
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 

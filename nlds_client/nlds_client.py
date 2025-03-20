@@ -1,7 +1,5 @@
 #! /usr/bin/env python
-"""
-
-"""
+""" """
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
 __copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
@@ -254,11 +252,8 @@ def print_multi_stat(response: dict, req_details):
 def print_stat(response: dict, req_details):
     """Print out the response from the list command"""
     L = len(response["data"]["records"])
-    if L == 0:
-        user = response["details"]["user"]
-        group = response["details"]["group"]
-        click.echo(f"No transactions found for user: {user}, group: {group}")
-    elif L == 1:
+    # L of 0 should be trapped by exceptions on the server
+    if L == 1:
         print_single_stat(response, req_details)
     else:
         print_multi_stat(response, req_details)
@@ -332,9 +327,19 @@ def print_simple_file(response, print_url=False):
                     click.echo(f"{f['original_path']}")
 
 
+def get_location_letters(locations):
+    ll = ""
+    for l in locations:
+        if l["root"] != "":
+            if len(ll) > 0:
+                ll += "+"
+            ll += l["storage_type"][:1]
+    return ll
+
+
 def print_multi_file(response, print_url):
     click.echo(
-        f"{'':<4}{'user':<16}{'h-id':<6}{'h-label':<16}{'size':<8}{'date':<12}{'path'}"
+        f"{'':<4}{'user':<16}{'h-id':<6}{'h-label':<16}{'size':<8}{'date':<12}{'storage':<8}{'path'}"
     )
     for hkey in response["data"]["holdings"]:
         h = response["data"]["holdings"][hkey]
@@ -348,10 +353,11 @@ def print_multi_file(response, print_url):
                     path_print = _get_url_from_file(f)
                 else:
                     path_print = f["original_path"]
+                storage = get_location_letters(f["locations"])
                 click.echo(
                     f"{'':4}{h['user']:<16}"
                     f"{h['holding_id']:<6}{h['label']:<16}"
-                    f"{size:<8}{time[:11]:<12}{path_print}"
+                    f"{size:<8}{time[:11]:<12}{storage:^8}{path_print}"
                 )
 
 
@@ -393,7 +399,7 @@ def print_meta(response: dict, req_details: str):
 def print_response(tr: dict):
     if "msg" in tr and len(tr["msg"]) > 0:
         click.echo(tr["msg"])
-    if "holding_id" in tr and tr["holding_id"] > 0:
+    if "holding_id" in tr and tr["holding_id"] and tr["holding_id"] > 0:
         click.echo(f"{'':<4}{'id':<16}: {tr['holding_id']}")
     if "user" in tr and len(tr["user"]) > 0:
         click.echo(f"{'':<4}{'user':<16}: {tr['user']}")
@@ -401,13 +407,17 @@ def print_response(tr: dict):
         click.echo(f"{'':<4}{'group':<16}: {tr['group']}")
     if "api_action" in tr and len(tr["api_action"]) > 0:
         click.echo(f"{'':<4}{'action':<16}: {tr['api_action']}")
-    if "job_label" in tr and len(tr["job_label"]) > 0:
+    if "job_label" in tr and tr["job_label"] and len(tr["job_label"]) > 0:
         click.echo(f"{'':<4}{'job label':<16}: {tr['job_label']}")
-    if "transaction_id" in tr and len(tr["transaction_id"]) > 0:
+    if (
+        "transaction_id" in tr
+        and tr["transaction_id"]
+        and len(tr["transaction_id"]) > 0
+    ):
         click.echo(f"{'':<4}{'transaction id':<16}: {tr['transaction_id']}")
-    if "label" in tr and len(tr["label"]) > 0:
+    if "label" in tr and tr["label"] and len(tr["label"]) > 0:
         click.echo(f"{'':<4}{'label':<16}: {tr['label']}")
-    if "tag" in tr and len(tr["tag"]) > 0:
+    if "tag" in tr and tr["tag"] and len(tr["tag"]) > 0:
         tag_str = _tags_to_str(tr["tag"])
         click.echo(f"{'':<4}{'tags':<16}: {tag_str}")
 
@@ -940,7 +950,14 @@ def getlist(
 @click.option(
     "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
-def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
+@click.option(
+    "--regex",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="Use regular expressions in the  label search term.",
+)
+def list(user, group, groupall, label, holding_id, transaction_id, tag, json, regex):
     #
     try:
         response = list_holding(
@@ -951,6 +968,7 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
             holding_id=holding_id,
             transaction_id=transaction_id,
             tag=tag,
+            regex=regex,
         )
         req_details = format_request_details(
             user, group, groupall=groupall, label=label, holding_id=holding_id, tag=tag
@@ -1047,7 +1065,17 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json):
     is_flag=True,
     help="Output the result as JSON.",
 )
-def stat(user, group, groupall, id, transaction_id, job_label, api_action, state, json):
+@click.option(
+    "-x",
+    "--regex",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="Use regular expressions in the job label search term.",
+)
+def stat(
+    user, group, groupall, id, transaction_id, job_label, api_action, state, json, regex
+):
     try:
         response = monitor_transactions(
             user,
@@ -1058,6 +1086,7 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action, state
             job_label=job_label,
             api_action=api_action,
             state=state,
+            regex=regex,
         )
         req_details = format_request_details(
             user,
@@ -1066,9 +1095,10 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action, state
             id=id,
             transaction_id=transaction_id,
             state=state,
+            job_label=job_label,
             api_action=api_action,
         )
-        if response["success"]:
+        if response["success"] and len(response["data"]["records"]):
             if json:
                 click.echo(json_dumps(response))
             else:
@@ -1164,6 +1194,14 @@ def stat(user, group, groupall, id, transaction_id, job_label, api_action, state
     is_flag=True,
     help="Output the URL for the file on the object storage.",
 )
+@click.option(
+    "-x",
+    "--regex",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="Use regular expressions in the path and label search terms.",
+)
 def find(
     user,
     group,
@@ -1176,6 +1214,7 @@ def find(
     json,
     simple,
     url,
+    regex,
 ):
     #
     try:
@@ -1188,6 +1227,7 @@ def find(
             transaction_id=transaction_id,
             path=path,
             tag=tag,
+            regex=regex,
         )
         req_details = format_request_details(
             user,
@@ -1207,7 +1247,7 @@ def find(
             fail_string = "Failed to list files with "
             fail_string += req_details
             if response["details"]["failure"]:
-                fail_string += "\n" + response["details"]["failure"]
+                fail_string += "\nReason: " + response["details"]["failure"]
             raise click.UsageError(fail_string)
 
     except ConnectionError as ce:
