@@ -27,13 +27,32 @@ from nlds_client.clientlib.exceptions import (
 )
 from nlds_client.clientlib.config import get_user, get_group, load_config
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
+from nlds_client import __version__
 
 json = False
 
 
-@click.group()
-def nlds_client():
-    pass
+@click.group(invoke_without_command=True)
+@click.pass_context
+@click.option(
+    "-v",
+    "--version",
+    default=False,
+    is_flag=True,
+    help="Output NLDS client version and exit.",
+)
+def nlds_client(ctx, version):
+    if ctx.invoked_subcommand is None and version:
+        click.echo(f"Near Line Data Store client {__version__}.")
+        click.echo(
+            "Copyright © 2022-2025 Centre of Environmental Data Analysis Developers, "
+            "Scientific and Technical Facilities Council (STFC), "
+            "UK Research and Innovation (UKRI)"
+        )
+        click.echo(
+            "See https://github.com/cedadev/nlds-client/blob/main/LICENSE.txt for full "
+            "license"
+        )
 
 
 """Custom class for tags in the format key:value 

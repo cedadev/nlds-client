@@ -42,7 +42,7 @@ movement of data between disk, cache, and tape.
 The NLDS also provides a searchable catalog of files, with the user able to
 assign a label and tags to a collection of files.
 
-.. figure:: ./userview.png
+.. figure:: ./_images/userview.png
 
     Figure 1: User view of the Near-Line Data Store
 
@@ -152,7 +152,7 @@ with the ability to add metadata to the *Holdings* in the form of *Tags* and
 Figure 2 shows a simplified view of the NLDS data-catalog.  This is covered in
 much more depth in the :ref:`catalog_organisation` section.
 
-.. figure:: ./simple_catalog.png
+.. figure:: ./_images/simple_catalog.png
 
     Figure 2: Simplified view of the NLDS data-catalog
 

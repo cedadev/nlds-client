@@ -20,7 +20,7 @@ Getting a JASMIN user account
 This is covered extensively in the "Getting Started" section of the JASMIN help docs:
 `JASMIN : Docs : Getting Started <https://help.jasmin.ac.uk/docs/getting-started/>`_.
 
-.. image:: ./jasmin_help.png
+.. image:: ./_images/jasmin_help.png
     :width: 50 %
     :align: center
 
@@ -38,19 +38,19 @@ This is done via the JASMIN accounts portal:
 1. Log into the JASMIN accounts portal: `accounts.jasmin.ac.uk <https://accounts.jasmin.ac.uk>`_
 2. Click ``My JASMIN account``.  You should see this screen:
    
-.. image:: ./jasmin_accounts.png
+.. image:: ./_images/jasmin_accounts.png
     :width: 50 %
     :align: center
 
 3. Click on ``My services`` then ``Group Workspaces`` on the next screen, in the left-hand gray column.  You will see this screen:
 
-.. image:: ./gws.png
+.. image:: ./_images/gws.png
     :width: 50 %
     :align: center
 
 4. Search for the Group Workspace in the search bar, and then click ``More Information`` for the GWS you wish to join.
 
-.. image:: ./gws_join.png
+.. image:: ./_images/gws_join.png
     :width: 50 %
     :align: center
 
@@ -69,7 +69,7 @@ You will require access to the Object Store that is used by NLDS to store files 
 1. Follow steps ``1`` & ``2`` in :ref:`gws_access`.
 2. Click on ``My services`` and click on ``Object Store`` in the left-hand gray column.  You will see this screen:
 
-.. image:: ./obj_store.png
+.. image:: ./_images/obj_store.png
     :width: 50 %
     :align: center
 
@@ -81,7 +81,7 @@ You will require access to the Object Store that is used by NLDS to store files 
 4. Log into the `JASMIN Object Store portal <https://s3-portal.jasmin.ac.uk>`_ using your web-browser.  Use your regular JASMIN account username and password.
 5. Click on the ``Object Stores`` blue button.  You will be presented with a list of your Object Store tenancies.  
 
-.. image:: ./jasmin_obj_store_01.png
+.. image:: ./_images/jasmin_obj_store_01.png
     :width: 50 %
     :align: center
 
@@ -89,7 +89,7 @@ You will require access to the Object Store that is used by NLDS to store files 
 
 You will be presented with this screen:
 
-.. image:: ./jasmin_obj_store_02.png
+.. image:: ./_images/jasmin_obj_store_02.png
     :width: 50 %
     :align: center
 
@@ -97,7 +97,7 @@ Click on the ``Create Key`` tab at the top of the table.
 
 7. Fill in the Description and an expiry-date and click ``Create Access Key``.
 
-.. image:: ./jasmin_obj_store_03.png
+.. image:: ./_images/jasmin_obj_store_03.png
     :width: 50 %
     :align: center
 
