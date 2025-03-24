@@ -42,17 +42,20 @@ json = False
     help="Output NLDS client version and exit.",
 )
 def nlds_client(ctx, version):
-    if ctx.invoked_subcommand is None and version:
-        click.echo(f"Near Line Data Store client {__version__}.")
-        click.echo(
-            "Copyright © 2022-2025 Centre of Environmental Data Analysis Developers, "
-            "Scientific and Technical Facilities Council (STFC), "
-            "UK Research and Innovation (UKRI)"
-        )
-        click.echo(
-            "See https://github.com/cedadev/nlds-client/blob/main/LICENSE.txt for full "
-            "license"
-        )
+    if ctx.invoked_subcommand is None:
+        if version:
+            click.echo(f"Near Line Data Store client {__version__}.")
+            click.echo(
+                "Copyright © 2022-2025 Centre of Environmental Data Analysis "
+                "Developers, Scientific and Technical Facilities Council (STFC), "
+                "UK Research and Innovation (UKRI)"
+            )
+            click.echo(
+                "See https://github.com/cedadev/nlds-client/blob/main/LICENSE.txt for "
+                "the full license."
+            )
+        else:
+            click.echo(ctx.get_help())
 
 
 """Custom class for tags in the format key:value 
