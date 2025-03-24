@@ -12,7 +12,7 @@ collection of files.
 *Figure 1* shows a simplified version of the structure of the catalog, with just
 the information relevant to the user remaining.  
 
-.. figure:: ./simple_catalog.png
+.. figure:: ./_images/simple_catalog.png
 
     Figure 1: Simplified view of the NLDS data-catalog
 
