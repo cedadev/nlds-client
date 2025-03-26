@@ -973,6 +973,7 @@ def getlist(
     "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
 @click.option(
+    "-x",
     "--regex",
     default=False,
     type=bool,
@@ -1062,22 +1063,24 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json, re
     "--api_action",
     default=None,
     type=str,
-    help="The api action of the transactions to list. Options: get | "
-    "put | getlist | putlist",
+    help="The api action of the transactions to list. Options: "
+    "get | put | getlist | putlist",
 )
 @click.option(
     "-s",
     "--state",
     default=None,
     type=str,
-    help="The state of the transactions to list.  Options: "
-    "INITIALISING | ROUTING | SPLITTING | INDEXING | "
-    "CATALOG_PUTTING | TRANSFER_PUTTING | CATLOG_ROLLBACK | "
-    "CATALOG_GETTING | ARCHIVE_GETTING | TRANSFER_GETTING | "
-    "ARCHIVE_INIT | CATALOG_ARCHIVE_AGGREGATING | ARCHIVE_PUTTING | "
-    "CATALOG_ARCHIVE_UPDATING | CATALOG_ARCHIVE_ROLLBACK | "
-    "COMPLETE | FAILED | COMPLETE_WITH_ERRORS | "
-    "COMPLETE_WITH_WARNINGS",
+    help="""
+The state of the transactions to list.  Options:
+INITIALISING | ROUTING | SPLITTING | INDEXING |
+CATALOG_PUTTING | TRANSFER_PUTTING | CATALOG_ROLLBACK |
+CATALOG_GETTING | ARCHIVE_GETTING | TRANSFER_GETTING |
+ARCHIVE_INIT | CATALOG_ARCHIVE_AGGREGATING | ARCHIVE_PUTTING |
+CATALOG_ARCHIVE_UPDATING | CATALOG_ARCHIVE_ROLLBACK |
+COMPLETE | FAILED | COMPLETE_WITH_ERRORS |
+COMPLETE_WITH_WARNINGS
+""",
 )
 @click.option(
     "-j",
@@ -1448,4 +1451,5 @@ def main():
 
 
 if __name__ == "__main__":
+    click.formatting.wrap_text = 80
     nlds_client()
