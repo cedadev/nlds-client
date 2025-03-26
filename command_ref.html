@@ -164,7 +164,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-find-l">
 <span id="cmdoption-nlds-find-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-l" title="Permalink to this definition"></a></dt>
-<dd><p>The label of the holding which the files belong to.  This can be a regular expression (regex).</p>
+<dd><p>The label of the holding which the files belong to.  This can be a regular expression (regex) if the -x/–regex flag is also used.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -182,7 +182,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-find-p">
 <span id="cmdoption-nlds-find-path"></span><span class="sig-name descname"><span class="pre">-p</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--path</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;path&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-p" title="Permalink to this definition"></a></dt>
-<dd><p>The path of the files to find.  This can be a regular expression (regex)</p>
+<dd><p>The path of the files to find.  This can be a regular expression (regex) if the -x/–regex flag is also used.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -213,6 +213,12 @@ given below.</p>
 <dt class="sig sig-object std" id="cmdoption-nlds-find-x">
 <span id="cmdoption-nlds-find-regex"></span><span class="sig-name descname"><span class="pre">-x</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-find-x" title="Permalink to this definition"></a></dt>
 <dd><p>Use regular expressions in the path and label search terms.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-f">
+<span id="cmdoption-nlds-find-findall"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--findall</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-find-f" title="Permalink to this definition"></a></dt>
+<dd><p>Allow the finding of all files.  WARNING: this could cause excessive load and a timeout on the request.</p>
 </dd></dl>
 
 </section>
@@ -250,7 +256,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-get-l">
 <span id="cmdoption-nlds-get-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-get-l" title="Permalink to this definition"></a></dt>
-<dd><p>The label of the holding to retrieve the file from.  This can be a regular expression (regex).</p>
+<dd><p>The label of the holding to retrieve the file from.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -319,7 +325,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-getlist-l">
 <span id="cmdoption-nlds-getlist-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-getlist-l" title="Permalink to this definition"></a></dt>
-<dd><p>The label of the holding(s) to retrieve files from.  This can be a regular expression (regex).</p>
+<dd><p>The label of the holding(s) to retrieve files from.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -402,7 +408,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-list-l">
 <span id="cmdoption-nlds-list-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-l" title="Permalink to this definition"></a></dt>
-<dd><p>The label of the holding(s) to list.  This can be a regularexpression (regex).</p>
+<dd><p>The label of the holding(s) to list.  This can be a regularexpression (regex) if the -x/–regex flag is also used.</p>
 </dd></dl>
 
 <dl class="std option">
@@ -458,7 +464,7 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-meta-l">
 <span id="cmdoption-nlds-meta-label"></span><span class="sig-name descname"><span class="pre">-l</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--label</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;label&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-meta-l" title="Permalink to this definition"></a></dt>
-<dd><p>The label of the holding to change metadata for.  This can be a regular expression (regex)</p>
+<dd><p>The label of the holding to change metadata for.</p>
 </dd></dl>
 
 <dl class="std option">
