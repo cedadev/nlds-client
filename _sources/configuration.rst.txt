@@ -65,7 +65,7 @@ the ``oauth_`` keys in the ``authentication`` section of the config and insert
 them either (a) into an existing config, or (b) into a blank template config 
 file if one doesn't already exist at the expected path in the user's home 
 directory. This will get you started if you don't already have a fully filled-in 
-config file. Note however that the oauth_token_file_location will not be 
+config file. Note, however, that the ``oauth_token_file_location`` will not be 
 altered.  For more information about this command please see the relevant part 
 of the :ref:`API reference<command-ref>` section.  
 
