@@ -556,8 +556,7 @@ user_help_text = (
     "--label",
     default=None,
     type=str,
-    help="The label of the holding to retrieve the file from.  This "
-    "can be a regular expression (regex).",
+    help="The label of the holding to retrieve the file from.",
 )
 @click.option(
     "-b",
@@ -781,8 +780,7 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
     "--label",
     default=None,
     type=str,
-    help="The label of the holding(s) to retrieve files from.  This "
-    "can be a regular expression (regex).",
+    help="The label of the holding(s) to retrieve files from.",
 )
 @click.option(
     "-b",
@@ -946,7 +944,7 @@ def getlist(
     default=None,
     type=str,
     help="The label of the holding(s) to list.  This can be a regular"
-    "expression (regex).",
+    "expression (regex) if the -x/--regex flag is also used.",
 )
 @click.option(
     "-i",
@@ -1165,7 +1163,7 @@ def stat(
     default=None,
     type=str,
     help="The label of the holding which the files belong to.  This "
-    "can be a regular expression (regex).",
+    "can be a regular expression (regex) if the -x/--regex flag is also used.",
 )
 @click.option(
     "-i",
@@ -1186,7 +1184,8 @@ def stat(
     "--path",
     default=None,
     type=str,
-    help="The path of the files to find.  This can be a regular expression (regex)",
+    help="The path of the files to find.  This can be a regular expression (regex) "
+    "if the -x/--regex flag is also used.",
 )
 @click.option(
     "-t",
@@ -1227,6 +1226,15 @@ def stat(
     is_flag=True,
     help="Use regular expressions in the path and label search terms.",
 )
+@click.option(
+    "-f",
+    "--findall",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="Allow the finding of all files.  WARNING: this could cause excessive load "
+    "and a timeout on the request.",
+)
 def find(
     user,
     group,
@@ -1240,8 +1248,22 @@ def find(
     simple,
     url,
     regex,
+    findall,
 ):
-    #
+    # check / prevent a user listing ALL their files
+    if (
+        label is None
+        and holding_id is None
+        and transaction_id is None
+        and path is None
+        and tag is None
+        and not findall
+    ):
+        raise click.UsageError(
+            "To list all of a user's files, you must specify the -f/--findall option.  "
+            "WARNING: this could cause excessive load and a timeout on the request."
+        )
+
     try:
         response = find_file(
             user,
@@ -1306,8 +1328,7 @@ def find(
     "--label",
     default=None,
     type=str,
-    help="The label of the holding to change metadata for.  This can "
-    "be a regular expression (regex)",
+    help="The label of the holding to change metadata for.",
 )
 @click.option(
     "-i",
