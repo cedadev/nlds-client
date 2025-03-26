@@ -114,7 +114,7 @@ Installing the NLDS client on a JASMIN scientific analysis server
 -----------------------------------------------------------------
 
 First, please familiarise yourself with the JASMIN documentation on the scientific analysis servers: `JASMIN : Docs : Scientific analysis servers <https://help.jasmin.ac.uk/docs/interactive-computing/sci-servers/>`_
-We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the NLDS client.  An alternative is to use the JASMIN transfer servers, if it suits your workflow more.  Details of these are here: `JASMIN : Docs : Transfer servers <https://help.jasmin.ac.uk/docs/interactive-computing/transfer-servers/>`.  Creating the virtual-evironment in your home directory means that it is available from both the scientific analysis servers or the transfer servers.
+We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the NLDS client.  An alternative is to use the JASMIN transfer servers, if it suits your workflow more.  Details of these are here: `JASMIN : Docs : Transfer servers <https://help.jasmin.ac.uk/docs/interactive-computing/transfer-servers/>`_.  Creating the virtual-evironment in your home directory means that it is available from both the scientific analysis servers or the transfer servers.
 
 1.  Log into your chosen scientific analysis server:
 
