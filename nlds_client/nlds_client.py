@@ -358,16 +358,30 @@ def print_meta(response:dict, req_details:str):
         click.echo(f"{'':<12}{'tags':<8}: {h['new_meta']['tags']}")
 
 def print_quota(response: dict, req_details:str):
-    """Print out the response from the quota command"""
+    """Print out the quota response from the quota command"""
     try:
         group = response['details']['group']
         quota = response['data']['quota']
         if quota == 0:
-            quota_string = f"There is no allocated quota for the group {group}."
+            quota_string = f"    There is no allocated quota for the group {group}."
         else:
-            quota_string = f"The allocated quota for the group {group} is {quota} GB."
+            quota_string = f"    The allocated quota for the group {group} is {quota} GB."
         click.echo(f"Checking quota for {req_details}:")
         click.echo(quota_string)
+    except KeyError as e:
+        click.echo(f"Error: Missing key in response data - {e}")
+
+def print_diskspace(response: dict, req_details:str):
+    """Print out the diskspace response from the quota command"""
+    try:
+        group = response ['details']['group']
+        diskspace = response['data']['diskspace']
+        if diskspace == 0:
+            diskspace_string = f"    There is no used diskspace for the group {group}."
+        else:
+            diskspace_string = f"    The used diskspace for the group {group} is {diskspace} GB."
+        click.echo(f"Checking diskspace for {req_details}:")
+        click.echo(diskspace_string)
     except KeyError as e:
         click.echo(f"Error: Missing key in response data - {e}")
 
@@ -783,6 +797,7 @@ def quota(user, group, ):
                 click.echo(json_dumps(response))
             else:
                 print_quota(response, req_details)
+                print_diskspace(response, req_details)
         else:
             fail_string = "Failed to get quota with "
             fail_string += req_details
