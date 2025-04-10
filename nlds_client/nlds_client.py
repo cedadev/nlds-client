@@ -306,7 +306,7 @@ def print_single_file(response, print_url=False):
             for f in t["filelist"]:
                 click.echo(f"{'':<4}{'path':<16}: {f['original_path']}")
                 click.echo(f"{'':<4}{'type':<16}: {f['path_type']}")
-                if f["link_path"]:
+                if f["path_type"] == "LINK" and f["link_path"]:
                     click.echo(f"{'':<4}{'link path':<16}: {f['link_path']}")
                 size = pretty_size(f["size"])
                 click.echo(f"{'':<4}{'size':<16}: {size}")
@@ -317,13 +317,15 @@ def print_single_file(response, print_url=False):
                     f"{integer_permissions_to_string(f['permissions'])}"
                 )
                 click.echo(f"{'':<4}{'ingest time':<16}: {time}")
-                # locations
-                stls = " "
-                url = _get_url_from_file(f)
-                for s in f["locations"]:
-                    stls += s["storage_type"] + ", "
+                # locations - if not a link file
+                if not f["path_type"] == "LINK":
+                    stls = " "
+                    for s in f["locations"]:
+                        stls += s["storage_type"] + ", "
+                    click.echo(f"{'':<4}{'storage location':<16}:{stls[0:-2]}")
 
-                click.echo(f"{'':<4}{'storage location':<16}:{stls[0:-2]}")
+                # url if requested
+                url = _get_url_from_file(f)
                 if url is not None and print_url:
                     click.echo(f"{'':<4}{'url':<16}: {url}")
 
@@ -349,8 +351,15 @@ def print_simple_file(response, print_url=False):
                     click.echo(f"{f['original_path']}")
 
 
-def get_location_letters(locations):
+def get_location_letters(file):
+    """Get the location letter for a file.  
+    This could be O(bject Storage) and/or T(ape) or L(ink)"""
     ll = ""
+    file_type = file["path_type"]
+    locations = file["locations"]
+
+    if file_type == "LINK":
+        return "L"
     for l in locations:
         if l["root"] != "":
             if len(ll) > 0:
@@ -375,7 +384,7 @@ def print_multi_file(response, print_url):
                     path_print = _get_url_from_file(f)
                 else:
                     path_print = f["original_path"]
-                storage = get_location_letters(f["locations"])
+                storage = get_location_letters(f)
                 click.echo(
                     f"{'':4}{h['user']:<16}"
                     f"{h['holding_id']:<6}{h['label']:<16}"
