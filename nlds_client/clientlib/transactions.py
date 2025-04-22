@@ -14,6 +14,7 @@ from pathlib import Path
 from datetime import datetime
 from base64 import b64decode
 from typing import List, Dict, Any
+import math
 
 import requests
 
@@ -875,6 +876,8 @@ def get_transaction_state(transaction: dict):
     min_state = 200
     min_time = datetime(1970, 1, 1)
     error_count = 0
+    complete_count = 0
+    n_subrecords = len(transaction["sub_records"])
     for sr in transaction["sub_records"]:
         sr_state = sr["state"]
         d = datetime.fromisoformat(sr["last_updated"])
@@ -884,9 +887,11 @@ def get_transaction_state(transaction: dict):
             min_state = state_mapping[sr_state]
         if sr_state == "FAILED":
             error_count += 1
+        if sr_state == "COMPLETE":
+            complete_count += 1
 
     if min_state == 200:
-        return None, None
+        return None, None, 0
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
@@ -898,7 +903,13 @@ def get_transaction_state(transaction: dict):
     if min_state == state_mapping["COMPLETE"] and warning_count > 0:
         min_state = state_mapping["COMPLETE_WITH_WARNINGS"]
 
-    return state_mapping_reverse[min_state], min_time
+    # percentage complete
+    if n_subrecords != 0:
+        p_complete = math.ceil(100.0 * float(complete_count)/float(n_subrecords))
+    else:
+        p_complete = 100
+
+    return state_mapping_reverse[min_state], min_time, p_complete
 
 
 def change_metadata(

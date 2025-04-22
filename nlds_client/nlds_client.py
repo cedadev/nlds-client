@@ -206,7 +206,7 @@ def print_single_stat(response: dict, req_details):
     click.echo(stat_string)
     # still looping over the keys, just in case more than one state returned
     for tr in response["data"]["records"]:
-        state, _ = get_transaction_state(tr)
+        state, last_time, p_complete = get_transaction_state(tr)
         if state == None:
             continue
         click.echo(f"{'':<4}{'id':<16}: {tr['id']}")
@@ -217,7 +217,7 @@ def print_single_stat(response: dict, req_details):
         if "label" in tr:
             click.echo(f"{'':<4}{'label':<16}: {tr['label']}")
         click.echo(
-            f"{'':<4}{'creation time':<16}: {(tr['creation_time']).replace('T',' ')}"
+            f"{'':<4}{'creation time':<16}: {(tr['creation_time']).replace('T',' ')[0:19]}"
         )
         click.echo(f"{'':<4}{'state':<16}: {state}")
         if "warnings" in tr:
@@ -226,6 +226,9 @@ def print_single_stat(response: dict, req_details):
                 warn_str += w + f"\n{'':<22}"
             click.echo(f"{'':<4}{'warnings':<16}: {warn_str[:-23]}")
 
+        last_time = last_time.isoformat().replace("T", " ")[0:19]
+        click.echo(f"{'':<4}{'last update':<16}: {last_time}")
+        click.echo(f"{'':<4}{'complete':<16}: {p_complete:>3}%")
         click.echo(f"{'':<4}{'sub records':<16}->")
         for sr in tr["sub_records"]:
             click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
@@ -249,13 +252,13 @@ def print_multi_stat(response: dict, req_details):
     click.echo(stat_string)
     click.echo(
         f"{'':<4}{'user':<16}{'id':<12}{'action':<16}{'job label':<16}"
-        f"{'label':<16}{'state':<23}{'last update':<20}"
+        f"{'label':<16}{'done':<6}{'state':<23}{'last update':<23}"
     )
     for tr in response["data"]["records"]:
-        state, time = get_transaction_state(tr)
+        state, last_time, p_complete = get_transaction_state(tr)
         if state == None:
             continue
-        time = time.isoformat().replace("T", " ")
+        last_time = last_time.isoformat().replace("T", " ")[0:19]
         if "label" in tr:
             label = tr["label"]
         else:
@@ -266,8 +269,8 @@ def print_multi_stat(response: dict, req_details):
             job_label = ""  # tr['transaction_id'][0:8]
         click.echo(
             f"{'':<4}{tr['user']:<16}{tr['id']:<12}{tr['api_action']:<16}"
-            f"{job_label:16}{label:16}"
-            f"{state:<23}{time:<20}"
+            f"{job_label:16}{label:16}{p_complete:>3}%  "
+            f"{state:<23}{last_time:<23}"
         )
 
 
@@ -352,7 +355,7 @@ def print_simple_file(response, print_url=False):
 
 
 def get_location_letters(file):
-    """Get the location letter for a file.  
+    """Get the location letter for a file.
     This could be O(bject Storage) and/or T(ape) or L(ink)"""
     ll = ""
     file_type = file["path_type"]
