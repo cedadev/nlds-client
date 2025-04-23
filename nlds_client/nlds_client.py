@@ -251,9 +251,10 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
                 )
 
         if errors:
-            click.echo(f"{'':<4}{'errors':<16}->")
+            click.echo(f"{'':<4}{'errors in sub records':<20} ->")
             for sr in tr["sub_records"]:
                 if len(sr["failed_files"]) > 0:
+                    click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
                     click.echo(f"{'':<9}{'failed files':<13}->")
                     for ff in sr["failed_files"]:
                         click.echo(
