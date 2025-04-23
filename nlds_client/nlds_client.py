@@ -198,12 +198,23 @@ def print_list(response: dict, req_details):
             )
 
 
-def print_single_stat(response: dict, req_details):
+def print_failed_files(response:dict, req_details):
+    """Print the files that failed to upload / download.  One per line so that they 
+    can be appended to a list and retried."""
+    for tr in response["data"]["records"]:
+        for sr in tr["sub_records"]:
+            if len(sr["failed_files"]) > 0:
+                for ff in sr["failed_files"]:
+                    click.echo(f"{ff['filepath']}")
+
+
+def print_single_stat(response: dict, req_details, sub_records, errors):
     """Print a single status in more detail, with a list of failed files if
     necessary"""
     stat_string = "State of transaction for "
     stat_string += req_details
     click.echo(stat_string)
+
     # still looping over the keys, just in case more than one state returned
     for tr in response["data"]["records"]:
         state, last_time, p_complete = get_transaction_state(tr)
@@ -229,20 +240,26 @@ def print_single_stat(response: dict, req_details):
         last_time = last_time.isoformat().replace("T", " ")[0:19]
         click.echo(f"{'':<4}{'last update':<16}: {last_time}")
         click.echo(f"{'':<4}{'complete':<16}: {p_complete:>3}%")
-        click.echo(f"{'':<4}{'sub records':<16}->")
-        for sr in tr["sub_records"]:
-            click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
-            click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
-            click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
-            click.echo(
-                f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')}"
-            )
+        if sub_records:
+            click.echo(f"{'':<4}{'sub records':<16}->")
+            for sr in tr["sub_records"]:
+                click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
+                click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
+                click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
+                click.echo(
+                    f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')}"
+                )
 
-            if len(sr["failed_files"]) > 0:
-                click.echo(f"{'':<9}{'failed files':<13}->")
-                for ff in sr["failed_files"]:
-                    click.echo(f"{'':<9}{'+':<4} {'filepath':<8} : {ff['filepath']}")
-                    click.echo(f"{'':<9}{'':>4} {'reason':<8} : {ff['reason']}")
+        if errors:
+            click.echo(f"{'':<4}{'errors':<16}->")
+            for sr in tr["sub_records"]:
+                if len(sr["failed_files"]) > 0:
+                    click.echo(f"{'':<9}{'failed files':<13}->")
+                    for ff in sr["failed_files"]:
+                        click.echo(
+                            f"{'':<9}{'+':<4} {'filepath':<8} : {ff['filepath']}"
+                        )
+                        click.echo(f"{'':<9}{'':>4} {'reason':<8} : {ff['reason']}")
 
 
 def print_multi_stat(response: dict, req_details):
@@ -274,12 +291,14 @@ def print_multi_stat(response: dict, req_details):
         )
 
 
-def print_stat(response: dict, req_details):
+def print_stat(response: dict, req_details, sub_records, errors, failed_files):
     """Print out the response from the list command"""
     L = len(response["data"]["records"])
     # L of 0 should be trapped by exceptions on the server
-    if L == 1:
-        print_single_stat(response, req_details)
+    if failed_files:
+        print_failed_files(response, req_details)
+    elif L == 1:
+        print_single_stat(response, req_details, sub_records, errors)
     else:
         print_multi_stat(response, req_details)
 
@@ -1108,8 +1127,44 @@ COMPLETE_WITH_WARNINGS
     is_flag=True,
     help="Use regular expressions in the job label search term.",
 )
+@click.option(
+    "-S",
+    "--sub_records",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="List the sub records for the transaction",
+)
+@click.option(
+    "-E",
+    "--errors",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="List the errors for the transaction",
+)
+@click.option(
+    "-F",
+    "--failed_files",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="List the failed files for the transaction, one per line",
+)
 def stat(
-    user, group, groupall, id, transaction_id, job_label, api_action, state, json, regex
+    user,
+    group,
+    groupall,
+    id,
+    transaction_id,
+    job_label,
+    api_action,
+    state,
+    json,
+    regex,
+    sub_records,
+    errors,
+    failed_files,
 ):
     try:
         response = monitor_transactions(
@@ -1137,7 +1192,7 @@ def stat(
             if json:
                 click.echo(json_dumps(response))
             else:
-                print_stat(response, req_details)
+                print_stat(response, req_details, sub_records, errors, failed_files)
         else:
             fail_string = "Failed to get status of transaction(s) with "
             fail_string += req_details
