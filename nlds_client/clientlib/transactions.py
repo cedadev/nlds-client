@@ -329,9 +329,7 @@ def put_filelist(
     transaction_id = uuid.uuid4()
 
     # Resolve the path to the file (i.e. make absolute)
-    # Convert to a pathlib.Path and then back to a string
-    filelist = [str(Path(fp).resolve()) for fp in filelist]
-
+    filelist = [os.path.abspath(os.path.expanduser(fp)) for fp in filelist]
     # build the parameters.  files/put requires (for a filelist):
     #    transaction_id: UUID
     #    user: str
