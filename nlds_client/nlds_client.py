@@ -181,7 +181,7 @@ def print_list(response: dict, req_details):
         click.echo(f"{'':<4}{'group':<16}: {h['group']}")
         click.echo(f"{'':<4}{'id':<16}: {h['id']}")
         click.echo(f"{'':<4}{'label':<16}: {h['label']}")
-        click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')}")
+        click.echo(f"{'':<4}{'ingest time':<16}: {h['date'].replace('T',' ')[0:19]}")
         if "transactions" in h:
             trans_str = ""
             for t in h["transactions"]:
@@ -194,12 +194,12 @@ def print_list(response: dict, req_details):
         click.echo(f"{'':<4}{'user':<16}{'id':<6}{'label':<16}{'ingest time':<32}")
         for h in response["data"]["holdings"]:
             click.echo(
-                f"{'':<4}{h['user']:<16}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' '):<32}"
+                f"{'':<4}{h['user']:<16}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' ')[0:19]:<32}"
             )
 
 
-def print_failed_files(response:dict, req_details):
-    """Print the files that failed to upload / download.  One per line so that they 
+def print_failed_files(response: dict, req_details):
+    """Print the files that failed to upload / download.  One per line so that they
     can be appended to a list and retried."""
     for tr in response["data"]["records"]:
         for sr in tr["sub_records"]:
@@ -247,7 +247,7 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
                 click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
                 click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
                 click.echo(
-                    f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')}"
+                    f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')[0:19]}"
                 )
 
         if errors:
@@ -325,7 +325,7 @@ def print_single_file(response, print_url=False):
         h = response["data"]["holdings"][hkey]
         for tkey in h["transactions"]:
             t = h["transactions"][tkey]
-            time = t["ingest_time"].replace("T", " ")
+            time = t["ingest_time"].replace("T", " ")[0:19]
             for f in t["filelist"]:
                 click.echo(f"{'':<4}{'path':<16}: {f['original_path']}")
                 click.echo(f"{'':<4}{'type':<16}: {f['path_type']}")
@@ -399,7 +399,7 @@ def print_multi_file(response, print_url):
         h = response["data"]["holdings"][hkey]
         for tkey in h["transactions"]:
             t = h["transactions"][tkey]
-            time = t["ingest_time"].replace("T", " ")
+            time = t["ingest_time"].replace("T", " ")[0:19]
             for f in t["filelist"]:
                 size = pretty_size(f["size"])
                 url = _get_url_from_file(f)
