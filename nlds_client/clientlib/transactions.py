@@ -708,6 +708,8 @@ def monitor_transactions(
     state: str = None,
     sub_id: str = None,
     regex: bool = False,
+    limit: int = None,
+    descending: bool = False,
 ):
     """Make a request to the monitoring database for a status update of ongoing
     or finished transactions in the NLDS for, a user/group
@@ -745,6 +747,14 @@ def monitor_transactions(
     :param regex: whether the job label is a regular expression
     :type regex: bool, optional
 
+    :param limit: limit the number of transactions to request
+    :type limit: int, optional
+
+    :param descending: sort the transactions in descending time order. Default is
+        ascending.
+    :type descending: bool, optional
+
+
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
 
@@ -779,6 +789,10 @@ def monitor_transactions(
         input_params["state"] = state
     if regex:
         input_params["regex"] = regex
+    if limit:
+        input_params["limit"] = limit
+    if descending:
+        input_params["descending"] = descending
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 

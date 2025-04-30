@@ -1152,6 +1152,21 @@ COMPLETE_WITH_WARNINGS
     is_flag=True,
     help="List the failed files for the transaction, one per line",
 )
+@click.option(
+    "-L",
+    "--limit",
+    default = None,
+    type=int,
+    help="Limit the number of transactions to list"
+)
+@click.option(
+    "-d/-a",
+    "--descending/--ascending",
+    "time",
+    default=True,
+    help="Switch between ascending and descending time order.",
+)
+
 def stat(
     user,
     group,
@@ -1166,6 +1181,8 @@ def stat(
     sub_records,
     errors,
     failed_files,
+    limit,
+    time,
 ):
     try:
         response = monitor_transactions(
@@ -1178,6 +1195,8 @@ def stat(
             api_action=api_action,
             state=state,
             regex=regex,
+            limit=limit,
+            descending=time,
         )
         req_details = format_request_details(
             user,
