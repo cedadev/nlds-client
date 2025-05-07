@@ -235,7 +235,8 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
             warn_str = ""
             for w in tr["warnings"]:
                 warn_str += w + f"\n{'':<22}"
-            click.echo(f"{'':<4}{'warnings':<16}: {warn_str[:-23]}")
+            if len(warn_str) > 0:
+                click.echo(f"{'':<4}{'warnings':<16}: {warn_str[:-23]}")
 
         last_time = last_time.isoformat().replace("T", " ")[0:19]
         click.echo(f"{'':<4}{'last update':<16}: {last_time}")
@@ -478,8 +479,8 @@ def print_response(tr: dict):
 
 user_help_text = (
     " If no user or group is given then these values will "
-    "default to the user:default_user and user:default values "
-    "in the ~/.nlds-config file."
+    "default to the ``user:default_user`` and ``user:default_group values`` "
+    "in the ``~/.nlds-config file``."
 )
 
 
@@ -554,8 +555,8 @@ def put(filepath, user, group, label, job_label, holding_id, tag, json):
 
 user_help_text = (
     " If no user or group is given then these values will "
-    "default to the user:default_user and user:default values "
-    "in the ~/.nlds-config file."
+    "default to the ``user:default_user`` and ``user:default_group values`` "
+    "in the ``~/.nlds-config file``."
 )
 
 """Get files command"""
@@ -615,13 +616,40 @@ user_help_text = (
 @click.option(
     "-j", "--json", default=False, is_flag=True, help="Output the result as JSON."
 )
+@click.option(
+    "-x",
+    "--regex",
+    default=False,
+    type=bool,
+    is_flag=True,
+    help="Use regular expressions in the path and label search terms.",
+)
 @click.argument("filepath", type=str)
 def get(
-    filepath, user, group, groupall, target, job_label, label, holding_id, tag, json
+    filepath,
+    user,
+    group,
+    groupall,
+    target,
+    job_label,
+    label,
+    holding_id,
+    tag,
+    json,
+    regex,
 ):
     try:
         response = get_filelist(
-            [filepath], user, group, groupall, target, job_label, label, holding_id, tag
+            [filepath],
+            user,
+            group,
+            groupall,
+            target,
+            job_label,
+            label,
+            holding_id,
+            tag,
+            regex,
         )
         if json:
             click.echo(json_dumps(response))
@@ -1008,9 +1036,35 @@ def getlist(
     default=False,
     type=bool,
     is_flag=True,
-    help="Use regular expressions in the  label search term.",
+    help="Use regular expressions in the label search term.",
 )
-def list(user, group, groupall, label, holding_id, transaction_id, tag, json, regex):
+@click.option(
+    "-L",
+    "--limit",
+    default=None,
+    type=int,
+    help="Limit the number of transactions to list",
+)
+@click.option(
+    "-9/-0",
+    "--descending/--ascending",
+    "time",
+    default=True,
+    help="Switch between ascending and descending time order.",
+)
+def list(
+    user,
+    group,
+    groupall,
+    label,
+    holding_id,
+    transaction_id,
+    tag,
+    json,
+    regex,
+    limit,
+    time,
+):
     #
     try:
         response = list_holding(
@@ -1022,6 +1076,8 @@ def list(user, group, groupall, label, holding_id, transaction_id, tag, json, re
             transaction_id=transaction_id,
             tag=tag,
             regex=regex,
+            limit=limit,
+            descending=time,
         )
         req_details = format_request_details(
             user, group, groupall=groupall, label=label, holding_id=holding_id, tag=tag
@@ -1155,18 +1211,17 @@ COMPLETE_WITH_WARNINGS
 @click.option(
     "-L",
     "--limit",
-    default = None,
+    default=None,
     type=int,
-    help="Limit the number of transactions to list"
+    help="Limit the number of transactions to list",
 )
 @click.option(
-    "-d/-a",
+    "-9/-0",
     "--descending/--ascending",
     "time",
     default=True,
     help="Switch between ascending and descending time order.",
 )
-
 def stat(
     user,
     group,
@@ -1314,13 +1369,18 @@ def stat(
     help="Use regular expressions in the path and label search terms.",
 )
 @click.option(
-    "-f",
-    "--findall",
-    default=False,
-    type=bool,
-    is_flag=True,
-    help="Allow the finding of all files.  WARNING: this could cause excessive load "
-    "and a timeout on the request.",
+    "-L",
+    "--limit",
+    default=1000,
+    type=int,
+    help="Limit the number of files to list.  Default is 1000 files.",
+)
+@click.option(
+    "-9/-0",
+    "--descending/--ascending",
+    "time",
+    default=True,
+    help="Switch between ascending and descending time order.",
 )
 def find(
     user,
@@ -1335,22 +1395,9 @@ def find(
     simple,
     url,
     regex,
-    findall,
+    limit,
+    time,
 ):
-    # check / prevent a user listing ALL their files
-    if (
-        label is None
-        and holding_id is None
-        and transaction_id is None
-        and path is None
-        and tag is None
-        and not findall
-    ):
-        raise click.UsageError(
-            "To list all of a user's files, you must specify the -f/--findall option.  "
-            "WARNING: this could cause excessive load and a timeout on the request."
-        )
-
     try:
         response = find_file(
             user,
@@ -1362,6 +1409,8 @@ def find(
             path=path,
             tag=tag,
             regex=regex,
+            limit=limit,
+            descending=time,
         )
         req_details = format_request_details(
             user,

@@ -168,20 +168,24 @@ option.
 .. code-block:: text
 
     > nlds --help
+    
     Usage: nlds [OPTIONS] COMMAND [ARGS]...
 
     Options:
-      --help  Show this message and exit.
+    -v, --version  Output NLDS client version and exit.
+    --help         Show this message and exit.
 
     Commands:
-      find     Find and list files.
-      get      Get a single file.
-      getlist  Get a number of files specified in a list.
-      list     List holdings.
-      meta     Alter metadata for a holding.
-      put      Put a single file.
-      putlist  Put a number of files specified in a list.
-      stat     List transactions.
+    find     Find and list files.
+    get      Get a single file.
+    getlist  Get a number of files specified in a list.
+    init     Set up the NLDS client on first use.
+    list     List holdings.
+    meta     Alter metadata for a holding.
+    put      Put a single file.
+    putlist  Put a number of files specified in a list.
+    stat     List transactions.
+
 
 
 .. code-block:: text
@@ -190,25 +194,40 @@ option.
 
     Usage: nlds find [OPTIONS]
 
-      Find and list files. If no user or group is given then these values will
-      default to the ``user:default_user`` and ``user:default values`` in the
-      ``~/.nlds-config file``.
+    Find and list files. If no user or group is given then these values will
+    default to the user:default_user and user:default values in the ~/.nlds-
+    config file.
 
     Options:
-      -u, --user TEXT            The username to find files for.
-      -g, --group TEXT           The group to find files for.
-      -l, --label TEXT           The label of the holding which the files belong
-                                  to.  This can be a regular expression (regex).
-      -i, --holding_id INTEGER   The numeric id of the holding which the files
-                                  belong to.
-      -n, --transaction_id TEXT  The UUID transaction id of the transaction to
-                                  list.
-      -p, --path TEXT            The path of the files to find.  This can be a
-                                  regular expression (regex)
-      -t, --tag TAG              The tag(s) of the holding(s) to find files
-                                  within.
-      -j, --json                 Output the result as JSON.
-      --help                     Show this message and exit.
+    -u, --user TEXT                 The username to find files for.
+    -g, --group TEXT                The group to find files for.
+    -A, --groupall                  Find files that belong to a group, rather
+                                    than a single user
+    -l, --label TEXT                The label of the holding which the files
+                                    belong to.  This can be a regular expression
+                                    (regex) if the -x/--regex flag is also used.
+    -i, --holding_id INTEGER        The numeric id of the holding which the
+                                    files belong to.
+    -n, --transaction_id TEXT       The UUID transaction id of the transaction
+                                    to list.
+    -p, --path TEXT                 The path of the files to find.  This can be
+                                    a regular expression (regex) if the
+                                    -x/--regex flag is also used.
+    -t, --tag TAG                   The tag(s) of the holding(s) to find files
+                                    within.
+    -j, --json                      Output the result as JSON.
+    -1, --simple                    Output the list of files, one per line,
+                                    filepath only.
+    -U, --url                       Output the URL for the file on the object
+                                    storage.
+    -x, --regex                     Use regular expressions in the path and
+                                    label search terms.
+    -L, --limit INTEGER             Limit the number of files to list.  Default
+                                    is 1000 files.
+    -9, --descending / -0, --ascending
+                                    Switch between ascending and descending time
+                                    order.
+    --help                          Show this message and exit.
 
 .. _put:
 
@@ -311,9 +330,9 @@ own to view the state of all the transactions for a user:
 
     > nlds stat
     State of transactions for user:frjohn, group:farmers
-        id    action          job label       label           state                  last update         
-        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
-        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+        user        id    action          job label       label           done  state                  last update         
+        frjohn      1     put             SheepHerding    SheepPen        100%  COMPLETE               2023-04-18 15:21:41 
+        frjohn      2     put             test_putlist    Zoo             100%  COMPLETE               2023-04-18 15:28:53 
 
 (the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
 ``-g`` arguments here, and so the defaults are read from the 
@@ -342,15 +361,15 @@ Results for the ``stat`` command can be filtered using the following options:
 
     > nlds stat -s COMPLETE
     State of transactions for user:frjohn, group:farmers, state:COMPLETE
-        id    action          job label       label           state                  last update         
-        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
-        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+        user        id    action          job label       label           done  state                  last update         
+        frjohn      1     put             SheepHerding    SheepPen        100%  COMPLETE               2023-04-18 15:21:41 
+        frjohn      2     put             test_putlist    Zoo             100%  COMPLETE               2023-04-18 15:28:53 
 
     > nlds stat -a put
     State of transactions for user:frjohn, group:farmers, api-action:put
-        id    action          job label       label           state                  last update         
-        1     put             SheepHerding    SheepPen        COMPLETE               2023-04-18 15:21:41 
-        2     put             test_putlist    Zoo             COMPLETE               2023-04-18 15:28:53 
+        user        id    action          job label       label           done  state                  last update         
+        frjohn      1     put             SheepHerding    SheepPen        100%  COMPLETE               2023-04-18 15:21:41 
+        frjohn      2     put             test_putlist    Zoo             100%  COMPLETE               2023-04-18 15:28:53 
 
     > nlds stat -b SheepHerding
     State of transaction for user:frjohn, group:farmers
@@ -362,13 +381,6 @@ Results for the ``stat`` command can be filtered using the following options:
         label           : SheepPen
         creation time   : 2023-04-18 15:21:36
         state           : COMPLETE
-        warnings        : 
-        sub records     ->
-        +   id           : 1
-            sub_id       : 19ccd443-e269-465d-b0ed-51c5e98b8fad
-            state        : COMPLETE
-            retries      : 0
-            last update  : 2023-04-18 15:21:41
    
 In the last example, only one transaction was found, and so the entire details
 for a single transaction was returned.  If more than one transaction had the
@@ -376,11 +388,12 @@ same ``job_label``, then the list format would be returned.
 
 To guarantee to get the full information for a single transaction, the ``-i``
 option can be used with the numeric id of the transaction.  The ``-n`` option
-can also be used with the transaction id, if you know it.
+can also be used with the transaction id, if you know it.  Finally, the ``-S`` 
+option lists the subrecords of the transaction.
 
 .. code-block:: text
 
-    > nlds stat -i 2
+    > nlds stat -i 2 -S
     State of transaction for user:frjohn, group:farmers, id:2
         id              : 2
         user            : frjohn
@@ -398,7 +411,7 @@ can also be used with the transaction id, if you know it.
             retries      : 0
             last update  : 2023-04-18 15:28:53
 
-    > nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1
+    > nlds stat -n 41d412e2-1c1b-4d59-943a-40d9e717a0a1 -S
     State of transaction for user:frjohn, group:farmers, transaction_id:41d412e2-1c1b-4d59-943a-40d9e717a0a1
         id              : 2
         user            : frjohn
@@ -442,9 +455,9 @@ that a user has:
 
     > nlds list
     Listing holdings for user:frjohn, group:farmers
-        id    label           ingest time                     
-        1     SheepPen        2023-04-18 15:21:37             
-        2     Zoo             2023-04-18 15:28:48
+        user        id    label           ingest time 
+        frjohn      1     SheepPen        2023-04-18 15:21:37             
+        frjohn      2     Zoo             2023-04-18 15:28:48
 
 (the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
 ``-g`` arguments here, and so the defaults are read from the 
@@ -493,17 +506,29 @@ To view which files the user holds in the NLDS, use the ``find`` command:
 
     > nlds find
     Listing files for holdings for user:frjohn, group:farmers
-        h-id  h-label         path                              size    time        
-        1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
-        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
+        user        h-id  h-label         size    date        storage path
+        frjohn      1     SheepPen        49.0B   2023-04-18     O    /Users/frjohn/sheep.txt 
+        frjohn      2     Zoo             96.0B   2023-04-18    O+T   /Users/frjohn/albatross.txt 
+        frjohn      2     Zoo             50.0B   2023-04-18     L    /Users/frjohn/rabbit.txt
+
+The storage column indicates where the file is stored, the possible combinations being:
+
+.. code-block:: text
+
+     O  : Object Storage
+    O+T : Object Storage and Tape
+     T  : Tape only
+     L  : File is a link
 
 .. warning::
 
     Issuing the ``find`` command like this, with no filters, will 
-    make an attempt to list *all* of a user's files.  When a user has many files in
-    the NLDS, this is likely to end in a ``gateway timeout``, as the request will
-    take too long to process.  It is much better to use the options to the ``find``
+    make an attempt to list *all* of a user's files, up to a limit of 1000.  
+    This is to prevent a ``gateway timeout``, where the request
+    takes too long to process, occurring when the user has many files in the NLDS.
+    To view more files, use the ``-L`` option with a higher limit set.  Note, that setting
+    this value high may cause the ``gateway timeout``.
+    To further refine your search, it is possible to use the options to the ``find``
     command to limit the number of files that will be returned.  This can be done
     in a number of ways, which will be illustrated below.
 
@@ -525,9 +550,9 @@ To list the files in a holding, use ``-i`` with the holding id (``h-id``) or
 
     > nlds find -l Zoo
     Listing files for holding for user:frjohn, group:farmers, label:Zoo
-        h-id  h-label         path                              size    time        
-        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
+        user        h-id  h-label         size    date        storage path
+        frjohn      2     Zoo             96.0B   2023-04-18    O+T   /Users/frjohn/albatross.txt 
+        frjohn      2     Zoo             50.0B   2023-04-18     L    /Users/frjohn/rabbit.txt
 
 In the first example, only one file is returned, so the full details are shown.
 To view the particular details of a file in the second example, the ``filepath``
@@ -546,11 +571,12 @@ of the file can be used with the ``-p`` argument.
         ingest time     : 2023-04-18 15:28:48
         storage location: OBJECT_STORAGE
 
-The ``filepath`` argument can be a regular expression:
+The ``filepath`` argument can be a regular expression, if the ``-x`` option is also 
+given:
 
 .. code-block:: text
 
-    > nlds find -l Zoo -p /Users/frjohn/a.*
+    > nlds find -l Zoo -p /Users/frjohn/a.* -x
     Listing files for holding for user:frjohn, group:farmers, label:Zoo
         path            : /Users/frjohn/albatross.txt
         type            : FILE
@@ -567,9 +593,9 @@ Finally, tags can be used to list files from holdings that contain those tags:
 
     > nlds find  -t zoo:Bristol
     Listing files for holding for user:frjohn, group:farmers, tag:{'zoo': 'Bristol'}
-        h-id  h-label         path                              size    time        
-        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
+        user        h-id  h-label         size    date        storage path
+        frjohn      2     Zoo             96.0B   2023-04-18    O+T   /Users/frjohn/albatross.txt 
+        frjohn      2     Zoo             50.0B   2023-04-18     L    /Users/frjohn/rabbit.txt
 
 .. _get:
 
@@ -583,10 +609,10 @@ two holdings in the NLDS, which can be seen by issuing the ``find`` command.
 
     > nlds find
     Listing files for holdings for user:frjohn, group:farmers
-        h-id  h-label         path                              size    time        
-        1     SheepPen        /Users/frjohn/sheep.txt         49.0B   2023-04-18 15:21:37
-        2     Zoo             /Users/frjohn/albatross.txt     96.0B   2023-04-18 15:28:48
-        2     Zoo             /Users/frjohn/rabbit.txt        50.0B   2023-04-18 15:28:48
+        user        h-id  h-label         size    date        storage path
+        frjohn      1     SheepPen        49.0B   2023-04-18     O    /Users/frjohn/sheep.txt 
+        frjohn      2     Zoo             96.0B   2023-04-18     O    /Users/frjohn/albatross.txt 
+        frjohn      2     Zoo             50.0B   2023-04-18     L    /Users/frjohn/rabbit.txt
 
 NLDS supports ways five of retrieving these files, by using the ``get`` command 
 in conjunction with:
@@ -633,11 +659,12 @@ time is returned.
 `regular expressions <https://en.wikipedia.org/wiki/Regular_expression>`_ (regex).
 This is a useful tool as it allows a user to get files depending on a pattern.  
 One use case would be to get all of the files beneath a certain directory.  To 
-get files using regular expressions, use the command:
+get files using regular expressions, use the ``-x`` option in conjunction with the 
+``get`` command:
 
 .. code-block:: text
 
-    > nlds get "/Users/frjohn/.*" -r ./
+    > nlds get -x "/Users/frjohn/.*" -r ./
     GETLIST transaction accepted for processing.
         user            : frjohn
         group           : farmers
@@ -666,7 +693,8 @@ version, ingested on a particular day, the holding id can be specified in the
 
 If the user attempts to get a file from a holding that does not contain it, then
 an error will be returned when a ``stat`` command is used to check the status
-of the transaction.
+of the transaction.  Using the ``-E`` option shows the errors that occurred during the
+transaction. 
 
 .. code-block:: text
 
@@ -679,7 +707,7 @@ of the transaction.
         job label       : 5842d371
         transaction id  : 5842d371-bf07-4ad4-a6ff-c46876a84ca6
 
-    > nlds stat -i 13
+    > nlds stat -i 13 -E
     State of transaction for user:frjohn, group:farmers, id:13
         id              : 13
         user            : frjohn
@@ -697,7 +725,7 @@ of the transaction.
             retries      : 6
             last update  : 2023-04-24 16:01:06
             failed files ->
-            +    filepath : /Users/frjohn/albatross.txt
+            +   filepath : /Users/frjohn/albatross.txt
                 reason   : File:/Users/frjohn/albatross.txt not found in holding:SheepPen for user:frjohn in group:farmers.
 
 **4.** Similarly to **3**, a label can be used to fetch a particular file from a 
@@ -728,7 +756,7 @@ the holding will return an error:
         transaction id  : c07dd223-88cb-41ec-a1e2-00f31c162116
         label           : sheeppen
 
-    > nlds stat -i 15
+    > nlds stat -i 15 -E
     State of transaction for user:frjohn, group:farmers, id:15
         id              : 15
         user            : frjohn
@@ -740,13 +768,13 @@ the holding will return an error:
         state           : FAILED
         warnings        : 
         sub records     ->
-        +    id           : 15
+        +   id           : 15
             sub_id       : 16759739-bc53-44be-b678-3999d0f7b76b
             state        : FAILED
             retries      : 0
             last update  : 2023-04-24 16:11:04
             failed files ->
-            +    filepath : /Users/frjohn/sheep.txt
+            +   filepath : /Users/frjohn/sheep.txt
                 reason   : Exception during callback: Could not find record of requested holding: label: sheeppen, id: None
 
 **5.** Finally, a tag can be specified when retrieving files:
@@ -893,10 +921,10 @@ seemingly random label has been assigned to the holding:
 
     > nlds list
     Listing holdings for user:frjohn, group:farmers
-        id    label           ingest time                     
-        1     SheepPen        2023-04-18 15:21:37             
-        2     Zoo             2023-04-18 15:28:48             
-        3     e4c00744        2023-04-25 15:07:18 
+        user        id    label           ingest time                     
+        frjohn      1     SheepPen        2023-04-18 15:21:37             
+        frjohn      2     Zoo             2023-04-18 15:28:48             
+        frjohn      3     e4c00744        2023-04-25 15:07:18 
 
 Here the holding with ``id`` 3 has the automatically generated label of ``e4c00744``.
 This can be changed to something more rememberable by using the ``meta`` command

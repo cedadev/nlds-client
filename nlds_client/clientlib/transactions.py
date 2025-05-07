@@ -394,6 +394,7 @@ def get_filelist(
     label: str = None,
     holding_id: int = None,
     tag: Dict = None,
+    regex: bool = False,
 ) -> Dict:
     """Make a request to get a list of files from the NLDS.
     :param filelist: the list of filepaths to get from the storage
@@ -518,6 +519,11 @@ def get_filelist(
             input_params["job_label"] = label
     else:
         input_params["job_label"] = job_label
+
+    # regex for path ?
+    if regex:
+        input_params["regex"] = regex
+
     # make the request
     response_dict = main_loop(
         url=url, input_params=input_params, body_params=body_params, method=call_method
@@ -545,6 +551,8 @@ def list_holding(
     transaction_id: str = None,
     tag: Dict = None,
     regex: bool = False,
+    limit: int = None,
+    descending: bool = False,
 ):
     """Make a request to list the holdings in the NLDS for a user
     :param user: the username to get the holding(s) for
@@ -569,6 +577,13 @@ def list_holding(
 
     :param regex: whether the job label is a regular expression
     :type regex: bool, optional
+
+    :param limit: limit the number of holdings to request
+    :type limit: int, optional
+
+    :param descending: sort the holdings in descending time order. Default is
+        ascending.
+    :type descending: bool, optional
 
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
@@ -599,6 +614,10 @@ def list_holding(
         input_params["transaction_id"] = transaction_id
     if regex:
         input_params["regex"] = regex
+    if limit:
+        input_params["limit"] = limit
+    if descending:
+        input_params["descending"] = descending
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
@@ -624,6 +643,8 @@ def find_file(
     path: str = None,
     tag: Dict = None,
     regex: bool = False,
+    limit: int = None,
+    descending: bool = False,
 ):
     """Make a request to find files in the NLDS for a user
     :param user: the username to get the holding(s) for
@@ -652,6 +673,12 @@ def find_file(
     :param regex: whether the label and the path are regular expressions
     :type regex: bool, optional
 
+    :param limit: limit the number of files to request
+    :type limit: int, optional
+
+    :param descending: sort the files in descending time order. Default is
+        ascending.
+    :type descending: bool, optional
     :raises requests.exceptions.ConnectionError: if the server cannot be
     reached
 
@@ -682,6 +709,10 @@ def find_file(
         input_params["path"] = path
     if regex:
         input_params["regex"] = regex
+    if limit:
+        input_params["limit"] = limit
+    if descending:
+        input_params["descending"] = descending
 
     response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
 
@@ -917,7 +948,7 @@ def get_transaction_state(transaction: dict):
 
     # percentage complete
     if n_subrecords != 0:
-        p_complete = math.ceil(100.0 * float(complete_count)/float(n_subrecords))
+        p_complete = math.ceil(100.0 * float(complete_count) / float(n_subrecords))
     else:
         p_complete = 100
 

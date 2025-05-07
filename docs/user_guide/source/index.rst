@@ -24,6 +24,7 @@ client provided to users for programmatic or interactive use.
    catalog_organisation.rst
    status_codes.rst
    command_ref.rst
+   hints_tips.rst
    license.rst
 
 Indices and tables
