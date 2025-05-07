@@ -22,7 +22,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="NLDS License" href="license.html" />
+    <link rel="next" title="Hints and Tips" href="hints_tips.html" />
     <link rel="prev" title="Status Codes" href="status_codes.html" /> 
 </head>
 
@@ -72,6 +72,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="hints_tips.html">Hints and Tips</a></li>
 <li class="toctree-l1"><a class="reference internal" href="license.html">NLDS License</a></li>
 </ul>
 
@@ -138,7 +139,7 @@ given below.</p>
 
 <section id="nlds-find">
 <h3>find<a class="headerlink" href="#nlds-find" title="Permalink to this heading"></a></h3>
-<p>Find and list files. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>Find and list files. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>find<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
@@ -216,15 +217,21 @@ given below.</p>
 </dd></dl>
 
 <dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-nlds-find-f">
-<span id="cmdoption-nlds-find-findall"></span><span class="sig-name descname"><span class="pre">-f</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--findall</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-find-f" title="Permalink to this definition"></a></dt>
-<dd><p>Allow the finding of all files.  WARNING: this could cause excessive load and a timeout on the request.</p>
+<dt class="sig sig-object std" id="cmdoption-nlds-find-L">
+<span id="cmdoption-nlds-find-limit"></span><span class="sig-name descname"><span class="pre">-L</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--limit</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;limit&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-find-L" title="Permalink to this definition"></a></dt>
+<dd><p>Limit the number of files to list.  Default is 1000 files.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-find-9">
+<span id="cmdoption-nlds-find-descending"></span><span id="cmdoption-nlds-find-0"></span><span id="cmdoption-nlds-find-ascending"></span><span class="sig-name descname"><span class="pre">-9</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--descending</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-0</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ascending</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-find-9" title="Permalink to this definition"></a></dt>
+<dd><p>Switch between ascending and descending time order.</p>
 </dd></dl>
 
 </section>
 <section id="nlds-get">
 <h3>get<a class="headerlink" href="#nlds-get" title="Permalink to this heading"></a></h3>
-<p>Get a single file. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>Get a single file. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>get<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILEPATH
 </pre></div>
 </div>
@@ -283,6 +290,12 @@ given below.</p>
 <dd><p>Output the result as JSON.</p>
 </dd></dl>
 
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-get-x">
+<span id="cmdoption-nlds-get-regex"></span><span class="sig-name descname"><span class="pre">-x</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-get-x" title="Permalink to this definition"></a></dt>
+<dd><p>Use regular expressions in the path and label search terms.</p>
+</dd></dl>
+
 <p class="rubric">Arguments</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-get-arg-FILEPATH">
@@ -293,7 +306,7 @@ given below.</p>
 </section>
 <section id="nlds-getlist">
 <h3>getlist<a class="headerlink" href="#nlds-getlist" title="Permalink to this heading"></a></h3>
-<p>Get a number of files specified in a list. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>Get a number of files specified in a list. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>getlist<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILELIST
 </pre></div>
 </div>
@@ -382,7 +395,7 @@ given below.</p>
 </section>
 <section id="nlds-list">
 <h3>list<a class="headerlink" href="#nlds-list" title="Permalink to this heading"></a></h3>
-<p>List holdings. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>List holdings. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>list<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
@@ -438,13 +451,25 @@ given below.</p>
 <dl class="std option">
 <dt class="sig sig-object std" id="cmdoption-nlds-list-x">
 <span id="cmdoption-nlds-list-regex"></span><span class="sig-name descname"><span class="pre">-x</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--regex</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-list-x" title="Permalink to this definition"></a></dt>
-<dd><p>Use regular expressions in the  label search term.</p>
+<dd><p>Use regular expressions in the label search term.</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-L">
+<span id="cmdoption-nlds-list-limit"></span><span class="sig-name descname"><span class="pre">-L</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--limit</span></span><span class="sig-prename descclassname"> <span class="pre">&lt;limit&gt;</span></span><a class="headerlink" href="#cmdoption-nlds-list-L" title="Permalink to this definition"></a></dt>
+<dd><p>Limit the number of transactions to list</p>
+</dd></dl>
+
+<dl class="std option">
+<dt class="sig sig-object std" id="cmdoption-nlds-list-9">
+<span id="cmdoption-nlds-list-descending"></span><span id="cmdoption-nlds-list-0"></span><span id="cmdoption-nlds-list-ascending"></span><span class="sig-name descname"><span class="pre">-9</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--descending</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-0</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ascending</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-list-9" title="Permalink to this definition"></a></dt>
+<dd><p>Switch between ascending and descending time order.</p>
 </dd></dl>
 
 </section>
 <section id="nlds-meta">
 <h3>meta<a class="headerlink" href="#nlds-meta" title="Permalink to this heading"></a></h3>
-<p>Alter metadata for a holding. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>Alter metadata for a holding. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>meta<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
@@ -563,7 +588,7 @@ given below.</p>
 </section>
 <section id="nlds-putlist">
 <h3>putlist<a class="headerlink" href="#nlds-putlist" title="Permalink to this heading"></a></h3>
-<p>Put a number of files specified in a list. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>Put a number of files specified in a list. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>putlist<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span><span class="w"> </span>FILELIST
 </pre></div>
 </div>
@@ -620,7 +645,7 @@ given below.</p>
 </section>
 <section id="nlds-stat">
 <h3>stat<a class="headerlink" href="#nlds-stat" title="Permalink to this heading"></a></h3>
-<p>List transactions. If no user or group is given then these values will default to the user:default_user and user:default values in the ~/.nlds-config file.</p>
+<p>List transactions. If no user or group is given then these values will default to the <code class="docutils literal notranslate"><span class="pre">user:default_user</span></code> and <code class="docutils literal notranslate"><span class="pre">user:default_group</span> <span class="pre">values</span></code> in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span> <span class="pre">file</span></code>.</p>
 <div class="highlight-shell notranslate"><div class="highlight"><pre><span></span>nlds<span class="w"> </span>stat<span class="w"> </span><span class="o">[</span>OPTIONS<span class="o">]</span>
 </pre></div>
 </div>
@@ -717,8 +742,8 @@ COMPLETE_WITH_WARNINGS</p>
 </dd></dl>
 
 <dl class="std option">
-<dt class="sig sig-object std" id="cmdoption-nlds-stat-d">
-<span id="cmdoption-nlds-stat-descending"></span><span id="cmdoption-nlds-stat-0"></span><span id="cmdoption-nlds-stat-ascending"></span><span class="sig-name descname"><span class="pre">-d</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--descending</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-a</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ascending</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-stat-d" title="Permalink to this definition"></a></dt>
+<dt class="sig sig-object std" id="cmdoption-nlds-stat-9">
+<span id="cmdoption-nlds-stat-descending"></span><span id="cmdoption-nlds-stat-0"></span><span id="cmdoption-nlds-stat-ascending"></span><span class="sig-name descname"><span class="pre">-9</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--descending</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">-0</span></span><span class="sig-prename descclassname"></span><span class="sig-prename descclassname"><span class="pre">,</span> </span><span class="sig-name descname"><span class="pre">--ascending</span></span><span class="sig-prename descclassname"></span><a class="headerlink" href="#cmdoption-nlds-stat-9" title="Permalink to this definition"></a></dt>
 <dd><p>Switch between ascending and descending time order.</p>
 </dd></dl>
 
@@ -731,7 +756,7 @@ COMPLETE_WITH_WARNINGS</p>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="status_codes.html" class="btn btn-neutral float-left" title="Status Codes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="license.html" class="btn btn-neutral float-right" title="NLDS License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="hints_tips.html" class="btn btn-neutral float-right" title="Hints and Tips" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

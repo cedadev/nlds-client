@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hints and Tips &mdash; Near-Line Data Store Client 1.0.6 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+    <link rel="shortcut icon" href="_static/icon-black.png"/>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=c0ddf5a4"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="NLDS License" href="license.html" />
+    <link rel="prev" title="Command Line Reference" href="command_ref.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Near-Line Data Store Client
+              <img src="_static/nlds.png" class="logo" alt="Logo"/>
+          </a>
+              <div class="version">
+                1.0.6
+              </div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Hints and Tips</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#getting-all-files-in-a-holding">Getting all files in a holding</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#using-a-regular-expression-with-the-get-command">Using a regular expression with the <code class="docutils literal notranslate"><span class="pre">get</span></code> command</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#generating-a-list-using-the-find-command">Generating a list using the <code class="docutils literal notranslate"><span class="pre">find</span></code> command</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#restarting-transactions-with-failed-files">Restarting transactions with FAILED files</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#use-the-limit-option">Use the limit option</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="license.html">NLDS License</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Near-Line Data Store Client</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Hints and Tips</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/hints_tips.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="hints-and-tips">
+<span id="hints-tips"></span><h1>Hints and Tips<a class="headerlink" href="#hints-and-tips" title="Permalink to this heading"></a></h1>
+<p>This page is a list of hints and tips for using the NLDS effectively.</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#holding-files"><span class="std std-ref">Getting all files in a holding</span></a></p></li>
+<li><p><a class="reference internal" href="#fail-restart"><span class="std std-ref">Restarting transactions with FAILED files</span></a></p></li>
+<li><p><a class="reference internal" href="#use-limit"><span class="std std-ref">Using the limit option</span></a></p></li>
+</ul>
+<section id="getting-all-files-in-a-holding">
+<span id="holding-files"></span><h2>Getting all files in a holding<a class="headerlink" href="#getting-all-files-in-a-holding" title="Permalink to this heading"></a></h2>
+<p>At first glance of the <a class="reference internal" href="command_ref.html#command-ref"><span class="std std-ref">command line reference</span></a>, it might not seem
+obvious how <em>all</em> the files in a holding can be retrieved all at once.  This is likely
+to be a common operation and, luckily, there are two different ways to do it:</p>
+<ol class="arabic simple">
+<li><p>Using a regular expression with the <code class="docutils literal notranslate"><span class="pre">get</span></code> command.</p></li>
+<li><p>Generating a list using the <code class="docutils literal notranslate"><span class="pre">find</span></code> command and then using the <code class="docutils literal notranslate"><span class="pre">getlist</span></code> command to retrieve the files in the list.</p></li>
+</ol>
+<section id="using-a-regular-expression-with-the-get-command">
+<h3>Using a regular expression with the <code class="docutils literal notranslate"><span class="pre">get</span></code> command<a class="headerlink" href="#using-a-regular-expression-with-the-get-command" title="Permalink to this heading"></a></h3>
+<p>NLDS supports regular expressions (regex) for the parameters of certain commands, and
+the <code class="docutils literal notranslate"><span class="pre">get</span></code> command is one of those, with regex supported for the <code class="docutils literal notranslate"><span class="pre">path</span></code> parameter.
+This can be used to get all the files from a holding, by specifying the holding either
+by <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code> or <code class="docutils literal notranslate"><span class="pre">tag</span></code>.  If <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">label</span></code> or <code class="docutils literal notranslate"><span class="pre">tag</span></code> is not specified, then
+an error will be returned by NLDS.  This is to prevent returning many, or all, of the
+user’s files when using regular expressions, as this would take a long time on the NLDS
+server and lead to timeouts.</p>
+<p>To <code class="docutils literal notranslate"><span class="pre">get</span></code> all the files in a holding use of the following:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i &lt;holding id&gt; -x &quot;.*&quot;
+&gt; nlds get -l &lt;label&gt; -x &quot;.*&quot;
+&gt; nlds get -t &lt;key:value&gt; -x &quot;.*&quot;
+</pre></div>
+</div>
+<p>The regular expression can be more complicated, for example to get all the files below
+a particular directory hierarchy:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i &lt;holding id&gt; -x &quot;/path/to/the/files/you/want/to/retrieve/.*&quot;
+</pre></div>
+</div>
+</section>
+<section id="generating-a-list-using-the-find-command">
+<h3>Generating a list using the <code class="docutils literal notranslate"><span class="pre">find</span></code> command<a class="headerlink" href="#generating-a-list-using-the-find-command" title="Permalink to this heading"></a></h3>
+<p>Another way to get all the files from a holding, or a selected subsection, is to first
+generate a list of the files in the holding.  This can be done with the <code class="docutils literal notranslate"><span class="pre">find</span></code>
+command, using the <code class="docutils literal notranslate"><span class="pre">-1</span></code> or <code class="docutils literal notranslate"><span class="pre">--simple</span></code> command option to output a list where there is
+one file per line.  This can be piped to a file using the <code class="docutils literal notranslate"><span class="pre">&gt;</span></code> standard Linux pipe.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -i &lt;holding_id&gt; -1 &gt; filelist.txt
+&gt; nlds find -l &lt;label&gt; -1 &gt; filelist.txt
+&gt; nlds find -t &lt;key:value&gt; -1 &gt; filelist.txt
+</pre></div>
+</div>
+<p>This can now be used with <code class="docutils literal notranslate"><span class="pre">getlist</span></code> to retrieve the files:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i &lt;holding_id&gt; filelist.txt -r &lt;target directory&gt;
+&gt; nlds getlist -l &lt;label&gt; filelist.txt -r &lt;target directory&gt;
+&gt; nlds getlist -t &lt;key:value&gt; filelist.txt -r &lt;target directory&gt;
+</pre></div>
+</div>
+<p>Here the <code class="docutils literal notranslate"><span class="pre">&lt;holding_id&gt;</span></code>, <code class="docutils literal notranslate"><span class="pre">&lt;label&gt;</span></code> or <code class="docutils literal notranslate"><span class="pre">&lt;key:value&gt;</span></code> is specified to guarantee that
+the files in the filelist are retrieved from the holding from which the filelist was
+generated.  If one of these parameters was not given then the <strong>newest</strong> file that
+matches each filepath in the filelist would be retrieved.  This is because NLDS will
+retrieve the newest version of a file, unless the holding is identified.  Remember that
+filepaths have to be unique within a holding, but a filepath can be present in multiple
+holdings.</p>
+</section>
+</section>
+<section id="restarting-transactions-with-failed-files">
+<span id="fail-restart"></span><h2>Restarting transactions with FAILED files<a class="headerlink" href="#restarting-transactions-with-failed-files" title="Permalink to this heading"></a></h2>
+<p>Every so often, there will be a problem with NLDS, or the user will not have given a
+file read permission, or something else will go wrong, and a request to <code class="docutils literal notranslate"><span class="pre">put</span></code> files
+will not <code class="docutils literal notranslate"><span class="pre">COMPLETE</span></code> fully.  Instead it will have the status of
+<code class="docutils literal notranslate"><span class="pre">COMPLETE_WITH_ERRORS</span></code> and an indication as to how much, in percentage, the
+transaction finished.  NLDS will try to do as much as it can, and then report on the
+files it could not ingest.</p>
+<p>Users can use the list of Failed Files to generate a filelist that can then be
+resubmitted to the same holding that the original list was <code class="docutils literal notranslate"><span class="pre">put</span></code> to.</p>
+<p>For example:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds putlist filelist.txt -l TestHolding
+</pre></div>
+</div>
+<p>This will <code class="docutils literal notranslate"><span class="pre">put</span></code> a list of files to NLDS, in a holding called <code class="docutils literal notranslate"><span class="pre">TestHolding</span></code>.  By
+using <code class="docutils literal notranslate"><span class="pre">stat</span></code> to query the status of this transaction, we can see that it has the
+status <code class="docutils literal notranslate"><span class="pre">COMPLETE_WITH_ERRORS</span></code></p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -b TestHolding
+State of transaction for user:nrmassey, group:cedaproc, id:34
+    id              : 34
+    user            : nrmassey
+    group           : cedaproc
+    action          : put
+    transaction id  : 74f8d8fe-48e2-448d-ba8e-d1d156bd461e
+    label           : TestHolding
+    creation time   : 2025-01-08 12:13:39
+    state           : COMPLETE_WITH_ERRORS
+    last update     : 2025-01-08 15:58:06
+    complete        :  50%
+</pre></div>
+</div>
+<p>By using the <code class="docutils literal notranslate"><span class="pre">-E</span></code>, a list of errors can be shown:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 34 -E
+State of transaction for user:nrmassey, group:cedaproc, id:34
+    id              : 34
+    user            : nrmassey
+    group           : cedaproc
+    action          : putlist
+    transaction id  : ce2baf0a-2436-4e59-ac22-449000dee399
+    label           : TestHolding
+    creation time   : 2025-05-07 15:29:16
+    state           : COMPLETE_WITH_ERRORS
+    last update     : 2025-05-07 15:29:35
+    complete        :  50%
+    errors in sub records -&gt;
+    +   id           : 927
+        failed files -&gt;
+        +   filepath : /Users/nrmassey/animals/minx.txt
+            reason   : Path:/Users/nrmassey/animals/minx.txt is inaccessible.
+        +   filepath : /Users/nrmassey/animals/pony.txt
+            reason   : Path:/Users/nrmassey/animals/pony.txt is inaccessible.
+        +   filepath : /Users/nrmassey/animals/unicorn.txt
+            reason   : Path:/Users/nrmassey/animals/unicorn.txt is inaccessible.
+</pre></div>
+</div>
+<p>Then by using the <code class="docutils literal notranslate"><span class="pre">-F</span></code> command with <code class="docutils literal notranslate"><span class="pre">stat</span></code> a list of the failed files can be output.</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 34 -F
+/Users/nrmassey/animals/minx.txt
+/Users/nrmassey/animals/pony.txt
+/Users/nrmassey/animals/unicorn.txt
+</pre></div>
+</div>
+<p>This can now be piped to a file and then resubmitted using <code class="docutils literal notranslate"><span class="pre">putlist</span></code> to the holding
+with the label <code class="docutils literal notranslate"><span class="pre">TestHolding</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -i 34 -F &gt; resub_list.txt
+&gt; nlds putlist -l TestHolding resub_list.txt
+putlist transaction accepted for processing.
+    user            : nrmassey
+    group           : cedaproc
+    action          : putlist
+    job label       : TestHolding
+    transaction id  : 14ef54b6-fba0-46f4-b6b2-9fdfb28194b9
+    label           : TestHolding
+</pre></div>
+</div>
+</section>
+<section id="use-the-limit-option">
+<span id="use-limit"></span><h2>Use the limit option<a class="headerlink" href="#use-the-limit-option" title="Permalink to this heading"></a></h2>
+<p>NLDS <code class="docutils literal notranslate"><span class="pre">find</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">stat</span></code> can produce a long output, which can take a while for the server
+to process.  Using the <code class="docutils literal notranslate"><span class="pre">limit</span></code> and <code class="docutils literal notranslate"><span class="pre">ascending</span></code> and <code class="docutils literal notranslate"><span class="pre">descending</span></code> options can help
+to prune the output, and speed up the processing on the server.  The <code class="docutils literal notranslate"><span class="pre">limit</span></code> option
+has an effect at the database query level, which explains the speed-up when used with
+<code class="docutils literal notranslate"><span class="pre">find</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code> and <code class="docutils literal notranslate"><span class="pre">stat</span></code>.</p>
+<p>For example to return the 10 most recent transactions:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds stat -L 10 -9
+</pre></div>
+</div>
+<p>To return the 20 oldest holdings:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds list -L 20 -0
+</pre></div>
+</div>
+<p>To return the details of the 12 newest files that match a regular expression:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds find -L 12 -x -p &quot;/Users/nrmassey/animals/.*&quot;
+</pre></div>
+</div>
+<p>The default is to list queries in descending order - i.e. newest first.
+There is a default limit of <code class="docutils literal notranslate"><span class="pre">1000</span></code>.  If a user wishes to return more than <code class="docutils literal notranslate"><span class="pre">1000</span></code>
+files, holdings or transactions, then they must specify <code class="docutils literal notranslate"><span class="pre">-L</span> <span class="pre">&lt;limit&gt;</span></code>.</p>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="command_ref.html" class="btn btn-neutral float-left" title="Command Line Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="license.html" class="btn btn-neutral float-right" title="NLDS License" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>  
+
+  <style>
+    /* Sidebar header (and topbar for mobile) */
+    .wy-side-nav-search, .wy-nav-top {
+      background: #A6C36F;
+    }
+
+    .caption-text {
+        color: #828C51
+    }
+
+    .wy-nav-side {
+        background: #1E352F;
+    }
+
+    a {
+        color: #828C51
+    }
+
+    .note {
+        background: #BEEF9E
+    }
+    .admonition-title {
+        background: #335145
+    }
+
+  </style>
+
+
+</body>
+</html>
