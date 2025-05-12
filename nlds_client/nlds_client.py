@@ -100,10 +100,10 @@ def pretty_size(size):
 
     suffixes = [
         ("B", 1),
-        ("K", 1000),
-        ("M", 1000000),
-        ("G", 1000000000),
-        ("T", 1000000000000),
+        ("K", 1024),
+        ("M", 1024*1024),
+        ("G", 1024*1024*1024),
+        ("T", 1024*1024*1024*1024),
     ]
     level_up_factor = 2000.0
     for suf, multipler in suffixes:
@@ -191,10 +191,10 @@ def print_list(response: dict, req_details):
             tags_str = _tags_to_str(h["tags"])
             click.echo(f"{'':<4}{'tags':<16}: {tags_str[:-23]}")
     else:
-        click.echo(f"{'':<4}{'user':<16}{'id':<6}{'label':<16}{'ingest time':<32}")
+        click.echo(f"{'':<4}{'user':<16}{'id':<6}{'label':<32}{'ingest time':<32}")
         for h in response["data"]["holdings"]:
             click.echo(
-                f"{'':<4}{h['user']:<16}{h['id']:<6}{h['label']:<16}{h['date'].replace('T',' ')[0:19]:<32}"
+                f"{'':<4}{h['user']:<16}{h['id']:<6}{h['label']:<32}{h['date'].replace('T',' ')[0:19]:<32}"
             )
 
 
