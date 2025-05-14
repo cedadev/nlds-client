@@ -361,11 +361,11 @@ def print_quota(response: dict, req_details:str):
     """Print out the quota response from the quota command"""
     try:
         group = response['details']['group']
-        quota = response['data']['quota']
+        quota = pretty_size(response['data']['quota'])
         if quota == 0:
             quota_string = f"    There is no allocated quota for the group {group}."
         else:
-            quota_string = f"    The allocated quota for the group {group} is {quota} GB."
+            quota_string = f"    The allocated quota for the group {group} is {quota}."
         click.echo(f"Checking quota for {req_details}:")
         click.echo(quota_string)
     except KeyError as e:
@@ -374,14 +374,36 @@ def print_quota(response: dict, req_details:str):
 def print_diskspace(response: dict, req_details:str):
     """Print out the diskspace response from the quota command"""
     try:
-        group = response ['details']['group']
-        diskspace = response['data']['diskspace']
+        group = response['details']['group']
+        diskspace = pretty_size(response['data']['diskspace'])
         if diskspace == 0:
             diskspace_string = f"    There is no used diskspace for the group {group}."
         else:
-            diskspace_string = f"    The used diskspace for the group {group} is {diskspace} GB."
+            diskspace_string = f"    The used diskspace for the group {group} is {diskspace}."
         click.echo(f"Checking diskspace for {req_details}:")
         click.echo(diskspace_string)
+    except KeyError as e:
+        click.echo(f"Error: Missing key in response data - {e}")
+
+def print_remaining_quota(response: dict, req_details:str):
+    """Print out the diskspace response from the quota command"""
+    try:
+        group = response['details']['group']
+        quota = response['data']['quota']
+        diskspace = response['data']['diskspace']
+
+        # Determine the appropriate message based on quota and diskspace
+        if quota == 0 and diskspace == 0:
+            return # Print nothing if there is no quota and no diskspace
+        elif quota == 0 and diskspace > 0:
+            message = f"{pretty_size(diskspace)} over quota."
+        elif quota >= diskspace:
+            message = f"{pretty_size(quota - diskspace)} remaining."
+        else:
+            message = f"{pretty_size(diskspace-quota)} over quota."
+        
+        click.echo(" ")
+        click.echo(message)
     except KeyError as e:
         click.echo(f"Error: Missing key in response data - {e}")
 
@@ -798,6 +820,7 @@ def quota(user, group, ):
             else:
                 print_quota(response, req_details)
                 print_diskspace(response, req_details)
+                print_remaining_quota(response, req_details)
         else:
             fail_string = "Failed to get quota with "
             fail_string += req_details
