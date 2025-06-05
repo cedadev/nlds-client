@@ -101,9 +101,9 @@ def pretty_size(size):
     suffixes = [
         ("B", 1),
         ("K", 1024),
-        ("M", 1024*1024),
-        ("G", 1024*1024*1024),
-        ("T", 1024*1024*1024*1024),
+        ("M", 1024 * 1024),
+        ("G", 1024 * 1024 * 1024),
+        ("T", 1024 * 1024 * 1024 * 1024),
     ]
     level_up_factor = 2000.0
     for suf, multipler in suffixes:
@@ -1149,16 +1149,31 @@ def list(
     "--api_action",
     default=None,
     type=str,
+    multiple=True,
     help="The api action of the transactions to list. Options: "
-    "get | put | getlist | putlist",
+    "get | put | getlist | putlist. More than one can be specified, e.g. "
+    "-a put -a putlist.",
+)
+@click.option(
+    "-b",
+    "--exclude_api_action",
+    default=None,
+    type=str,
+    multiple=True,
+    help="The api action of the transactions to exclude. Options: "
+    "get | put | getlist | putlist. More than one can be specified, e.g. "
+    "-b get -b getlist.",
 )
 @click.option(
     "-s",
     "--state",
     default=None,
     type=str,
+    multiple=True,
     help="""
-The state of the transactions to list.  Options:
+The state of the transactions to list.  
+More than one can be specified.
+Options:
 INITIALISING | ROUTING | SPLITTING | INDEXING |
 CATALOG_PUTTING | TRANSFER_PUTTING | CATALOG_ROLLBACK |
 CATALOG_GETTING | ARCHIVE_GETTING | TRANSFER_GETTING |
@@ -1230,6 +1245,7 @@ def stat(
     transaction_id,
     job_label,
     api_action,
+    exclude_api_action,
     state,
     json,
     regex,
@@ -1239,6 +1255,12 @@ def stat(
     limit,
     time,
 ):
+    api_action_list = [a for a in api_action]
+    state_list = [s for s in state]
+    exclude_api_action_list = [x for x in exclude_api_action]
+    # users don't need to know about `archive-put`!
+    # if "archive-put" not in exclude_api_action_list:
+    #     exclude_api_action_list.append("archive-put")
     try:
         response = monitor_transactions(
             user,
@@ -1247,8 +1269,9 @@ def stat(
             idd=id,
             transaction_id=transaction_id,
             job_label=job_label,
-            api_action=api_action,
-            state=state,
+            api_action=api_action_list,
+            exclude_api_action=exclude_api_action_list,
+            state=state_list,
             regex=regex,
             limit=limit,
             descending=time,

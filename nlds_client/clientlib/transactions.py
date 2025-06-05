@@ -103,42 +103,32 @@ def process_transaction_response(
                 f"{response_json['msg']} (HTTP_{response.status_code})",
                 response.status_code,
             )
-        elif response.status_code == requests.codes.unauthorized:  # 401
+        elif (
+            response.status_code == requests.codes.unauthorized  # 401
+            or response.status_code == requests.codes.forbidden
+        ):  # 403
             raise AuthenticationError(
                 f"Could not complete the request to the URL: {url} \n"
                 "Authentication failed.  Check that the token in the "
                 f"{config['authentication']['oauth_token_file_location']} file "
                 f"is a valid token (HTTP_{response.status_code})",
-                response.status_code,
-            )
-        elif response.status_code == requests.codes.forbidden:  # 403
-            raise AuthenticationError(
-                f"Could not complete the request to the URL: {url} \n"
-                "Authentication failed.  Check that the token in the "
-                f"{config['authentication']['oauth_token_file_location']} file "
-                f"is a valid token (HTTP_{response.status_code})",
-                response.status_code,
-            )
-        elif response.status_code == requests.codes.not_found:  # 404
-            response_msg = response.json()["detail"]
-            raise RequestError(
-                f"Could not complete the request to the URL: {url} \n"
-                f"Response was: {response_msg} (HTTP_{response.status_code})",
-                response.status_code,
-            )
-        elif response.status_code == requests.codes.unprocessable:  # 422
-            response_msg = response.json()["detail"]
-            raise RequestError(
-                f"Could not complete the request to the URL: {url} \n"
-                f"{response_msg} (HTTP_{response.status_code})",
                 response.status_code,
             )
         else:
-            raise RequestError(
-                f"Could not complete the request to the URL: {url} "
-                f"(HTTP_{response.status_code})",
-                response.status_code,
-            )
+            if "detail" in response.json():
+                response_msg = response.json()["detail"]
+                raise RequestError(
+                    f"Could not complete the request to the URL: {url} \n"
+                    f"Response was: {response_msg} (HTTP_{response.status_code})",
+                    response.status_code,
+                )
+            else:
+                raise RequestError(
+                    f"Could not complete the request to the URL: {url} "
+                    f"(HTTP_{response.status_code})",
+                    response.status_code,
+                )
+
     except KeyError:
         raise ServerError(
             f"An error has occurred with the response from the server with the "
@@ -735,8 +725,9 @@ def monitor_transactions(
     idd: int = None,
     transaction_id: str = None,
     job_label: str = None,
-    api_action: str = None,
-    state: str = None,
+    api_action: list[str] = None,
+    exclude_api_action: list[str] = None,
+    state: list[str] = None,
     sub_id: str = None,
     regex: bool = False,
     limit: int = None,
@@ -767,6 +758,11 @@ def monitor_transactions(
         request, only transaction_records of the given api_action will be
         returned.
     :type api_action: string, optional
+
+    :param exclude_api_action: applies an api-action-specific exclusion to the
+        status request.  Transaction records of the excluded api_action will be
+        filtered out.
+    :type exclude_api_action: string, optional
 
     :param sub_id: a specific sub_id (of a sub_record) to get the status of
     :type sub_id: string, optional
@@ -804,20 +800,16 @@ def monitor_transactions(
     #    user: str
     #    group: str
     input_params = {"user": user, "group": group, "groupall": groupall}
-
+    body_params = {}
     # add additional / optional components to input params
-    if idd is not None:
+    if idd:
         input_params["id"] = idd
-    if transaction_id is not None:
+    if transaction_id:
         input_params["transaction_id"] = transaction_id
-    if job_label is not None:
+    if job_label:
         input_params["job_label"] = job_label
-    if api_action is not None:
-        input_params["api_action"] = api_action
-    if sub_id is not None:
+    if sub_id:
         input_params["sub_id"] = sub_id
-    if state is not None:
-        input_params["state"] = state
     if regex:
         input_params["regex"] = regex
     if limit:
@@ -825,7 +817,13 @@ def monitor_transactions(
     if descending:
         input_params["descending"] = descending
 
-    response_dict = main_loop(url=url, input_params=input_params, method=requests.get)
+    body_params["api_action"] = api_action or None
+    body_params["exclude_api_action"] = exclude_api_action or None
+    body_params["state"] = state or None
+
+    response_dict = main_loop(
+        url=url, input_params=input_params, body_params=body_params, method=requests.get
+    )
 
     # If we get to this point then the transaction could not be processed
     if not response_dict:
