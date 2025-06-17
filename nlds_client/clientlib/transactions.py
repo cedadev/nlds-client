@@ -17,6 +17,7 @@ from typing import List, Dict, Any
 import math
 
 import requests
+from requests.exceptions import JSONDecodeError
 
 from nlds_client.clientlib.config import (
     load_config,
@@ -115,14 +116,21 @@ def process_transaction_response(
                 response.status_code,
             )
         else:
-            if "detail" in response.json():
-                response_msg = response.json()["detail"]
-                raise RequestError(
-                    f"Could not complete the request to the URL: {url} \n"
-                    f"Response was: {response_msg} (HTTP_{response.status_code})",
-                    response.status_code,
-                )
-            else:
+            try:
+                if "detail" in response.json():
+                    response_msg = response.json()["detail"]
+                    raise RequestError(
+                        f"Could not complete the request to the URL: {url} \n"
+                        f"Response was: {response_msg} (HTTP_{response.status_code})",
+                        response.status_code,
+                    )
+                else:
+                    raise RequestError(
+                        f"Could not complete the request to the URL: {url} "
+                        f"(HTTP_{response.status_code})",
+                        response.status_code,
+                    )
+            except JSONDecodeError:
                 raise RequestError(
                     f"Could not complete the request to the URL: {url} "
                     f"(HTTP_{response.status_code})",
