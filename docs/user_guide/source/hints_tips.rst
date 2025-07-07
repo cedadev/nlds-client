@@ -249,3 +249,5 @@ This is so that the ``nlds_user``, which is a member of every group, including `
 To write the data to a directory, that directory must have the ``g+rwx`` permission bits
 set, using ``chmod``, and the group must be a group workspace group, or ``users``.
 Again, the execute bit needs to be set for every parent directory, but the write bit only needs to be set for the directory that NLDS will actually ``get`` data to - the target directory in the NLDS client.
+
+If all this fails, and you are still getting "Path is inaccessible" errors, then there could be an error with adding the ``nlds_user`` to your group workspace.  Please contact the JASMIN helpdesk at ``support@jasmin.ac.uk`` with the name of the group workspace that you are trying to use NLDS with, an outline of the problem, the commands you entered when you encountered the error and the error message obtained from the command ``nlds stat -i <job id> -E``.
