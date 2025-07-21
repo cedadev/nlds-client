@@ -1155,14 +1155,14 @@ def list(
     "-a put -a putlist.",
 )
 @click.option(
-    "-b",
+    "-c",
     "--exclude_api_action",
     default=None,
     type=str,
     multiple=True,
     help="The api action of the transactions to exclude. Options: "
     "get | put | getlist | putlist. More than one can be specified, e.g. "
-    "-b get -b getlist.",
+    "-c get -c getlist.",
 )
 @click.option(
     "-s",
