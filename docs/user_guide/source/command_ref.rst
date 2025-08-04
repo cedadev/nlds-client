@@ -24,6 +24,7 @@ Commands:
   | ``putlist  Put a number of files specified in a list.``
   | ``stat     List transactions.``
     ``quota    Get the tape quota for the group.``
+    ``quota-sync  Sync the quota values for the group.``
 
 Each command has its own specific options.  The argument is generally the file
 or filelist that the user wishes to operate on.  The full command listing is

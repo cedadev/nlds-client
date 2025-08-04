@@ -963,7 +963,7 @@ def get_quota(user: str,
     group = get_group(config, group)
     url = construct_server_url(config, "catalog/quota")
 
-    # build the parameters.  holdings->get requires
+    # build the parameters.  quota->get requires
     #    user: str
     #    group: str
     #    token: str
@@ -986,7 +986,52 @@ def get_quota(user: str,
     elif "details" in response_dict and "failure" in response_dict["details"]:
         response_dict["success"] = False
 
-    return response_dict   
+    return response_dict
+
+def sync_quota(user: str, group: str,):
+    """Make a request to sync the quota for a particular group in the NLDS
+    :param user: the username to sync the quota
+    :type user: string
+    
+    :param group: the group to sync the quota for
+    :type group: string
+    
+    :raises requests.exceptions.ConnectionError: if the server cannot be reached
+    
+    :return: a Dictionary of the response
+    :rtype: Dict
+    """
+    # get the config, user and group
+    config = load_config()
+    token = load_token(config)
+    user = get_user(config, user)
+    group = get_group(config, group)
+    url = construct_server_url(config, "catalog/sync-quota")
+
+    # build the parameters quota->sync requires
+    #   user: str
+    #   group: str
+    #   token: str
+    input_params = {"user": user,
+                    "group": group,
+                    "token": token,}
+    
+    response_dict = main_loop(
+        url=url,
+        input_params=input_params,
+        method=requests.get
+    )
+
+    if not response_dict:
+        response_dict = {
+            "msg" : f"SYNC QUOTA for user {user} and group {group} failed",
+            "success" : False
+        }
+        # mark as failed in RPC call
+    elif "details" in response_dict and "failure" in response_dict["details"]:
+        response_dict["success"] = False
+
+    return response_dict
 
 
 def init_client(

@@ -361,8 +361,8 @@ def print_quota(response: dict, req_details:str):
     """Print out the quota response from the quota command"""
     try:
         group = response['details']['group']
-        quota = pretty_size(response['data']['quota'])
-        if quota == 0:
+        quota = pretty_size(response['data']['size'])
+        if not quota:
             quota_string = f"    There is no allocated quota for the group {group}."
         else:
             quota_string = f"    The allocated quota for the group {group} is {quota}."
@@ -375,8 +375,8 @@ def print_diskspace(response: dict, req_details:str):
     """Print out the diskspace response from the quota command"""
     try:
         group = response['details']['group']
-        diskspace = pretty_size(response['data']['diskspace'])
-        if diskspace == 0:
+        diskspace = pretty_size(response['data']['used'])
+        if not diskspace:
             diskspace_string = f"    There is no used diskspace for the group {group}."
         else:
             diskspace_string = f"    The used diskspace for the group {group} is {diskspace}."
@@ -389,11 +389,11 @@ def print_remaining_quota(response: dict, req_details:str):
     """Print out the diskspace response from the quota command"""
     try:
         group = response['details']['group']
-        quota = response['data']['quota']
-        diskspace = response['data']['diskspace']
+        quota = response['data']['size']
+        diskspace = response['data']['used']
 
         # Determine the appropriate message based on quota and diskspace
-        if quota == 0 and diskspace == 0:
+        if not quota and not diskspace:
             return # Print nothing if there is no quota and no diskspace
         elif quota == 0 and diskspace > 0:
             message = f"{pretty_size(diskspace)} over quota."
