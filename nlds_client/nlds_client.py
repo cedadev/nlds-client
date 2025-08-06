@@ -357,53 +357,37 @@ def print_meta(response:dict, req_details:str):
         click.echo(f"{'':<12}{'label':<8}: {h['new_meta']['label']}")
         click.echo(f"{'':<12}{'tags':<8}: {h['new_meta']['tags']}")
 
+
 def print_quota(response: dict, req_details:str):
     """Print out the quota response from the quota command"""
+    click.echo(f"Checking quota for {req_details}:")
     try:
         group = response['details']['group']
-        quota = pretty_size(response['data']['size'])
+        quota = response['data']['quota']
+
         if not quota:
             quota_string = f"    There is no allocated quota for the group {group}."
+            click.echo(quota_string)
         else:
-            quota_string = f"    The allocated quota for the group {group} is {quota}."
-        click.echo(f"Checking quota for {req_details}:")
-        click.echo(quota_string)
-    except KeyError as e:
-        click.echo(f"Error: Missing key in response data - {e}")
-
-def print_diskspace(response: dict, req_details:str):
-    """Print out the diskspace response from the quota command"""
-    try:
-        group = response['details']['group']
-        diskspace = pretty_size(response['data']['used'])
-        if not diskspace:
-            diskspace_string = f"    There is no used diskspace for the group {group}."
-        else:
-            diskspace_string = f"    The used diskspace for the group {group} is {diskspace}."
-        click.echo(f"Checking diskspace for {req_details}:")
-        click.echo(diskspace_string)
-    except KeyError as e:
-        click.echo(f"Error: Missing key in response data - {e}")
-
-def print_remaining_quota(response: dict, req_details:str):
-    """Print out the diskspace response from the quota command"""
-    try:
-        group = response['details']['group']
-        quota = response['data']['size']
-        diskspace = response['data']['used']
-
-        # Determine the appropriate message based on quota and diskspace
-        if not quota and not diskspace:
-            return # Print nothing if there is no quota and no diskspace
-        elif quota == 0 and diskspace > 0:
-            message = f"{pretty_size(diskspace)} over quota."
-        elif quota >= diskspace:
-            message = f"{pretty_size(quota - diskspace)} remaining."
-        else:
-            message = f"{pretty_size(diskspace-quota)} over quota."
+            size = quota['size']
+            used = quota['used']
+            size_string = f"    The allocated quota for the group {group} is {pretty_size(size)}."
+            used_string = f"    The used diskspace for the group {group} is {pretty_size(used)}."
+            click.echo(size_string)
+            click.echo(used_string)
+            # Determine the appropriate message based on size and used values
+            if not size and not used:
+                message = " " # Print nothing if there is no quota
+            elif size == 0 and used > 0:
+                message = f"{pretty_size(used)} over quota."
+            elif size >= used:
+                message = f"{pretty_size(size - used)} remaining."
+            else:
+                message = f"{pretty_size(used-size)} over quota."
         
-        click.echo(" ")
-        click.echo(message)
+            click.echo(" ")
+            click.echo(message)
+        
     except KeyError as e:
         click.echo(f"Error: Missing key in response data - {e}")
 
@@ -819,8 +803,6 @@ def quota(user, group, ):
                 click.echo(json_dumps(response))
             else:
                 print_quota(response, req_details)
-                print_diskspace(response, req_details)
-                print_remaining_quota(response, req_details)
         else:
             fail_string = "Failed to get quota with "
             fail_string += req_details
