@@ -893,6 +893,7 @@ def get_transaction_state(transaction: dict):
         FAILED = 101
         COMPLETE_WITH_ERRORS = 102
         COMPLETE_WITH_WARNINGS = 103
+        SPLIT = 110
         SEARCHING = 1000
     The overall state is the minimum of these
     """
@@ -918,6 +919,7 @@ def get_transaction_state(transaction: dict):
         "FAILED": 101,
         "COMPLETE_WITH_ERRORS": 102,
         "COMPLETE_WITH_WARNINGS": 103,
+        "SPLIT": 110,
         "SEARCHING": 1000,
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
@@ -926,7 +928,7 @@ def get_transaction_state(transaction: dict):
     min_time = datetime(1970, 1, 1)
     error_count = 0
     complete_count = 0
-    n_subrecords = len(transaction["sub_records"])
+    n_subrecords = 0
     for sr in transaction["sub_records"]:
         sr_state = sr["state"]
         d = datetime.fromisoformat(sr["last_updated"])
@@ -938,6 +940,8 @@ def get_transaction_state(transaction: dict):
             error_count += 1
         if sr_state == "COMPLETE":
             complete_count += 1
+        if sr_state != "SPLIT":
+            n_subrecords += 1
 
     if min_state == 200:
         return None, None, 0

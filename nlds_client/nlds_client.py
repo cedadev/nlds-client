@@ -244,12 +244,13 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
         if sub_records:
             click.echo(f"{'':<4}{'sub records':<16}->")
             for sr in tr["sub_records"]:
-                click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
-                click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
-                click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
-                click.echo(
-                    f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')[0:19]}"
-                )
+                if sr['state'] != "SPLIT":
+                    click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
+                    click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
+                    click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
+                    click.echo(
+                        f"{'':<9}{'last update':<13}: {(sr['last_updated']).replace('T',' ')[0:19]}"
+                    )
 
         if errors:
             click.echo(f"{'':<4}{'errors in sub records':<20} ->")
@@ -1180,7 +1181,7 @@ CATALOG_GETTING | ARCHIVE_GETTING | TRANSFER_GETTING |
 ARCHIVE_INIT | CATALOG_ARCHIVE_AGGREGATING | ARCHIVE_PUTTING |
 CATALOG_ARCHIVE_UPDATING | CATALOG_ARCHIVE_ROLLBACK |
 COMPLETE | FAILED | COMPLETE_WITH_ERRORS |
-COMPLETE_WITH_WARNINGS
+COMPLETE_WITH_WARNINGS | SPLIT
 """,
 )
 @click.option(
