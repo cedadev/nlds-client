@@ -349,10 +349,7 @@ def put_filelist(
     body_params = {"filelist": filelist}
     # add optional job_label.  If None then use first 8 characters of UUID
     if job_label is None:
-        if label is None:
-            input_params["job_label"] = str(transaction_id)[0:8]
-        else:
-            input_params["job_label"] = label
+        input_params["job_label"] = str(transaction_id)[0:8]
     else:
         input_params["job_label"] = job_label
     # add optional components to body: label, tags, holding_id
