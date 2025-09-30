@@ -185,7 +185,7 @@ This produces the output:
     {
         "server": {
             "url": "https://nlds.jasmin.ac.uk",
-            "api": "api/0.1"
+            "api": "api/1.0.0"
         },
         "user": {
             "default_user": "{{ user }}",
