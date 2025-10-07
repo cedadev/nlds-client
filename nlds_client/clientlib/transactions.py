@@ -937,8 +937,7 @@ def get_transaction_state(transaction: dict):
             error_count += 1
         if sr_state == "COMPLETE":
             complete_count += 1
-        if sr_state != "SPLIT":
-            n_subrecords += 1
+        n_subrecords += 1
 
     if min_state == 200:
         return None, None, 0
