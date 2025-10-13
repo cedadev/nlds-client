@@ -29,7 +29,7 @@ Installation
 
 3.  Install the nlds-client package directly from this github repo:
     ``` bash
-    pip install git+https://github.com/cedadev/nlds-client.git
+    pip install git+https://github.com/cedadev/nlds-client.git#1.0.12
     ```
 
 If installing this repository for development we recommend you install with the 

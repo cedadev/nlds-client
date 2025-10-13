@@ -129,7 +129,7 @@ We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the N
     > python3 -m venv ~/nlds-client
     > source ~/nlds-client/bin/activate
     > pip install --upgrade pip
-    > pip install git+https://github.com/cedadev/nlds-client.git
+    > pip install git+https://github.com/cedadev/nlds-client.git@1.0.12
 
 .. note::
    The installation procedure for the NLDS client will likely change when NLDS is in full production.  You may have to reinstall your client.
