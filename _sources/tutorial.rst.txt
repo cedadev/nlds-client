@@ -660,11 +660,12 @@ time is returned.
 This is a useful tool as it allows a user to get files depending on a pattern.  
 One use case would be to get all of the files beneath a certain directory.  To 
 get files using regular expressions, use the ``-x`` option in conjunction with the 
-``get`` command:
+``get`` command.  This must be used in conjuction with either a ``-i`` (holding id),
+``-l`` (holding label) or ``--t`` (tag) to identify the holding the file belongs to:
 
 .. code-block:: text
 
-    > nlds get -x "/Users/frjohn/.*" -r ./
+    > nlds get -i 2 -x "/Users/frjohn/.*" -r ./
     GETLIST transaction accepted for processing.
         user            : frjohn
         group           : farmers
@@ -805,12 +806,12 @@ example:
     /Users/frjohn/albatross.txt
     /Users/frjohn/rabbit.txt
 
-The command and response then becomes the following, where ``test_getlist`` is the name of the 
-above file and we give the retrieval a *job_label* of ``getlisttest``:
+The command and response then becomes the following, where ``test_getlist`` is the name 
+of the above file and we give the retrieval a *job_label* of ``getlisttest``:
 
 .. code-block:: text
 
-    > nlds getlist test_list -r ./ -b getlisttest
+    > nlds getlist test_getlist -r ./ -b getlisttest
     GETLIST transaction accepted for processing.
         user            : frjohn
         group           : farmers
@@ -845,7 +846,7 @@ the correct version of the filepaths in the *filelist* are retrieved.
 
 .. code-block:: text
 
-    > nlds getlist -i 2 test_list -r ./ -b getlist2
+    > nlds getlist -i 2 test_getlist -r ./ -b getlist2
     GETLIST transaction accepted for processing.
         id              : 2
         user            : frjohn
@@ -868,7 +869,7 @@ and the command is issued:
 
 .. code-block:: text
 
-    > nlds getlist -i 1 test_list -r ./ -b getlist3
+    > nlds getlist -i 1 test_getlist -r ./ -b getlist3
     GETLIST transaction accepted for processing.
         id              : 2
         user            : frjohn

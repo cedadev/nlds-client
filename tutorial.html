@@ -668,8 +668,9 @@ time is returned.</p>
 This is a useful tool as it allows a user to get files depending on a pattern.
 One use case would be to get all of the files beneath a certain directory.  To
 get files using regular expressions, use the <code class="docutils literal notranslate"><span class="pre">-x</span></code> option in conjunction with the
-<code class="docutils literal notranslate"><span class="pre">get</span></code> command:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -x &quot;/Users/frjohn/.*&quot; -r ./
+<code class="docutils literal notranslate"><span class="pre">get</span></code> command.  This must be used in conjuction with either a <code class="docutils literal notranslate"><span class="pre">-i</span></code> (holding id),
+<code class="docutils literal notranslate"><span class="pre">-l</span></code> (holding label) or <code class="docutils literal notranslate"><span class="pre">--t</span></code> (tag) to identify the holding the file belongs to:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds get -i 2 -x &quot;/Users/frjohn/.*&quot; -r ./
 GETLIST transaction accepted for processing.
     user            : frjohn
     group           : farmers
@@ -798,9 +799,9 @@ example:</p>
 /Users/frjohn/rabbit.txt
 </pre></div>
 </div>
-<p>The command and response then becomes the following, where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name of the
-above file and we give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist test_list -r ./ -b getlisttest
+<p>The command and response then becomes the following, where <code class="docutils literal notranslate"><span class="pre">test_getlist</span></code> is the name
+of the above file and we give the retrieval a <em>job_label</em> of <code class="docutils literal notranslate"><span class="pre">getlisttest</span></code>:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist test_getlist -r ./ -b getlisttest
 GETLIST transaction accepted for processing.
     user            : frjohn
     group           : farmers
@@ -831,7 +832,7 @@ State of transaction for user:frjohn, group:farmers
 </div>
 <p>A holding id or label can be used in conjunction with getlist to make sure that
 the correct version of the filepaths in the <em>filelist</em> are retrieved.</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 2 test_list -r ./ -b getlist2
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 2 test_getlist -r ./ -b getlist2
 GETLIST transaction accepted for processing.
     id              : 2
     user            : frjohn
@@ -850,7 +851,7 @@ different <em>terminating state</em> will be produced for the transaction.  If t
 </pre></div>
 </div>
 <p>and the command is issued:</p>
-<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 1 test_list -r ./ -b getlist3
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>&gt; nlds getlist -i 1 test_getlist -r ./ -b getlist3
 GETLIST transaction accepted for processing.
     id              : 2
     user            : frjohn
