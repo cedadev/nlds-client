@@ -52,6 +52,7 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="#upgrading-to-v1-0-12">Upgrading to v1.0.12</a></li>
 <li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
@@ -100,8 +101,23 @@ user space or home directory.</p></li>
 <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/nlds-client/bin/activate</span></code></p></li>
 <li><p>It is a good idea to upgrade your version of pip - otherwise some modules may fail to install: <br/>
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pip</span></code></p></li>
-<li><p>Install the nlds-client package from github: <br/>
+<li><p>Install the nlds-client package from GitHub: <br/>
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/cedadev/nlds-client.git</span></code></p></li>
+</ol>
+</section>
+<section id="upgrading-to-v1-0-12">
+<h1>Upgrading to v1.0.12<a class="headerlink" href="#upgrading-to-v1-0-12" title="Permalink to this heading"></a></h1>
+<p>Here’s how to upgrade the NLDS client to v1.0.12:</p>
+<ol class="arabic simple">
+<li><p>Activate your virtual environment: <br/>
+<code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/nlds-client/bin/activate</span></code></p></li>
+<li><p>Upgrade using the latest nlds-client package from GitHub: <br/>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">—upgrade</span> <span class="pre">git+https://github.com/cedadev/nlds-client.git&#64;1.0.12</span></code></p></li>
+<li><p>Check if you have the right client by issuing the command: <br/>
+<code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">—version</span></code> <br/>
+The output should start with: <code class="docutils literal notranslate"><span class="pre">Near</span> <span class="pre">Line</span> <span class="pre">Data</span> <span class="pre">Store</span> <span class="pre">client</span> <span class="pre">1.0.12</span></code></p></li>
+<li><p>Update your <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code> file: <br/>
+The line that reads <code class="docutils literal notranslate"><span class="pre">&quot;api&quot;:</span> <span class="pre">&quot;api/0.1&quot;</span></code> should now read <code class="docutils literal notranslate"><span class="pre">&quot;api&quot;:</span> <span class="pre">&quot;api/1.0.0&quot;</span></code></p></li>
 </ol>
 </section>
 
