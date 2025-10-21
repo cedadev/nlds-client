@@ -164,7 +164,7 @@ This produces the output:
     - user.default_group 
     - object_storage.access_key
     - object_storage.secret_key
-    - object_storage.tenancy (will default to nlds-cache-02 if not set)
+    - object_storage.tenancy (will default to nlds-cache-01-o if not set)
 
     The latter three values can be obtained from the object store portal for any object stores you have access to (https://s3-portal.jasmin.ac.uk/).
 

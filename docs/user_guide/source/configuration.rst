@@ -88,5 +88,5 @@ your use case. The ``access_key`` and ``secret_key`` will also need to be
 populated with a ``token`` and ``secret_key`` generated on the 
 `object-store portal <https://s3-portal.jasmin.ac.uk/login>`_ for the 
 appropriate ``tenancy`` you wish to use. In most cases this will be the default 
-``nlds-cache-02-o``, so we recommend that, unless you know what you are doing, 
+``nlds-cache-01-o``, so we recommend that, unless you know what you are doing, 
 the ``tenancy`` field should just be omitted.

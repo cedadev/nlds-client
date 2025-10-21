@@ -1612,7 +1612,7 @@ def init(url: str = None, insecure: bool = False):
             "\n - object_storage.access_key"
             "\n - object_storage.secret_key"
             "\n - object_storage.tenancy "
-            + click.style("(will default to nlds-cache-02 if not set)", fg="yellow")
+            + click.style("(will default to nlds-cache-01-o if not set)", fg="yellow")
             + "\n\nThe latter three values can be obtained from the "
             "object store portal for any object stores you have "
             f"access to ({link_str})."
