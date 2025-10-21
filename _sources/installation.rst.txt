@@ -34,10 +34,10 @@ Here's how to upgrade the NLDS client to v1.0.12:
    ``source ~/nlds-client/bin/activate``
 
 #. Upgrade using the latest nlds-client package from GitHub: |br|
-   ``pip install —upgrade git+https://github.com/cedadev/nlds-client.git@1.0.12``
+   ``pip install --upgrade git+https://github.com/cedadev/nlds-client.git@1.0.12``
 
 #. Check if you have the right client by issuing the command: |br|
-   ``nlds —version`` |br|
+   ``nlds --version`` |br|
    The output should start with: ``Near Line Data Store client 1.0.12``
    
 #. Update your ``~/.nlds-config`` file: |br|
