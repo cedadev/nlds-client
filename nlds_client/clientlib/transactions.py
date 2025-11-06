@@ -941,7 +941,8 @@ def get_transaction_state(transaction: dict):
             n_subrecords += 1
 
     if min_state == 200:
-        return None, None, 0
+        d = datetime.fromisoformat(transaction["creation_time"])
+        return "INITIALIZING", d, 0
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
