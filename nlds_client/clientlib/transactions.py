@@ -23,18 +23,22 @@ from nlds_client.clientlib.config import (
     load_config,
     create_config,
     write_auth_section,
+    write_os_section,
     get_user,
     get_group,
     get_option,
     get_tenancy,
     get_access_key,
     get_secret_key,
+    get_user_config,
+    get_group_config,
 )
 from nlds_client.clientlib.authentication import (
     load_token,
-    get_username_password,
+    get_password,
     fetch_oauth2_token,
     fetch_oauth2_token_from_refresh,
+    fetch_s3_access_keys,
 )
 from nlds_client.clientlib.exceptions import *
 
@@ -217,8 +221,10 @@ def main_loop(
             except FileNotFoundError:
                 # we need the username and password to get the OAuth2 token in
                 # the password flow
-                username, password = get_username_password(config)
-                auth_token = fetch_oauth2_token(config, username, password)
+                password = get_password(config)
+                auth_token = fetch_oauth2_token(
+                    config, config["user"], password
+                )
                 # we don't want to do the rest of the loop!
                 continue
             token_headers["Authorization"] = f"Bearer {auth_token['access_token']}"
@@ -942,7 +948,7 @@ def get_transaction_state(transaction: dict):
 
     if min_state == 200:
         d = datetime.fromisoformat(transaction["creation_time"])
-        return "INITIALIZING", d, 0
+        return "INITIALISING", d, 0
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
@@ -1052,6 +1058,8 @@ def change_metadata(
 
 def init_client(
     url: str = None,
+    user: str = None,
+    group: str = None,
     verify_certificates: bool = True,
 ) -> Dict[str, Any]:
     """Make two requests to the API to get some secret, encrypted configuration
@@ -1075,22 +1083,38 @@ def init_client(
     if url is None:
         url = DEFAULT_SERVER_URL
     cli_response = {"success": True, "new_config": False}
-
     try:
         # get the config, if it exists, and change the url to that provided
         config = load_config()
         config["server"]["url"] = url
+        # override the user and group
+        if user is not None:
+            try:
+                user = get_user_config(user)
+                config["user"]["default_user"] = user
+            except ConfigError as e:
+                raise(e)
+        if group is not None:
+            try:
+                group = get_group_config(user, group)
+                config["user"]["default_group"] = group
+            except ConfigError as e:
+                raise(e)
     except FileNotFoundError:
         # If the file doesn't exist then create it
-        config = create_config(url, verify_certificates)
+        config = create_config(url, user, group, verify_certificates)
         cli_response["new_config"] = True
 
     responses = {}
+    input_params = {
+        "user": user,
+        "group": group
+    }
     for endpoint in ["init", "init/token"]:
         url = construct_server_url(config, endpoint)
         response_dict = main_loop(
             url=url,
-            input_params=None,
+            input_params=input_params,
             method=requests.get,
             allow_redirects=True,
             verify=verify_certificates,
@@ -1104,7 +1128,7 @@ def init_client(
 
     try:
         key = b64decode(responses["init/token"]["token"])
-        auth_config_enc = responses["init"]["encrypted_keys"]
+        remote_config_enc = responses["init"]["encrypted_keys"]
     except (KeyError, AttributeError) as e:
         raise RequestError(
             "Malformed init response from api, could not create "
@@ -1114,9 +1138,21 @@ def init_client(
 
     # Decrypt the encrypted keys
     f = Fernet(key)
-    auth_config = json.loads(f.decrypt(auth_config_enc))
-
+    remote_config = json.loads(f.decrypt(remote_config_enc))
     # Write auth_config to config file
-    write_auth_section(config, auth_config)
+    write_auth_section(config, remote_config["authentication"])
+
+    # Run the workflow to get the password and OAuth token
+    username = config["user"]["default_user"]
+    password = get_password(config)
+    _ = fetch_oauth2_token(config, username, password)
+
+    # Get the access_key and secret_key from the object store tenancy
+    tenancy = remote_config["object_storage"]["tenancy"]
+    access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
+    # Write object storage to config file
+    remote_config["object_storage"]["access_key"] = access_key
+    remote_config["object_storage"]["secret_key"] = secret_key
+    write_os_section(config, remote_config["object_storage"])
 
     return cli_response

@@ -244,7 +244,7 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
         if sub_records:
             click.echo(f"{'':<4}{'sub records':<16}->")
             for sr in tr["sub_records"]:
-                if sr['state'] != "SPLIT":
+                if sr["state"] != "SPLIT":
                     click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
                     click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
                     click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
@@ -1562,8 +1562,8 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "init",
     help=(
         f"Set up the NLDS client on first use. Will either create a new "
-        "config file if one doesn't exist or fill the 'authentication' "
-        "section with appropriate values if it does."
+        "config file if one doesn't exist or amend the config file if it "
+        "does."
     ),
 )
 @click.option(
@@ -1574,6 +1574,12 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     help=("Url to use for getting config info. Must start with http(s)://"),
 )
 @click.option(
+    "-u", "--user", default=None, type=str, help=("Default user to use with nlds.")
+)
+@click.option(
+    "-g", "--group", default=None, type=str, help=("Default group to use with nlds.")
+)
+@click.option(
     "-k",
     "--insecure",
     is_flag=True,
@@ -1582,10 +1588,10 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "certificates during request. Defaults to true, only needs to be False"
     " for the staging/test version of the NLDS.",
 )
-def init(url: str = None, insecure: bool = False):
+def init(url: str = None, user: str = None, group: str = None, insecure: bool = False):
     click.echo(click.style("Initialising the Near-line Data Store...\n", fg="yellow"))
     try:
-        response = init_client(url, verify_certificates=(not insecure))
+        response = init_client(url, user, group, verify_certificates=(not insecure))
         if (
             "success" in response and not response["success"]
         ) or "new_config" not in response:
@@ -1594,9 +1600,8 @@ def init(url: str = None, insecure: bool = False):
         path_str = click.style(CONFIG_FILE_LOCATION, fg="yellow")
         if response["new_config"]:
             success_msg += (
-                f"a template config file has been created at "
-                f"{path_str} with some of the information necessary"
-                " to use the NLDS."
+                f"a template config file has been created at {path_str} with some "
+                f"of the information necessary to use the NLDS."
             )
         else:
             success_msg += (
@@ -1605,18 +1610,21 @@ def init(url: str = None, insecure: bool = False):
                 "using the NLDS."
             )
 
-        link_str = click.style("https://s3-portal.jasmin.ac.uk/", fg="blue")
-        success_msg += (
-            "\n\nYou may still need to manually update the fields:"
-            "\n - user.default_user \n - user.default_group "
-            "\n - object_storage.access_key"
-            "\n - object_storage.secret_key"
-            "\n - object_storage.tenancy "
-            + click.style("(will default to nlds-cache-01-o if not set)", fg="yellow")
-            + "\n\nThe latter three values can be obtained from the "
-            "object store portal for any object stores you have "
-            f"access to ({link_str})."
-        )
+        # NRM - this message not needed when object store keys are fetched from
+        # the object store portal
+
+        # link_str = click.style("https://s3-portal.jasmin.ac.uk/", fg="blue")
+        # success_msg += (
+        #     "\n\nYou may still need to manually update the fields:"
+        #     "\n - user.default_user \n - user.default_group "
+        #     "\n - object_storage.access_key"
+        #     "\n - object_storage.secret_key"
+        #     "\n - object_storage.tenancy "
+        #     + click.style("(will default to nlds-cache-01-o if not set)", fg="yellow")
+        #     + "\n\nThe latter three values can be obtained from the "
+        #     "object store portal for any object stores you have "
+        #     f"access to ({link_str})."
+        # )
         click.echo(success_msg)
 
     except ConnectionError as ce:
