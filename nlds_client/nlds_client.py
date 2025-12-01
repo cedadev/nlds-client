@@ -19,6 +19,7 @@ from nlds_client.clientlib.transactions import (
     get_transaction_state,
     change_metadata,
     init_client,
+    renew_keys
 )
 from nlds_client.clientlib.exceptions import (
     ConnectionError,
@@ -1585,7 +1586,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     is_flag=True,
     default=False,
     help="Boolean flag to control whether to turn off verification of ssl "
-    "certificates during request. Defaults to true, only needs to be False"
+    "certificates during request. Defaults to False, only needs to be True"
     " for the staging/test version of the NLDS.",
 )
 def init(url: str = None, user: str = None, group: str = None, insecure: bool = False):
@@ -1609,22 +1610,6 @@ def init(url: str = None, user: str = None, group: str = None, insecure: bool = 
                 "with some of the necessary information to start "
                 "using the NLDS."
             )
-
-        # NRM - this message not needed when object store keys are fetched from
-        # the object store portal
-
-        # link_str = click.style("https://s3-portal.jasmin.ac.uk/", fg="blue")
-        # success_msg += (
-        #     "\n\nYou may still need to manually update the fields:"
-        #     "\n - user.default_user \n - user.default_group "
-        #     "\n - object_storage.access_key"
-        #     "\n - object_storage.secret_key"
-        #     "\n - object_storage.tenancy "
-        #     + click.style("(will default to nlds-cache-01-o if not set)", fg="yellow")
-        #     + "\n\nThe latter three values can be obtained from the "
-        #     "object store portal for any object stores you have "
-        #     f"access to ({link_str})."
-        # )
         click.echo(success_msg)
 
     except ConnectionError as ce:
@@ -1635,9 +1620,46 @@ def init(url: str = None, user: str = None, group: str = None, insecure: bool = 
         raise click.UsageError(e)
 
 
+@nlds_client.command(
+    "renew",
+    help=(
+        f"Renew the access token and the object storage keys.  This is necessary if "
+        f"your object storage keys have expired.\n"
+        f"Access tokens automatically refresh, but if you have not used the NLDS for a "
+        f" long time, then it may also have expired.  You can use this command to "
+        f"renew it."
+    ),
+)
+def renew():
+    click.echo(
+        click.style(
+            "Renewing access tokens and object storage keys for the "
+            "Near-line Data Store...\n",
+            fg="yellow",
+        )
+    )
+    click.echo(click.style("Initialising the Near-line Data Store...\n", fg="yellow"))
+    try:
+        response = renew_keys()
+        if ("success" not in response or not response["success"]):
+            raise RequestError(
+                f"Could not renew access token and object store keys, something has "
+                "gone wrong"
+            )
+        success_msg = (
+            f"Access token and object store keys have been successfully renewed."
+        )
+        click.echo(success_msg)
+
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except RequestError as re:
+        raise click.UsageError(re)
+    except Exception as e:
+        raise click.UsageError(e)
+
 def main():
     nlds_client(prog_name="nlds")
-
 
 if __name__ == "__main__":
     click.formatting.wrap_text = 80

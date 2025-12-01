@@ -32,13 +32,16 @@ def get_password(config):
     auth_config = config["authentication"]
     print(
         "This application uses OAuth2 to authenticate with the server on your"
-        " behalf."
+        " behalf, and to create Object Storage keys."
     )
-    print("To do this it needs your password.")
+    print("To do this it needs your password. Your password is not stored. ")
     print(
-        "Your password is not stored.  It is used to obtain an access token, "
-        "which is stored in the file: "
-        f"{auth_config['oauth_token_file_location']}"
+        "It is used to obtain an access token, which is stored in the file: "
+        f"{auth_config['oauth_token_file_location']}. "
+    )
+    print(
+        "It is also used to obtain object storage keys.  These are stored in the "
+        "configuration file: ~/.nlds-config file."
     )
     password = getpass.getpass("Password: ")
     return password

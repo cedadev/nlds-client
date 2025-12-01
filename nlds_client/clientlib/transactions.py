@@ -927,7 +927,7 @@ def get_transaction_state(transaction: dict):
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 
-    min_state = 200
+    min_state = 1000
     min_time = datetime(1970, 1, 1)
     error_count = 0
     complete_count = 0
@@ -946,9 +946,11 @@ def get_transaction_state(transaction: dict):
         if sr_state != "SPLIT":
             n_subrecords += 1
 
-    if min_state == 200:
+    if min_state == 1000:
+        # 1000 state is "SEARCHING", but we change this to a more user friendly
+        # "QUEUED"
         d = datetime.fromisoformat(transaction["creation_time"])
-        return "INITIALISING", d, 0
+        return "QUEUED", d, 0
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
@@ -1154,5 +1156,33 @@ def init_client(
     remote_config["object_storage"]["access_key"] = access_key
     remote_config["object_storage"]["secret_key"] = secret_key
     write_os_section(config, remote_config["object_storage"])
+
+    return cli_response
+
+
+def renew_keys():
+    """
+    Renew the object store keys and the access token
+    All details are read from the config file
+        - the username
+        - the url for renewing tokens
+        - the url / tenancy for accessing the object store
+    The user will be access for their password again
+    """
+    config = load_config()
+
+    # Run the workflow to get the password and OAuth token
+    username = config["user"]["default_user"]
+    password = get_password(config)
+    _ = fetch_oauth2_token(config, username, password)
+
+    # Get the access_key and secret_key from the object store tenancy
+    tenancy = config["object_storage"]["tenancy"]
+    access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
+    # Write object storage to config file
+    config["object_storage"]["access_key"] = access_key
+    config["object_storage"]["secret_key"] = secret_key
+    write_os_section(config, config["object_storage"])
+    cli_response = {"success": True}
 
     return cli_response
