@@ -163,8 +163,8 @@ def main_loop(
     url: str,
     input_params: Dict = None,
     body_params: Dict = None,
-    authenticate_fl: bool = True,
     method=requests.get,
+    authenticate_fl: bool = True,
     **kwargs,
 ):
     """Generalised main loop to make requests to the NLDS server
@@ -199,8 +199,7 @@ def main_loop(
     else:
         verify = get_option(config, "verify_certificates")
 
-    # If we're not verifying the certificate we can turn off the warnings about
-    # it
+    # If we're not verifying the certificate we can turn off the warnings about it
     if not verify:
         from urllib3.connectionpool import InsecureRequestWarning
         import warnings
@@ -228,8 +227,6 @@ def main_loop(
                 # we don't want to do the rest of the loop!
                 continue
             token_headers["Authorization"] = f"Bearer {auth_token['access_token']}"
-
-        # make the request
         try:
             response = method(
                 url,
@@ -239,6 +236,7 @@ def main_loop(
                 verify=verify,
                 **kwargs,
             )
+            print(response.content)
         except requests.exceptions.ConnectionError as e:
             raise ConnectionError(
                 f"Could not connect to the URL: {url}\n"
@@ -1112,22 +1110,21 @@ def init_client(
         "user": user,
         "group": group
     }
-    for endpoint in ["init", "init/token"]:
+    for endpoint in ["init/token", "init"]:
         url = construct_server_url(config, endpoint)
         response_dict = main_loop(
             url=url,
             input_params=input_params,
             method=requests.get,
+            authenticate_fl=False,
             allow_redirects=True,
             verify=verify_certificates,
-            authenticate_fl=False,
         )
 
         # If we get to this point then the transaction could not be processed
         if not response_dict:
             raise RequestError(f"Could not init NLDS, empty response")
         responses[endpoint] = response_dict
-
     try:
         key = b64decode(responses["init/token"]["token"])
         remote_config_enc = responses["init"]["encrypted_keys"]
