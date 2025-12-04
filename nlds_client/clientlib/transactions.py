@@ -15,6 +15,7 @@ from datetime import datetime
 from base64 import b64decode
 from typing import List, Dict, Any
 import math
+from nlds_client import __version__
 
 import requests
 from requests.exceptions import JSONDecodeError
@@ -236,7 +237,6 @@ def main_loop(
                 verify=verify,
                 **kwargs,
             )
-            print(response.content)
         except requests.exceptions.ConnectionError as e:
             raise ConnectionError(
                 f"Could not connect to the URL: {url}\n"
@@ -1110,7 +1110,7 @@ def init_client(
         "user": user,
         "group": group
     }
-    for endpoint in ["init/token", "init"]:
+    for endpoint in ["init", "init/token"]:
         url = construct_server_url(config, endpoint)
         response_dict = main_loop(
             url=url,
@@ -1139,6 +1139,12 @@ def init_client(
     f = Fernet(key)
     remote_config = json.loads(f.decrypt(remote_config_enc))
     # Write auth_config to config file
+    if not "authentication" in remote_config:
+        raise RequestError(
+            "authentication keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
     write_auth_section(config, remote_config["authentication"])
 
     # Run the workflow to get the password and OAuth token
@@ -1147,6 +1153,21 @@ def init_client(
     _ = fetch_oauth2_token(config, username, password)
 
     # Get the access_key and secret_key from the object store tenancy
+    if not "object_storage" in remote_config:
+        raise RequestError(
+            "object_storage keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
+    
+    if not "tenancy" in remote_config["object_storage"]:
+        raise RequestError(
+            "tenancy keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
+
+
     tenancy = remote_config["object_storage"]["tenancy"]
     access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
     # Write object storage to config file

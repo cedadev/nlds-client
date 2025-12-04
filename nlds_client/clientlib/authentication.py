@@ -16,6 +16,7 @@ from datetime import datetime, timedelta
 import random
 import string
 from nlds_client.clientlib.exceptions import *
+from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 
 def get_password(config):
@@ -30,18 +31,20 @@ def get_password(config):
 
     """
     auth_config = config["authentication"]
+    TOKEN_FILE_LOCATION = os.path.expanduser(auth_config['oauth_token_file_location'])
     print(
-        "This application uses OAuth2 to authenticate with the server on your"
-        " behalf, and to create Object Storage keys."
+        "• This application uses OAuth2 to authenticate with the server on your behalf."
     )
-    print("To do this it needs your password. Your password is not stored. ")
+    print("• To do this it needs your password.  Your password is not stored. ")
     print(
-        "It is used to obtain an access token, which is stored in the file: "
-        f"{auth_config['oauth_token_file_location']}. "
+        "• It is used to obtain an access token, which is stored in the file: "
+        f"{TOKEN_FILE_LOCATION}, and used for subsequent "
+        "interactions with the server. "
     )
     print(
-        "It is also used to obtain object storage keys.  These are stored in the "
-        "configuration file: ~/.nlds-config file."
+        "• It is also used to obtain object storage keys.  These are stored in the "
+        f"configuration file: {CONFIG_FILE_LOCATION} and used for interaction with the "
+        "object storage cache.\n"
     )
     password = getpass.getpass("Password: ")
     return password
@@ -68,7 +71,9 @@ def process_fetch_oauth2_token_response(config, response):
             "Could not obtain an Oauth2 token from "
             f"{auth_config['oauth_token_url']}\n"
             "Check your username and password and try again. "
-            f"(HTTP_{response.status_code})",
+            f"(HTTP_{response.status_code})\n"
+            'Check the "default_user" and "default_group" entries in '
+            f"the configuration file: {CONFIG_FILE_LOCATION}, or the -u option.",
             response.status_code,
         )
     elif response.status_code == requests.codes.unauthorized:  # code 401
@@ -78,7 +83,7 @@ def process_fetch_oauth2_token_response(config, response):
             "The request was unauthorized.\n"
             "Check the ['authentication']['oauth_client_id'] and "
             "['authentication']['oauth_client_secret'] settings in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code})",
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
             response.status_code,
         )
     elif response.status_code == requests.codes.forbidden:  # code 403
@@ -94,7 +99,7 @@ def process_fetch_oauth2_token_response(config, response):
             f"{auth_config['oauth_token_url']}\n"
             "The token server was not found.\n"
             "Check the ['authentication']['oauth_token_url'] setting in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code})",
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
             response.status_code,
         )
     else:
@@ -289,8 +294,9 @@ def process_fetch_s3_access_keys_response(tenancy, response):
             f"{fail_stub}\n"
             "The request was unauthorized.\n"
             "Check the ['user']['default_user'] setting in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code}), "
-            "and ensure that you type your password correctly.",
+            f"{CONFIG_FILE_LOCATION} file, or the -u option, "
+            "and ensure that you type your password correctly."
+            f"(HTTP_{response.status_code})",
             response.status_code,
         )
     elif response.status_code == requests.codes.forbidden:  # code 403
@@ -303,7 +309,7 @@ def process_fetch_s3_access_keys_response(tenancy, response):
             f"{fail_stub}\n"
             f"The S3 server at {tenancy} was not found.\n"
             "Check the ['object_storage']['tenancy'] setting in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code})",
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
             response.status_code,
         )
     else:

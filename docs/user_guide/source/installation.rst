@@ -6,6 +6,10 @@
 
 Installation
 ============
+
+.. note::
+   In December 2025, a more intuitive method of installation using PyPi was rolled out to NLDS users.  The instructions below are for this new installation method.
+
 To use the NLDS, first you must install the client software.  This guide will show
 you how to install it into a Python virtual-environment (virtualenv) in your
 user space or home directory.
@@ -22,23 +26,30 @@ user space or home directory.
 #. It is a good idea to upgrade your version of pip - otherwise some modules may fail to install: |br|
    ``pip install --upgrade pip``
 
-#. Install the nlds-client package from GitHub: |br|
-   ``pip install git+https://github.com/cedadev/nlds-client.git``
+#. Install the nlds-client package from PyPi: |br|
+   ``pip install nlds-client``
 
 
-Upgrading to v1.0.12
-============
-Here's how to upgrade the NLDS client to v1.0.12:
+Upgrading to v1.0.13
+--------------------
+
+.. note::
+   In December 2025, hosting of the NLDS client was moved to PyPi.  Previous installations of ``nlds-client`` from GitHub may have to be removed using ``pip uninstall``.
 
 #. Activate your virtual environment: |br|
    ``source ~/nlds-client/bin/activate``
 
 #. Upgrade using the latest nlds-client package from GitHub: |br|
-   ``pip install --upgrade git+https://github.com/cedadev/nlds-client.git@1.0.12``
+   ``pip install --upgrade nlds-client``
+
+#. If the above point produces an error, then you may need to uninstall your previous version of ``nlds-client`` and install the new one:
+   ``pip uninstall nlds-client`` |br|
+   ``pip install nlds-client``
 
 #. Check if you have the right client by issuing the command: |br|
    ``nlds --version`` |br|
    The output should start with: ``Near Line Data Store client 1.0.12``
    
-#. Update your ``~/.nlds-config`` file: |br|
-   The line that reads ``"api": "api/0.1"`` should now read ``"api": "api/1.0.0"``
+#. You may need to update your NLDS client config.  This can be done using the ``init`` command:
+   ``nlds init`` |br|
+   This will ask for your user name and password, regenerate your OAuth access tokens and object storage keys, and make any necessary changes in your config file.

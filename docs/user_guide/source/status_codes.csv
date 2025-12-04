@@ -20,4 +20,4 @@ Value,State,Description
 ``101``,``'FAILED'``,Transaction has failed completely.
 ``102``,``'COMPLETE_WITH_ERRORS'``,Transaction has completed but with some errors.
 ``103``,``'COMPLETE_WITH_WARNINGS'``,Transaction has completed but with some warnings.
-``1000``,``'SEARCHING'``,NLDS is searching for the state of a request.  The user should not see this state!
+``1000``,``'QUEUED'``,The user's request is in a queue waiting for processing.

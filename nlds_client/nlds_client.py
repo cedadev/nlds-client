@@ -482,7 +482,7 @@ def print_response(tr: dict):
 user_help_text = (
     " If no user or group is given then these values will "
     "default to the ``user:default_user`` and ``user:default_group values`` "
-    "in the ``~/.nlds-config file``."
+    f"in the ``{CONFIG_FILE_LOCATION}``."
 )
 
 
@@ -1288,7 +1288,8 @@ def stat(
             job_label=job_label,
             api_action=api_action,
         )
-        if response["success"] and len(response["data"]["records"]):
+        n_records = len(response["data"]["records"])
+        if response["success"] and n_records:
             if json:
                 click.echo(json_dumps(response))
             else:
@@ -1298,6 +1299,13 @@ def stat(
             fail_string += req_details
             if "failure" in response["details"]:
                 fail_string += "\nReason: " + response["details"]["failure"]
+            if n_records == 0:
+                response_user = response["details"]["user"]
+                response_group = response["details"]["group"]
+                fail_string += (
+                    f"\nReason: no transaction records found for user:{response_user} "
+                    f"and group:{response_group}"
+                )
             raise click.UsageError(fail_string)
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -1572,7 +1580,7 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "--url",
     default=None,
     type=str,
-    help=("Url to use for getting config info. Must start with http(s)://"),
+    help=("Url to use for getting config info. Must start with ``http(s)://``"),
 )
 @click.option(
     "-u", "--user", default=None, type=str, help=("Default user to use with nlds.")
@@ -1586,11 +1594,11 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     is_flag=True,
     default=False,
     help="Boolean flag to control whether to turn off verification of ssl "
-    "certificates during request. Defaults to False, only needs to be True"
+    "certificates during request. Defaults to ``false``, only needs to be ``true``"
     " for the staging/test version of the NLDS.",
 )
 def init(url: str = None, user: str = None, group: str = None, insecure: bool = False):
-    click.echo(click.style("Initialising the Near-line Data Store...\n", fg="yellow"))
+    click.echo(click.style("\nInitialising the Near-line Data Store...", fg="yellow"))
     try:
         response = init_client(url, user, group, verify_certificates=(not insecure))
         if (
@@ -1606,9 +1614,8 @@ def init(url: str = None, user: str = None, group: str = None, insecure: bool = 
             )
         else:
             success_msg += (
-                f"the config file at {path_str} has been updated "
-                "with some of the necessary information to start "
-                "using the NLDS."
+                f"the config file at {path_str} has been updated with all of the "
+                "necessary information to start using the NLDS."
             )
         click.echo(success_msg)
 
@@ -1623,28 +1630,28 @@ def init(url: str = None, user: str = None, group: str = None, insecure: bool = 
 @nlds_client.command(
     "renew",
     help=(
-        f"Renew the access token and the object storage keys.  This is necessary if "
-        f"your object storage keys have expired.\n"
-        f"Access tokens automatically refresh, but if you have not used the NLDS for a "
-        f" long time, then it may also have expired.  You can use this command to "
-        f"renew it."
+        "Renew the access token and the object storage keys.  This is necessary if "
+        "your object storage keys have expired, and this command will generate new "
+        "ones.\n"
+        "OAuth access tokens should automatically refresh, but if you have not used "
+        "the NLDS for a long time, then they may also have expired.  You can use this "
+        "command to renew them."
     ),
 )
 def renew():
     click.echo(
         click.style(
             "Renewing access tokens and object storage keys for the "
-            "Near-line Data Store...\n",
+            "Near-line Data Store...",
             fg="yellow",
         )
     )
-    click.echo(click.style("Initialising the Near-line Data Store...\n", fg="yellow"))
     try:
         response = renew_keys()
         if ("success" not in response or not response["success"]):
             raise RequestError(
                 f"Could not renew access token and object store keys, something has "
-                "gone wrong"
+                "gone wrong."
             )
         success_msg = (
             f"Access token and object store keys have been successfully renewed."
