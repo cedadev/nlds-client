@@ -11,11 +11,12 @@ It consists of a library part (clientlib) and a command line client
 
 NLDS client is built upon [Requests](https://docs.python-requests.org/en/master/index.html) and [Click](https://click.palletsprojects.com/en/8.0.x/)
 
-NLDS client requires Python 3.  It has been tested with Python 3.8, 3.9, 3.10 
-and 3.11.
+NLDS client requires Python 3.10 or greater.  It has been tested with Python 3.10, 3.11 and 3.12.
 
 Installation
 ------------
+
+To install directly from the GitHub repository.
 
 1.  Create a python virtual environment:
     ``` bash
@@ -29,11 +30,28 @@ Installation
 
 3.  Install the nlds-client package directly from this github repo:
     ``` bash
-    pip install git+https://github.com/cedadev/nlds-client.git@1.0.12
+    pip install git+https://github.com/cedadev/nlds-client.git
+    ```
+
+To install from PyPi (v1.0.13 and newer).
+
+1.  Create a python virtual environment:
+    ``` bash
+    python3 -m venv ~/nlds-client
+    ```
+
+2.  Activate your new virtual environment:
+    ``` bash
+    source ~/nlds-client/bin/activate
+    ```
+
+3.  Install the nlds-client package from PyPi:
+    ``` bash
+    pip install nlds-client
     ```
 
 If installing this repository for development we recommend you install with the 
-editable flag (`-e`).  
+editable flag (`-e`).
 
 Config
 ------

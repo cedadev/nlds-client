@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools >= 77.0.3"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nlds-client"
+version = "1.0.13"
+authors = [
+  { name="Neil Massey", email="neil.massey@stfc.ac.uk" },
+]
+description = "Client library and command line tool for the Near Line Data Store (NLDS)."
+readme = "README.md"
+requires-python = ">=3.10"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+license = "BSD-2-Clause"
+license-files = ["LICEN[CS]E*"]
+
+[project.urls]
+Homepage = "https://github.com/cedadev/nlds"
+Issues = "https://github.com/cedadev/nlds/issues"
