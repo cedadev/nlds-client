@@ -4,7 +4,7 @@
 
 [project]
   name = "nlds-client"
-  version = "1.0.13"
+  version = "1.0.15"
   authors = [
     { name="Neil Massey", email="neil.massey@stfc.ac.uk" },
   ]
@@ -17,6 +17,14 @@
   ]
   license = "BSD-2-Clause"
   license-files = ["LICEN[CS]E*"]
+  dependencies = [
+    "requests==2.32.5",
+    "requests_oauthlib==2.0.0",
+    "click==8.3.1",
+    "cryptography==46.0.3",
+    "certifi==2025.11.12",
+  ]
+
 
 [project.urls]
   Homepage = "https://github.com/cedadev/nlds"
