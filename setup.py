@@ -1,6 +1,7 @@
 import os
 from setuptools import setup, find_packages
-from nlds_client import __version__
+#from nlds_client import __version__
+__version__ = '1.0.16'
 
 with open(os.path.join(os.path.dirname(__file__), 'README.md')) as readme:
     README = readme.read()

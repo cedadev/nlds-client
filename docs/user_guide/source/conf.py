@@ -14,7 +14,7 @@ from nlds_client import __version__
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 project = 'Near-Line Data Store Client'
-copyright = '2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation'
+copyright = '2021-2026, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation'
 author = 'Neil Massey & Jack Leland'
 
 version = __version__
