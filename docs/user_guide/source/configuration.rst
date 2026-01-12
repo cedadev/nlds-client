@@ -1,11 +1,8 @@
+.. _configuration:
+
 .. |br| raw:: html
 
   <br/>
-
-.. _configuration:
-
-.. note:: 
-    This makes NLDS much easier to setup and use.
 
 Configuration File
 ==================

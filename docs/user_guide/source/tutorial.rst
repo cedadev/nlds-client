@@ -71,7 +71,7 @@ with the ability to add metadata to the *Holdings* in the form of *Tags* and
 *Labels*.
 
 Figure 2 shows a simplified view of the NLDS data-catalog.  This is covered in
-much more depth in the :ref:`catalog_organisation` section.
+much more depth in the :ref:`NLDS : Docs : Catalog Organisation <catalog_organisation>` section.
 
 .. figure:: ./_images/simple_catalog.png
 
@@ -160,7 +160,7 @@ Ingesting data into NLDS is acheived using two commands: ``put`` and ``putlist``
 
 This is the simplest form of the command and will PUT the file into a holding
 with a seemingly random label.  It will also use the values of ``user`` and
-``group`` from the :ref:`configuration`.
+``group`` from the :ref:`NLDS : Docs : Configuration <configuration>`..
 
 To specify the ``user`` and ``group``:
 
@@ -256,7 +256,7 @@ own to view the state of all the transactions for a user:
 
 (the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
 ``-g`` arguments here, and so the defaults are read from the 
-:ref:`configuration`.)
+:ref:`NLDS : Docs : Configuration <configuration>`..)
 
 This table shows the numeric ``id``, the ``action`` which created the 
 transaction, the user-specified ``job label``, the holding ``label``, the last
@@ -264,7 +264,7 @@ time the ``state`` was updated and the ``state`` of the transaction.
 
 As the transaction is processed by the NLDS, it goes through a number of 
 *states* and will end with a *terminating state*.  All possible *states* are
-listed on the :ref:`status_codes` page.  The *terminating states* are:
+listed on the :ref:`NLDS : Docs : Status Codes <status_codes>`.. page.  The *terminating states* are:
 
 * ``COMPLETE``
 * ``FAILED``
@@ -274,7 +274,7 @@ listed on the :ref:`status_codes` page.  The *terminating states* are:
 Results for the ``stat`` command can be filtered using the following options:
 
 * ``-b`` : filter on the user-specified ``job label``.
-* ``-s`` : filter on the ``state``.  See :ref:`status_codes` for a list of possible values.
+* ``-s`` : filter on the ``state``.  See :ref:`NLDS : Docs : Status Codes <status_codes>` for a list of possible values.
 * ``-a`` : filter on the API action. Options are ``get``, ``put`` ``getlist`` and ``putlist``.
 
 .. code-block:: text
@@ -381,7 +381,7 @@ that a user has:
 
 (the ``user_name`` and ``group`` have not been specified with the ``-u`` and 
 ``-g`` arguments here, and so the defaults are read from the 
-:ref:`configuration`.)
+:ref:`NLDS : Docs : Configuration <configuration>`..)
 
 This table shows the numeric ``id``, ``label`` and latest ``ingest time`` for
 the holding.  To examine the holding in more detail, the ``-i`` option
