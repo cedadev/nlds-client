@@ -17,7 +17,9 @@ Step-by-Step guide to setting up the NLDS client on JASMIN
 
     * In addition, the ``nlds init`` command will now fill in all of the required values in the ``~/.nlds-config`` file, including the user and group.  This makes the setting up of the NLDS client much more user-friendly.
 
-    * PyPi for hosting the NLDS client, which makes installation much more straightforward for the user, as ``pip install nlds-client`` can be used, rather than the long GitHub URL as previously.
+    * PyPi is now used for hosting the NLDS client, which makes installation much more straightforward for the user.  ``pip install nlds-client`` can now be used, rather than the long GitHub URL as previously.
+
+    * JASMIN users are automatically granted access to the ``nlds-cache-01-o`` object store tenancy on JASMIN.  They no longer have to apply for access to this tenancy via the JASMIN accounts portal.
 
 Prerequisites
 -------------
@@ -32,37 +34,6 @@ This document will take you through the necessary steps to access NLDS as a JASM
 #. Getting access to the NLDS object storage.
 #. Installing the NLDS client.
 #. Running the ``nlds init`` command.
-
-.. _object_store_access:
-
-Access to the object storage
-----------------------------
-
-Before proceeding, please read the JASMIN help documentation on the object storage:
-`JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_.
-
-You will require access to the object storage that is used by NLDS to cache files before they are put to tape, and after they are retrieved from tape.  To gain access, two keys are required: the ``access key`` and the ``secret key``.  These are obtained by running the ``nlds init`` command, which stores the keys in the ``~/.nlds-config`` file.  However, before that, you must apply for access to the NLDS tenancy on the object storage, which is allocated area of space that has a name and a dedicated URL.
-
-#. Log into the JASMIN accounts portal: `accounts.jasmin.ac.uk <https://accounts.jasmin.ac.uk>`_
-#. Click ``My JASMIN account``.  You should see this screen:
-
-.. image:: ./_images/jasmin_accounts.png
-    :width: 50 %
-    :align: center
-
-|br|
-
-#. Click on ``My services`` and click on ``Object Store`` in the left-hand gray column.  You will see this screen:
-
-.. image:: ./_images/obj_store.png
-    :width: 50 %
-    :align: center
-
-|br|
-
-3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
-
-**You now have access to the object store tenancy for NLDS.**
 
 .. _installing_nlds_client:
 

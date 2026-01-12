@@ -1167,7 +1167,6 @@ def init_client(
             f"{__version__}."
         )
 
-
     tenancy = remote_config["object_storage"]["tenancy"]
     access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
     # Write object storage to config file

@@ -173,11 +173,16 @@ def get_group_config(user: str = None, group: str = None):
         # get the primary group, then get its name
         gid = user_details.pw_gid
         group = grp.getgrgid(gid).gr_name
-    # check group exists
+
+    # check group exists, either in this form, or with `gws_` in front of it
+    failed = False
     try:
         _ = grp.getgrnam(group)
     except KeyError:
-        raise ConfigError(f"Group {group} is not known.")
+        try:
+            _ = grp.getgrnam("gws_" + group)
+        except KeyError:
+            raise ConfigError(f"Group {group} is not known.")
     return group
 
 def create_config(
