@@ -8,7 +8,7 @@ Installation
 ============
 
 .. note::
-   In December 2025, a more intuitive method of installation using PyPi was rolled out to NLDS users.  The instructions below are for this new installation method.
+   In January 2026, a more intuitive method of installation using PyPi was rolled out to NLDS users.  The instructions below are for this new installation method.
 
 To use the NLDS, first you must install the client software.  This guide will show
 you how to install it into a Python virtual-environment (virtualenv) in your
@@ -30,11 +30,11 @@ user space or home directory.
    ``pip install nlds-client``
 
 
-Upgrading to v1.0.13
+Upgrading to v1.0.17
 --------------------
 
 .. note::
-   In December 2025, hosting of the NLDS client was moved to PyPi.  Previous installations of ``nlds-client`` from GitHub may have to be removed using ``pip uninstall``.
+   In January 2026, hosting of the NLDS client was moved to PyPi.  Previous installations of ``nlds-client`` from GitHub may have to be removed using ``pip uninstall``.
 
 #. Activate your virtual environment: |br|
    ``source ~/nlds-client/bin/activate``

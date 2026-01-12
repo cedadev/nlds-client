@@ -4,17 +4,19 @@
 
 .. _configuration:
 
+.. note:: 
+    This makes NLDS much easier to setup and use.
+
 Configuration File
 ==================
 
-.. note::
-    In December 2025, a more user friendly method of creating the config file was rolled
-    out to NLDS users.  This now means that editing of the config file is not needed.
-    This section is retained as documentation in case the config file does need to be
-    edited.
-
 Overview
 --------
+
+ .. note::
+    As of January 2026, and v1.0.17 of the NLDS, the ``nlds init`` command can fill in all of the required values in the ``~/.nlds-config`` file.  This is much more user-friendly and editing of the config file is no longer needed.
+    This section is retained as documentation in case the config file does need to be
+    edited.
 
 When the user invokes ``nlds`` from the command line or issues a command
 from the ``nlds_client.clientlib`` API, a configuration file is required in the 
@@ -74,9 +76,6 @@ documentation, we recommend you use the ``init`` command to populate them.
 The init command
 ----------------
 
-.. note:: 
-    As of December 2025, and v1.0.13 of the NLDS, the ``nlds init`` command can fill in all of the required values in the ``~/.nlds-config`` file.  This makes NLDS much easier to setup and use.
-
 To initialise the NLDS config file, run the command:
 
 ::  
@@ -122,15 +121,3 @@ In conjunction with the username and password, this command will:
 #.  Fetch valid access and secret keys for the object store and write them into the config file at ``{{ object_store_access_key }}`` and ``{{ object_store_secret_key }}``.
 #.  Fill out the correct URL for the object store in the ``{{ tenanacy }}`` field.
 #.  Fill out the ``{{ verify_certificates }}`` field based on the ``-k|--insecure`` option.
-
-..  .. note::
-..     If you are taking part in the ``nlds`` beta testing program, you will also 
-..     need to specify a url with the ``-U`` switch and turn off ssl verification 
-..     with the ``-k`` flag, so your init command will look a bit like this:
-
-..     .. code-block:: bash
-
-..         > nlds init -u {{ nlds-testing-url }} -k
-    
-..     but with the ``{{ nlds-testing-url }}`` replaced with the url provided to 
-..     you by the JASMIN staff.
