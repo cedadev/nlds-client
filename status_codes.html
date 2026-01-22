@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Status Codes &mdash; Near-Line Data Store Client 1.0.15 documentation</title>
+  <title>Status Codes &mdash; Near-Line Data Store Client 1.0.17 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -16,7 +16,7 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=17525b7a"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=84d25509"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
@@ -39,7 +39,7 @@
               <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.15
+                1.0.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,10 +52,9 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html#upgrading-to-v1-0-12">Upgrading to v1.0.12</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Status Codes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#transaction-states">Transaction states</a></li>
@@ -196,8 +195,8 @@ in the <code class="docutils literal notranslate"><span class="pre">nlds_client<
 <td><p>Transaction has completed but with some warnings.</p></td>
 </tr>
 <tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">1000</span></code></p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">'SEARCHING'</span></code></p></td>
-<td><p>NLDS is searching for the state of a request.  The user should not see this state!</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">'QUEUED'</span></code></p></td>
+<td><p>The user’s request is in a queue waiting for processing.</p></td>
 </tr>
 </tbody>
 </table>
@@ -215,7 +214,7 @@ in the <code class="docutils literal notranslate"><span class="pre">nlds_client<
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
+    <p>&#169; Copyright 2021-2026, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

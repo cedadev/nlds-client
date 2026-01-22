@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Installation &mdash; Near-Line Data Store Client 1.0.15 documentation</title>
+  <title>Installation &mdash; Near-Line Data Store Client 1.0.17 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -16,13 +16,13 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=17525b7a"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=84d25509"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Configuration File" href="configuration.html" />
+    <link rel="next" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" />
     <link rel="prev" title="Near-Line Data Store - Client documentation" href="index.html" /> 
 </head>
 
@@ -39,7 +39,7 @@
               <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.15
+                1.0.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -51,11 +51,13 @@
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="#upgrading-to-v1-0-12">Upgrading to v1.0.12</a></li>
-<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#upgrading-to-v1-0-17">Upgrading to v1.0.17</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration File</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
@@ -89,6 +91,10 @@
              
   <section id="installation">
 <span id="id1"></span><h1>Installation<a class="headerlink" href="#installation" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In January 2026, a more intuitive method of installation using PyPi was rolled out to NLDS users.  The instructions below are for this new installation method.</p>
+</div>
 <p>To use the NLDS, first you must install the client software.  This guide will show
 you how to install it into a Python virtual-environment (virtualenv) in your
 user space or home directory.</p>
@@ -101,24 +107,31 @@ user space or home directory.</p></li>
 <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/nlds-client/bin/activate</span></code></p></li>
 <li><p>It is a good idea to upgrade your version of pip - otherwise some modules may fail to install: <br/>
 <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">pip</span></code></p></li>
-<li><p>Install the nlds-client package from GitHub: <br/>
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">git+https://github.com/cedadev/nlds-client.git</span></code></p></li>
+<li><p>Install the nlds-client package from PyPi: <br/>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">nlds-client</span></code></p></li>
 </ol>
-</section>
-<section id="upgrading-to-v1-0-12">
-<h1>Upgrading to v1.0.12<a class="headerlink" href="#upgrading-to-v1-0-12" title="Permalink to this heading"></a></h1>
-<p>Here’s how to upgrade the NLDS client to v1.0.12:</p>
+<section id="upgrading-to-v1-0-17">
+<h2>Upgrading to v1.0.17<a class="headerlink" href="#upgrading-to-v1-0-17" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In January 2026, hosting of the NLDS client was moved to PyPi.  Previous installations of <code class="docutils literal notranslate"><span class="pre">nlds-client</span></code> from GitHub may have to be removed using <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span></code>.</p>
+</div>
 <ol class="arabic simple">
 <li><p>Activate your virtual environment: <br/>
 <code class="docutils literal notranslate"><span class="pre">source</span> <span class="pre">~/nlds-client/bin/activate</span></code></p></li>
 <li><p>Upgrade using the latest nlds-client package from GitHub: <br/>
-<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">git+https://github.com/cedadev/nlds-client.git&#64;1.0.12</span></code></p></li>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">--upgrade</span> <span class="pre">nlds-client</span></code></p></li>
+<li><p>If the above point produces an error, then you may need to uninstall your previous version of <code class="docutils literal notranslate"><span class="pre">nlds-client</span></code> and install the new one:
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">uninstall</span> <span class="pre">nlds-client</span></code> <br/>
+<code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">nlds-client</span></code></p></li>
 <li><p>Check if you have the right client by issuing the command: <br/>
 <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">--version</span></code> <br/>
 The output should start with: <code class="docutils literal notranslate"><span class="pre">Near</span> <span class="pre">Line</span> <span class="pre">Data</span> <span class="pre">Store</span> <span class="pre">client</span> <span class="pre">1.0.12</span></code></p></li>
-<li><p>Update your <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code> file: <br/>
-The line that reads <code class="docutils literal notranslate"><span class="pre">&quot;api&quot;:</span> <span class="pre">&quot;api/0.1&quot;</span></code> should now read <code class="docutils literal notranslate"><span class="pre">&quot;api&quot;:</span> <span class="pre">&quot;api/1.0.0&quot;</span></code></p></li>
+<li><p>You may need to update your NLDS client config.  This can be done using the <code class="docutils literal notranslate"><span class="pre">init</span></code> command:
+<code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">init</span></code> <br/>
+This will ask for your user name and password, regenerate your OAuth access tokens and object storage keys, and make any necessary changes in your config file.</p></li>
 </ol>
+</section>
 </section>
 
 
@@ -126,13 +139,13 @@ The line that reads <code class="docutils literal notranslate"><span class="pre"
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Near-Line Data Store - Client documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration File" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
+    <p>&#169; Copyright 2021-2026, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a

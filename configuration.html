@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Configuration File &mdash; Near-Line Data Store Client 1.0.15 documentation</title>
+  <title>Configuration File &mdash; Near-Line Data Store Client 1.0.17 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
 
@@ -16,14 +16,14 @@
   
         <script src="_static/jquery.js?v=5d32c60e"></script>
         <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
-        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=17525b7a"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=84d25509"></script>
         <script src="_static/doctools.js?v=888ff710"></script>
         <script src="_static/sphinx_highlight.js?v=4825356b"></script>
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Step-by-Step guide to setting up the NLDS client on JASMIN" href="step_by_step.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Catalog Organisation" href="catalog_organisation.html" />
+    <link rel="prev" title="Tutorial" href="tutorial.html" /> 
 </head>
 
 <body class="wy-body-for-nav"> 
@@ -39,7 +39,7 @@
               <img src="_static/nlds.png" class="logo" alt="Logo"/>
           </a>
               <div class="version">
-                1.0.15
+                1.0.17
               </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
@@ -52,13 +52,13 @@
               <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html#upgrading-to-v1-0-12">Upgrading to v1.0.12</a></li>
+<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Configuration File</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#overview">Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#the-init-command">The init command</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="step_by_step.html">Step-by-Step guide to setting up the NLDS client on JASMIN</a></li>
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="catalog_organisation.html">Catalog Organisation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="status_codes.html">Status Codes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="command_ref.html">Command Line Reference</a></li>
@@ -90,18 +90,28 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
              
-  <section id="configuration-file">
-<span id="configuration"></span><h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
-<p>When the user first invokes <code class="docutils literal notranslate"><span class="pre">nlds</span></code> from the command line or issues a command
+  <span class="target" id="configuration"></span><section id="configuration-file">
+<h1>Configuration File<a class="headerlink" href="#configuration-file" title="Permalink to this heading"></a></h1>
+<section id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this heading"></a></h2>
+<blockquote>
+<div><div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As of January 2026, and v1.0.17 of the NLDS, the <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">init</span></code> command can fill in all of the required values in the <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code> file.  This is much more user-friendly and editing of the config file is no longer needed.
+This section is retained as documentation in case the config file does need to be
+edited.</p>
+</div>
+</div></blockquote>
+<p>When the user invokes <code class="docutils literal notranslate"><span class="pre">nlds</span></code> from the command line or issues a command
 from the <code class="docutils literal notranslate"><span class="pre">nlds_client.clientlib</span></code> API, a configuration file is required in the
-user’s home directory with the path:</p>
-<p><code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code></p>
-<p>This configuration file is JSON formatted and contains the authentication
-credentials required by:</p>
+user’s home directory with the path: <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code></p>
+<p>This configuration file is JSON formatted and contains information required to perform
+NLDS requests, including the URL of the NLDS server, the user’s details and the
+authentication credentials required by:</p>
 <blockquote>
 <div><ul class="simple">
 <li><p>The OAuth server</p></li>
-<li><p>The Object Storage cache</p></li>
+<li><p>The object storage cache</p></li>
 </ul>
 </div></blockquote>
 <p>It also contains the default user and group to use when issuing a request to the
@@ -124,7 +134,7 @@ is invoked.</p>
         <span class="s2">&quot;oauth_client_id&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_client_id }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;oauth_client_secret&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_client_secret }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;oauth_token_url&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_token_url }}&quot;</span><span class="p">,</span>
-        <span class="s2">&quot;oauth_scopes&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_scopes }}&quot;&quot;,</span>
+        <span class="s2">&quot;oauth_scopes&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ oauth_scopes }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;oauth_token_file_location&quot;</span> <span class="p">:</span> <span class="s2">&quot;~/.nlds-token&quot;</span>
     <span class="p">},</span>
     <span class="s2">&quot;object_storage&quot;</span> <span class="p">:</span> <span class="p">{</span>
@@ -132,42 +142,58 @@ is invoked.</p>
         <span class="s2">&quot;access_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_access_key }}&quot;</span><span class="p">,</span>
         <span class="s2">&quot;secret_key&quot;</span> <span class="p">:</span> <span class="s2">&quot;{{ object_store_secret_key }}&quot;</span>
 
+    <span class="p">},</span>
+    <span class="s2">&quot;options&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;verify_certificates&quot;</span><span class="p">:</span> <span class="n">true</span>
     <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 </div>
 <p>The values for the authentication section have been redacted for this
 documentation, we recommend you use the <code class="docutils literal notranslate"><span class="pre">init</span></code> command to populate them.</p>
+</section>
 <section id="the-init-command">
 <span id="init"></span><h2>The init command<a class="headerlink" href="#the-init-command" title="Permalink to this heading"></a></h2>
-<p>The required values for the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section of the config file can be
-obtained via the <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">init</span></code> command, which will get values for each of the
-the <code class="docutils literal notranslate"><span class="pre">oauth_</span></code> keys in the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section of the config and insert
-them either (a) into an existing config, or (b) into a blank template config
-file if one doesn’t already exist at the expected path in the user’s home
-directory. This will get you started if you don’t already have a fully filled-in
-config file. Note, however, that the <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code> will not be
-altered.  For more information about this command please see the relevant part
-of the <a class="reference internal" href="command_ref.html#command-ref"><span class="std std-ref">API reference</span></a> section.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>If you are taking part in the <code class="docutils literal notranslate"><span class="pre">nlds</span></code> beta testing program, you will also
-need to specify a url with the <code class="docutils literal notranslate"><span class="pre">-u</span></code> switch and turn off ssl verification
-with the <code class="docutils literal notranslate"><span class="pre">-k</span></code> flag, so your init command will look a bit like this:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;<span class="w"> </span>nlds<span class="w"> </span>init<span class="w"> </span>-u<span class="w"> </span><span class="o">{{</span><span class="w"> </span>nlds-testing-url<span class="w"> </span><span class="o">}}</span><span class="w"> </span>-k
+<p>To initialise the NLDS config file, run the command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nlds</span> <span class="n">init</span> <span class="o">-</span><span class="n">u</span> <span class="o">&lt;</span><span class="n">user</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">g</span> <span class="o">&lt;</span><span class="n">group</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">U</span> <span class="n">url</span> <span class="o">&lt;</span><span class="n">NLDS</span> <span class="n">server</span> <span class="n">URL</span><span class="o">&gt;</span> <span class="o">-</span><span class="n">k</span>
 </pre></div>
 </div>
-<p>but with the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">nlds-testing-url</span> <span class="pre">}}</span></code> replaced with the url provided to
-you by the JASMIN staff.</p>
+<p>where the options are:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>-u, --user TEXT   Default user to use with nlds.
+-g, --group TEXT  Default group to use with nlds.
+-k, --insecure    Boolean flag to control whether to turn off verification
+                  of ssl certificates during request. Defaults to ``false``,
+                  only needs to be ``true`` for the staging/test version of
+                  the NLDS.
+-U, --url TEXT    Url to use for getting config info. Must start with
+                  ``http(s)://``
+--help            Show this message and exit.
+</pre></div>
 </div>
-<p>The init command will not populate the <code class="docutils literal notranslate"><span class="pre">default_user</span></code> or <code class="docutils literal notranslate"><span class="pre">default_group</span></code>, so
-these will have to be filled in with the relevant user and group-workspace for
-your use case. The <code class="docutils literal notranslate"><span class="pre">access_key</span></code> and <code class="docutils literal notranslate"><span class="pre">secret_key</span></code> will also need to be
-populated with a <code class="docutils literal notranslate"><span class="pre">token</span></code> and <code class="docutils literal notranslate"><span class="pre">secret_key</span></code> generated on the
-<a class="reference external" href="https://s3-portal.jasmin.ac.uk/login">object-store portal</a> for the
-appropriate <code class="docutils literal notranslate"><span class="pre">tenancy</span></code> you wish to use. In most cases this will be the default
-<code class="docutils literal notranslate"><span class="pre">nlds-cache-01-o</span></code>, so we recommend that, unless you know what you are doing,
-the <code class="docutils literal notranslate"><span class="pre">tenancy</span></code> field should just be omitted.</p>
+<p>Most of these options can be omitted:</p>
+<ul class="simple">
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">-u|--user</span></code> option is omitted, then the user’s login username will be used.  On JASMIN, this will be your JASMIN username.</p></li>
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">-g|--group</span></code> option is omitted, then the first group the user belongs to will be used.  On JASMIN this is typically <code class="docutils literal notranslate"><span class="pre">users</span></code>.  This is not really suitable, a group workspace group that the user belongs to should be used.</p></li>
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">-U|--url</span></code> option is omitted, then the default URL will be used.  This is the location of the NLDS service, so this option should be omitted in most cases.</p></li>
+<li><p>If the <code class="docutils literal notranslate"><span class="pre">-k|--insecure</span></code> option is omitted, then a secure connection will be used.  This is the default option, so this option should be omitted in most cases, to ensure a secure connection.</p></li>
+</ul>
+<p>As a minimum, and in most cases for most NLDS users, only the <code class="docutils literal notranslate"><span class="pre">-g|--group</span></code> option is required.  This should be a group workspace (GWS) that you belong to, and want to use as your default GWS. i.e.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">nlds</span> <span class="n">init</span> <span class="o">-</span><span class="n">g</span> <span class="o">&lt;</span><span class="n">gws_group</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>will create and fill your <code class="docutils literal notranslate"><span class="pre">~/.nlds-config</span></code> file.  It will ask for your JASMIN password, which should be the one used for your login username to log into JASMIN.
+In conjunction with the username and password, this command will:</p>
+<ol class="arabic simple">
+<li><p>Fill out the location of the NLDS server in the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">nlds_api_url</span> <span class="pre">}}</span></code> field.</p></li>
+<li><p>Fill out the api version of NLDS in the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">nlds_api_version</span> <span class="pre">}}</span></code> field.</p></li>
+<li><p>Fill out the value of <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">user_name</span> <span class="pre">}}</span></code> from either the login username, or the <code class="docutils literal notranslate"><span class="pre">-u|--user</span></code> option if supplied.</p></li>
+<li><p>Fill out the value of <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">user_gws</span> <span class="pre">}}</span></code> from either the first group of the user, or the <code class="docutils literal notranslate"><span class="pre">-g|--group</span></code> option if supplied.</p></li>
+<li><p>Fill out the required values for the <code class="docutils literal notranslate"><span class="pre">authentication</span></code> section of the config file. This includes the values for <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">oauth_client_id</span> <span class="pre">}},</span> <span class="pre">{{</span> <span class="pre">oauth_client_secret</span> <span class="pre">}},</span> <span class="pre">{{</span> <span class="pre">oauth_token_url</span> <span class="pre">}}</span></code> and <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">oauth_scopes</span> <span class="pre">}}</span></code></p></li>
+<li><p>Fetch a valid OAuth token and save it to a file at the path indicated by <code class="docutils literal notranslate"><span class="pre">oauth_token_file_location</span></code>.  The default is <code class="docutils literal notranslate"><span class="pre">~/.nlds-token</span></code>, i.e. in your home directory.</p></li>
+<li><p>Fetch valid access and secret keys for the object store and write them into the config file at <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">object_store_access_key</span> <span class="pre">}}</span></code> and <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">object_store_secret_key</span> <span class="pre">}}</span></code>.</p></li>
+<li><p>Fill out the correct URL for the object store in the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">tenanacy</span> <span class="pre">}}</span></code> field.</p></li>
+<li><p>Fill out the <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">verify_certificates</span> <span class="pre">}}</span></code> field based on the <code class="docutils literal notranslate"><span class="pre">-k|--insecure</span></code> option.</p></li>
+</ol>
 </section>
 </section>
 
@@ -175,14 +201,14 @@ the <code class="docutils literal notranslate"><span class="pre">tenancy</span><
            </div>
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="step_by_step.html" class="btn btn-neutral float-right" title="Step-by-Step guide to setting up the NLDS client on JASMIN" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="tutorial.html" class="btn btn-neutral float-left" title="Tutorial" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="catalog_organisation.html" class="btn btn-neutral float-right" title="Catalog Organisation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
 
   <div role="contentinfo">
-    <p>&#169; Copyright 2025, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
+    <p>&#169; Copyright 2021-2026, Centre for Environmental Data Analysis, Science and Technologies Facilities Council, UK Research and Innovation.</p>
   </div>
 
   Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
