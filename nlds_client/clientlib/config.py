@@ -2,7 +2,7 @@
 
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
-__copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
+__copyright__ = "Copyright 2026 United Kingdom Research and Innovation"
 __license__ = "BSD - see LICENSE file in top-level package directory"
 __contact__ = "neil.massey@stfc.ac.uk"
 

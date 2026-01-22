@@ -2,7 +2,7 @@
 """ """
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
-__copyright__ = "Copyright 2025 United Kingdom Research and Innovation"
+__copyright__ = "Copyright 2026 United Kingdom Research and Innovation"
 __license__ = "BSD - see LICENSE file in top-level package directory"
 __contact__ = "neil.massey@stfc.ac.uk"
 
@@ -47,7 +47,7 @@ def nlds_client(ctx, version):
         if version:
             click.echo(f"Near Line Data Store client {__version__}.")
             click.echo(
-                "Copyright © 2022-2025 Centre of Environmental Data Analysis "
+                "Copyright © 2022-2026 Centre of Environmental Data Analysis "
                 "Developers, Scientific and Technical Facilities Council (STFC), "
                 "UK Research and Innovation (UKRI)"
             )

@@ -8,7 +8,7 @@ NLDS is Open Source software made available under a BSD 2-Clause License.
 BSD 2-Clause License
 ====================
 
-Copyright (c) 2019-2025, Centre of Environmental Data Analysis Developers,
+Copyright (c) 2019-2026, Centre of Environmental Data Analysis Developers,
 Scientific and Technical Facilities Council (STFC),
 UK Research and Innovation (UKRI).
 All rights reserved.
