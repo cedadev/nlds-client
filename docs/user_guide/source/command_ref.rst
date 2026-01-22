@@ -17,9 +17,10 @@ Commands:
   | ``find     Find and list files.``
   | ``get      Get a single file.``
   | ``getlist  Get a number of files specified in a list.``
-  | ``init     Set up the nlds client with a config file on first use.``   
+  | ``init     Set up the nlds client with a config file on first use.``
   | ``list     List holdings.``
   | ``meta     Alter metadata for a holding.``
+  | ``renew    Renew the OAuth tokens and object store access and secret keys``
   | ``put      Put a single file.``
   | ``putlist  Put a number of files specified in a list.``
   | ``stat     List transactions.``

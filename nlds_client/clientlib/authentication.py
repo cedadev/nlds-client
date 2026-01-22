@@ -1,6 +1,4 @@
-"""
-
-"""
+""" """
 
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
@@ -13,34 +11,43 @@ import os.path
 import getpass
 
 import requests
+from requests.auth import HTTPBasicAuth
+from datetime import datetime, timedelta
+import random
+import string
 from nlds_client.clientlib.exceptions import *
+from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
 
-def get_username_password(config):
-    """Get the username and password interactively from the user.
+def get_password(config):
+    """Get the password interactively from the user.
        Print a message first to reassure the user.
 
     :param config: the configuration loaded by config.load_config
     :type config: Dict
 
-    :return: a tuple containing (username, password)
-    :rtype: Tuple
+    :return: a string containing password
+    :rtype: String
 
     """
     auth_config = config["authentication"]
+    TOKEN_FILE_LOCATION = os.path.expanduser(auth_config['oauth_token_file_location'])
     print(
-        "This application uses OAuth2 to authenticate with the server on your"
-        " behalf."
+        "• This application uses OAuth2 to authenticate with the server on your behalf."
     )
-    print("To do this it needs your username and password.")
+    print("• To do this it needs your password.  Your password is not stored. ")
     print(
-        "Your password is not stored.  It is used to obtain an access token, "
-        "which is stored in the file: "
-        f"{auth_config['oauth_token_file_location']}"
+        "• It is used to obtain an access token, which is stored in the file: "
+        f"{TOKEN_FILE_LOCATION}, and used for subsequent "
+        "interactions with the server. "
     )
-    username = input("Username: ")
+    print(
+        "• It is also used to obtain object storage keys.  These are stored in the "
+        f"configuration file: {CONFIG_FILE_LOCATION} and used for interaction with the "
+        "object storage cache.\n"
+    )
     password = getpass.getpass("Password: ")
-    return username, password
+    return password
 
 
 def process_fetch_oauth2_token_response(config, response):
@@ -64,7 +71,9 @@ def process_fetch_oauth2_token_response(config, response):
             "Could not obtain an Oauth2 token from "
             f"{auth_config['oauth_token_url']}\n"
             "Check your username and password and try again. "
-            f"(HTTP_{response.status_code})",
+            f"(HTTP_{response.status_code})\n"
+            'Check the "default_user" and "default_group" entries in '
+            f"the configuration file: {CONFIG_FILE_LOCATION}, or the -u option.",
             response.status_code,
         )
     elif response.status_code == requests.codes.unauthorized:  # code 401
@@ -74,7 +83,7 @@ def process_fetch_oauth2_token_response(config, response):
             "The request was unauthorized.\n"
             "Check the ['authentication']['oauth_client_id'] and "
             "['authentication']['oauth_client_secret'] settings in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code})",
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
             response.status_code,
         )
     elif response.status_code == requests.codes.forbidden:  # code 403
@@ -90,7 +99,7 @@ def process_fetch_oauth2_token_response(config, response):
             f"{auth_config['oauth_token_url']}\n"
             "The token server was not found.\n"
             "Check the ['authentication']['oauth_token_url'] setting in the "
-            f"~/.nlds-config file. (HTTP_{response.status_code})",
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
             response.status_code,
         )
     else:
@@ -99,8 +108,6 @@ def process_fetch_oauth2_token_response(config, response):
             f"{auth_config['oauth_token_url']}. (HTTP_{response.status_code})",
             response.status_code,
         )
-
-    return response
 
 
 def fetch_oauth2_token(config, username, password):
@@ -257,3 +264,100 @@ def save_token(config, token):
             "The OAuth2 token file cannot be written to: "
             f"{auth_config['oauth_token_file_location']}"
         )
+
+
+def process_fetch_s3_access_keys_response(tenancy, response):
+    """Process the return from fetching a new pair of access keys from the S3 server
+
+    :param config: the configuration loaded by config.load_config
+    :type config: Dict
+
+    :return: A requests response object, if none of the exceptions are
+    triggered.
+    :rtype: requests.models.Response object
+
+    """
+    fail_stub = f"Could not obtain S3 keys from {tenancy}"
+
+    if (response.status_code == requests.codes.ok or
+        response.status_code == requests.codes.created ):  # status code 200 or 201
+        return response
+    elif response.status_code == requests.codes.bad_request:  # code 400
+        raise RequestError(
+            f"{fail_stub}\n"
+            f"Check your username and password and try again. "
+            f"(HTTP_{response.status_code})",
+            response.status_code,
+        )
+    elif response.status_code == requests.codes.unauthorized:  # code 401
+        raise AuthenticationError(
+            f"{fail_stub}\n"
+            "The request was unauthorized.\n"
+            "Check the ['user']['default_user'] setting in the "
+            f"{CONFIG_FILE_LOCATION} file, or the -u option, "
+            "and ensure that you type your password correctly."
+            f"(HTTP_{response.status_code})",
+            response.status_code,
+        )
+    elif response.status_code == requests.codes.forbidden:  # code 403
+        raise AuthenticationError(
+            f"{fail_stub}\n" f"Access is forbidden. (HTTP_{response.status_code})",
+            response.status_code,
+        )
+    elif response.status_code == requests.codes.not_found:  # code 404
+        raise RequestError(
+            f"{fail_stub}\n"
+            f"The S3 server at {tenancy} was not found.\n"
+            "Check the ['object_storage']['tenancy'] setting in the "
+            f"{CONFIG_FILE_LOCATION} file. (HTTP_{response.status_code})",
+            response.status_code,
+        )
+    else:
+        raise RequestError(
+            f"{fail_stub}\n",
+            response.status_code,
+        )
+
+
+def fetch_s3_access_keys(tenancy, username, password):
+    """Contact the S3 tenancy using the URL in:
+        tenancy,
+    using the user details from:
+        config['user']['default_user'],
+        password
+    to obtain a pair of (accessKey, secret_key) to authenticate to the object storage.
+
+    :param tenancy: the tenancy url of the object store
+    :type config: Dict
+
+    :param username: username for HTTP basic authentication
+    :type username: string
+
+    :param password: password for HTTP basic authentication
+    :type password: string
+
+    :return: A Dictionary containing the access key details
+    :rtype: Dict
+
+    """
+    description = f"NLDS access key for user: {username}"
+    url = "http://" + tenancy + ":81/.TOKEN/"
+    expires = datetime.today() + timedelta(weeks=26)
+    secret_key = "".join(
+        random.choices(string.ascii_letters + string.digits, k=64)
+    )  # Generate secret key
+
+    headers = {
+        "X-User-Secret-Key-Meta": secret_key,
+        "X-Custom-Meta-Source": description,
+        "X-User-Token-Expires-Meta": expires.strftime("%Y-%m-%d"),
+    }
+    response = requests.post(
+        url,
+        headers=headers,
+        auth=HTTPBasicAuth(username, password),
+    )
+    response_text = response.text
+    process_fetch_s3_access_keys_response(tenancy, response)
+    access_key = response_text.split()[1]
+    return access_key, secret_key

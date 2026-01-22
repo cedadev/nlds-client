@@ -10,9 +10,9 @@ package Local {
 
 package Remote {
     agent API_server as "API server" #DodgerBlue
-    queue nq as "NLDS Queue" #lightgrey
-    agent proc as "File Processor" #lightblue
-    cloud object_storage as "Object Storage"
+    queue nq as "NLDS queue" #lightgrey
+    agent proc as "File processor" #lightblue
+    cloud object_storage as "Object storage"
     database catalogdb as "Catalog" #SpringGreen
     component tape as "Tape"
 }

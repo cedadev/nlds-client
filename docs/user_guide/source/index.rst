@@ -7,20 +7,20 @@ Near-Line Data Store - Client documentation
 ===========================================
 
 The Near-Line Data Store (NLDS) is a multi-tiered storage solution that uses 
-Object Storage as a front end cache to a tape library. It catalogs the data as 
+object storage as a front end cache to a tape library. It catalogs the data as 
 it is ingested and permits multiple versions of files. It has a microservice 
 architecture using a message broker to communicate between the parts.
 Interaction with NLDS is via a HTTP API, with a Python library and command-line 
-client provided to users for programmatic or interactive use.
+client provided for programmatic or interactive use.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
 
    installation.rst
-   configuration.rst
    step_by_step.rst
    tutorial.rst
+   configuration.rst
    catalog_organisation.rst
    status_codes.rst
    command_ref.rst

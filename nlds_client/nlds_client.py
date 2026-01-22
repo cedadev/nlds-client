@@ -19,6 +19,7 @@ from nlds_client.clientlib.transactions import (
     get_transaction_state,
     change_metadata,
     init_client,
+    renew_keys
 )
 from nlds_client.clientlib.exceptions import (
     ConnectionError,
@@ -244,7 +245,7 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
         if sub_records:
             click.echo(f"{'':<4}{'sub records':<16}->")
             for sr in tr["sub_records"]:
-                if sr['state'] != "SPLIT":
+                if sr["state"] != "SPLIT":
                     click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
                     click.echo(f"{'':<9}{'sub_id':<13}: {sr['sub_id']}")
                     click.echo(f"{'':<9}{'state':<13}: {sr['state']}")
@@ -481,7 +482,7 @@ def print_response(tr: dict):
 user_help_text = (
     " If no user or group is given then these values will "
     "default to the ``user:default_user`` and ``user:default_group values`` "
-    "in the ``~/.nlds-config file``."
+    f"in the ``{CONFIG_FILE_LOCATION}``."
 )
 
 
@@ -1287,7 +1288,8 @@ def stat(
             job_label=job_label,
             api_action=api_action,
         )
-        if response["success"] and len(response["data"]["records"]):
+        n_records = len(response["data"]["records"])
+        if response["success"] and n_records:
             if json:
                 click.echo(json_dumps(response))
             else:
@@ -1297,6 +1299,13 @@ def stat(
             fail_string += req_details
             if "failure" in response["details"]:
                 fail_string += "\nReason: " + response["details"]["failure"]
+            if n_records == 0:
+                response_user = response["details"]["user"]
+                response_group = response["details"]["group"]
+                fail_string += (
+                    f"\nReason: no transaction records found for user:{response_user} "
+                    f"and group:{response_group}"
+                )
             raise click.UsageError(fail_string)
     except ConnectionError as ce:
         raise click.UsageError(ce)
@@ -1562,8 +1571,8 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "init",
     help=(
         f"Set up the NLDS client on first use. Will either create a new "
-        "config file if one doesn't exist or fill the 'authentication' "
-        "section with appropriate values if it does."
+        "config file if one doesn't exist or amend the config file if it "
+        "does."
     ),
 )
 @click.option(
@@ -1571,7 +1580,13 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     "--url",
     default=None,
     type=str,
-    help=("Url to use for getting config info. Must start with http(s)://"),
+    help=("Url to use for getting config info. Must start with ``http(s)://``"),
+)
+@click.option(
+    "-u", "--user", default=None, type=str, help=("Default user to use with nlds.")
+)
+@click.option(
+    "-g", "--group", default=None, type=str, help=("Default group to use with nlds.")
 )
 @click.option(
     "-k",
@@ -1579,13 +1594,13 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
     is_flag=True,
     default=False,
     help="Boolean flag to control whether to turn off verification of ssl "
-    "certificates during request. Defaults to true, only needs to be False"
+    "certificates during request. Defaults to ``false``, only needs to be ``true``"
     " for the staging/test version of the NLDS.",
 )
-def init(url: str = None, insecure: bool = False):
-    click.echo(click.style("Initialising the Near-line Data Store...\n", fg="yellow"))
+def init(url: str = None, user: str = None, group: str = None, insecure: bool = False):
+    click.echo(click.style("\nInitialising the Near-line Data Store...", fg="yellow"))
     try:
-        response = init_client(url, verify_certificates=(not insecure))
+        response = init_client(url, user, group, verify_certificates=(not insecure))
         if (
             "success" in response and not response["success"]
         ) or "new_config" not in response:
@@ -1594,29 +1609,14 @@ def init(url: str = None, insecure: bool = False):
         path_str = click.style(CONFIG_FILE_LOCATION, fg="yellow")
         if response["new_config"]:
             success_msg += (
-                f"a template config file has been created at "
-                f"{path_str} with some of the information necessary"
-                " to use the NLDS."
+                f"a template config file has been created at {path_str} with some "
+                f"of the information necessary to use the NLDS."
             )
         else:
             success_msg += (
-                f"the config file at {path_str} has been updated "
-                "with some of the necessary information to start "
-                "using the NLDS."
+                f"the config file at {path_str} has been updated with all of the "
+                "necessary information to start using the NLDS."
             )
-
-        link_str = click.style("https://s3-portal.jasmin.ac.uk/", fg="blue")
-        success_msg += (
-            "\n\nYou may still need to manually update the fields:"
-            "\n - user.default_user \n - user.default_group "
-            "\n - object_storage.access_key"
-            "\n - object_storage.secret_key"
-            "\n - object_storage.tenancy "
-            + click.style("(will default to nlds-cache-01-o if not set)", fg="yellow")
-            + "\n\nThe latter three values can be obtained from the "
-            "object store portal for any object stores you have "
-            f"access to ({link_str})."
-        )
         click.echo(success_msg)
 
     except ConnectionError as ce:
@@ -1627,9 +1627,46 @@ def init(url: str = None, insecure: bool = False):
         raise click.UsageError(e)
 
 
+@nlds_client.command(
+    "renew",
+    help=(
+        "Renew the access token and the object storage keys.  This is necessary if "
+        "your object storage keys have expired, and this command will generate new "
+        "ones.\n"
+        "OAuth access tokens should automatically refresh, but if you have not used "
+        "the NLDS for a long time, then they may also have expired.  You can use this "
+        "command to renew them."
+    ),
+)
+def renew():
+    click.echo(
+        click.style(
+            "Renewing access tokens and object storage keys for the "
+            "Near-line Data Store...",
+            fg="yellow",
+        )
+    )
+    try:
+        response = renew_keys()
+        if ("success" not in response or not response["success"]):
+            raise RequestError(
+                f"Could not renew access token and object store keys, something has "
+                "gone wrong."
+            )
+        success_msg = (
+            f"Access token and object store keys have been successfully renewed."
+        )
+        click.echo(success_msg)
+
+    except ConnectionError as ce:
+        raise click.UsageError(ce)
+    except RequestError as re:
+        raise click.UsageError(re)
+    except Exception as e:
+        raise click.UsageError(e)
+
 def main():
     nlds_client(prog_name="nlds")
-
 
 if __name__ == "__main__":
     click.formatting.wrap_text = 80

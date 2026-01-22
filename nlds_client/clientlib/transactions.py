@@ -15,6 +15,7 @@ from datetime import datetime
 from base64 import b64decode
 from typing import List, Dict, Any
 import math
+from nlds_client import __version__
 
 import requests
 from requests.exceptions import JSONDecodeError
@@ -23,18 +24,22 @@ from nlds_client.clientlib.config import (
     load_config,
     create_config,
     write_auth_section,
+    write_os_section,
     get_user,
     get_group,
     get_option,
     get_tenancy,
     get_access_key,
     get_secret_key,
+    get_user_config,
+    get_group_config,
 )
 from nlds_client.clientlib.authentication import (
     load_token,
-    get_username_password,
+    get_password,
     fetch_oauth2_token,
     fetch_oauth2_token_from_refresh,
+    fetch_s3_access_keys,
 )
 from nlds_client.clientlib.exceptions import *
 
@@ -159,8 +164,8 @@ def main_loop(
     url: str,
     input_params: Dict = None,
     body_params: Dict = None,
-    authenticate_fl: bool = True,
     method=requests.get,
+    authenticate_fl: bool = True,
     **kwargs,
 ):
     """Generalised main loop to make requests to the NLDS server
@@ -195,8 +200,7 @@ def main_loop(
     else:
         verify = get_option(config, "verify_certificates")
 
-    # If we're not verifying the certificate we can turn off the warnings about
-    # it
+    # If we're not verifying the certificate we can turn off the warnings about it
     if not verify:
         from urllib3.connectionpool import InsecureRequestWarning
         import warnings
@@ -217,13 +221,13 @@ def main_loop(
             except FileNotFoundError:
                 # we need the username and password to get the OAuth2 token in
                 # the password flow
-                username, password = get_username_password(config)
-                auth_token = fetch_oauth2_token(config, username, password)
+                password = get_password(config)
+                auth_token = fetch_oauth2_token(
+                    config, config["user"], password
+                )
                 # we don't want to do the rest of the loop!
                 continue
             token_headers["Authorization"] = f"Bearer {auth_token['access_token']}"
-
-        # make the request
         try:
             response = method(
                 url,
@@ -921,7 +925,7 @@ def get_transaction_state(transaction: dict):
     }
     state_mapping_reverse = {v: k for k, v in state_mapping.items()}
 
-    min_state = 200
+    min_state = 1000
     min_time = datetime(1970, 1, 1)
     error_count = 0
     complete_count = 0
@@ -940,9 +944,11 @@ def get_transaction_state(transaction: dict):
         if sr_state != "SPLIT":
             n_subrecords += 1
 
-    if min_state == 200:
+    if min_state == 1000:
+        # 1000 state is "SEARCHING", but we change this to a more user friendly
+        # "QUEUED"
         d = datetime.fromisoformat(transaction["creation_time"])
-        return "INITIALIZING", d, 0
+        return "QUEUED", d, 0
 
     if min_state == state_mapping["COMPLETE"] and error_count > 0:
         min_state = state_mapping["COMPLETE_WITH_ERRORS"]
@@ -1052,6 +1058,8 @@ def change_metadata(
 
 def init_client(
     url: str = None,
+    user: str = None,
+    group: str = None,
     verify_certificates: bool = True,
 ) -> Dict[str, Any]:
     """Make two requests to the API to get some secret, encrypted configuration
@@ -1075,36 +1083,51 @@ def init_client(
     if url is None:
         url = DEFAULT_SERVER_URL
     cli_response = {"success": True, "new_config": False}
-
     try:
         # get the config, if it exists, and change the url to that provided
         config = load_config()
         config["server"]["url"] = url
+        # override the user and group
+        if user is not None:
+            try:
+                user = get_user_config(user)
+                config["user"]["default_user"] = user
+            except ConfigError as e:
+                raise(e)
+        if group is not None:
+            try:
+                group = get_group_config(user, group)
+                config["user"]["default_group"] = group
+            except ConfigError as e:
+                raise(e)
     except FileNotFoundError:
         # If the file doesn't exist then create it
-        config = create_config(url, verify_certificates)
+        config = create_config(url, user, group, verify_certificates)
         cli_response["new_config"] = True
 
     responses = {}
+    input_params = {
+        "user": user,
+        "group": group
+    }
     for endpoint in ["init", "init/token"]:
         url = construct_server_url(config, endpoint)
         response_dict = main_loop(
             url=url,
-            input_params=None,
+            input_params=input_params,
             method=requests.get,
+            authenticate_fl=False,
             allow_redirects=True,
             verify=verify_certificates,
-            authenticate_fl=False,
         )
 
         # If we get to this point then the transaction could not be processed
         if not response_dict:
             raise RequestError(f"Could not init NLDS, empty response")
         responses[endpoint] = response_dict
-
     try:
         key = b64decode(responses["init/token"]["token"])
-        auth_config_enc = responses["init"]["encrypted_keys"]
+        remote_config_enc = responses["init"]["encrypted_keys"]
     except (KeyError, AttributeError) as e:
         raise RequestError(
             "Malformed init response from api, could not create "
@@ -1114,9 +1137,69 @@ def init_client(
 
     # Decrypt the encrypted keys
     f = Fernet(key)
-    auth_config = json.loads(f.decrypt(auth_config_enc))
-
+    remote_config = json.loads(f.decrypt(remote_config_enc))
     # Write auth_config to config file
-    write_auth_section(config, auth_config)
+    if not "authentication" in remote_config:
+        raise RequestError(
+            "authentication keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
+    write_auth_section(config, remote_config["authentication"])
+
+    # Run the workflow to get the password and OAuth token
+    username = config["user"]["default_user"]
+    password = get_password(config)
+    _ = fetch_oauth2_token(config, username, password)
+
+    # Get the access_key and secret_key from the object store tenancy
+    if not "object_storage" in remote_config:
+        raise RequestError(
+            "object_storage keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
+    
+    if not "tenancy" in remote_config["object_storage"]:
+        raise RequestError(
+            "tenancy keyword not in returned config dictionary. There could "
+            "be a mismatch in the client and server versions.  Client version is "
+            f"{__version__}."
+        )
+
+    tenancy = remote_config["object_storage"]["tenancy"]
+    access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
+    # Write object storage to config file
+    remote_config["object_storage"]["access_key"] = access_key
+    remote_config["object_storage"]["secret_key"] = secret_key
+    write_os_section(config, remote_config["object_storage"])
+
+    return cli_response
+
+
+def renew_keys():
+    """
+    Renew the object store keys and the access token
+    All details are read from the config file
+        - the username
+        - the url for renewing tokens
+        - the url / tenancy for accessing the object store
+    The user will be access for their password again
+    """
+    config = load_config()
+
+    # Run the workflow to get the password and OAuth token
+    username = config["user"]["default_user"]
+    password = get_password(config)
+    _ = fetch_oauth2_token(config, username, password)
+
+    # Get the access_key and secret_key from the object store tenancy
+    tenancy = config["object_storage"]["tenancy"]
+    access_key, secret_key = fetch_s3_access_keys(tenancy, username, password)
+    # Write object storage to config file
+    config["object_storage"]["access_key"] = access_key
+    config["object_storage"]["secret_key"] = secret_key
+    write_os_section(config, config["object_storage"])
+    cli_response = {"success": True}
 
     return cli_response
