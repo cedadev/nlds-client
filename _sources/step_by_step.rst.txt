@@ -19,7 +19,7 @@ Step-by-Step guide to setting up the NLDS client on JASMIN
 
     * PyPi is now used for hosting the NLDS client, which makes installation much more straightforward for the user.  ``pip install nlds-client`` can now be used, rather than the long GitHub URL as previously.
 
-    * JASMIN users are automatically granted access to the ``nlds-cache-01-o`` object store tenancy on JASMIN.  They no longer have to apply for access to this tenancy via the JASMIN accounts portal.
+    .. * JASMIN users are automatically granted access to the ``nlds-cache-01-o`` object store tenancy on JASMIN.  They no longer have to apply for access to this tenancy via the JASMIN accounts portal.
 
 Prerequisites
 -------------
@@ -35,6 +35,30 @@ This document will take you through the necessary steps to access NLDS as a JASM
 #. Installing the NLDS client.
 #. Running the ``nlds init`` command.
 
+Gaining access to the NLDS Object Store
+---------------------------------------
+
+.. _object_store:
+
+Access to the Object Store
+--------------------------
+
+Before proceeding, please read the JASMIN help documentation on the Object Store:
+`JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_.
+
+You will require access to the Object Store that is used by NLDS to store files before they are put to tape, and after they are retrieved from tape.  Getting access keys is now handled by the `nlds init` command, but access to the Object Store must still be requested by the user.  To do this:
+
+1. Log into the JASMIN accounts portal at `accounts.jasmin.ac.uk <https://accounts.jasmin.ac.uk>`_
+2. Click on ``My services`` and click on ``Object Store`` in the left-hand gray column.  You will see this screen:
+
+.. image:: ./_images/obj_store.png
+    :width: 50 %
+    :align: center
+
+
+3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
+
+
 .. _installing_nlds_client:
 
 Installing the NLDS client on a JASMIN scientific analysis server
@@ -49,10 +73,12 @@ We suggest that you use one of the ``sci-vm-0x`` servers to set up and use the N
     
     > ssh <username>@sci-vm-01.jasmin.ac.uk
 
-2. Follow the installation instructions here: :ref:`NLDS : Docs : Installation<installation>`.  The steps are reproduced below:
+2. Follow the installation instructions here: :ref:`NLDS : Docs : Installation<installation>`.  On JASMIN, an up-to-date Python must be activated by using `module load`.  These steps are reproduced below:
 
 .. code-block:: bash
-
+    
+    > cd $HOME
+    > module load jaspy
     > python3 -m venv ~/nlds-client
     > source ~/nlds-client/bin/activate
     > pip install --upgrade pip
