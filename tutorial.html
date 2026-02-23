@@ -268,6 +268,7 @@ PUT transaction accepted for processing.
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>On JASMIN, NLDS cannot transfer data from the user’s home directory (<code class="docutils literal notranslate"><span class="pre">$HOME</span></code> or <code class="docutils literal notranslate"><span class="pre">~/</span></code>), as only the user has permission to read or write to their own home directory.  NLDS can be used with a Group Workspace (GWS), and with the transfer cache (XFC).</p>
+<p>In a GWS, before you run <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">put</span></code>, make sure that all the files you want to put into a holding belong to your <code class="docutils literal notranslate"><span class="pre">gws_&lt;mygws&gt;</span></code> group using <code class="docutils literal notranslate"><span class="pre">chgrp</span></code>. In addition, run <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">g+r</span></code> for files and <code class="docutils literal notranslate"><span class="pre">chmod</span> <span class="pre">g+rx</span></code> for directories so NLDS can retrieve them.</p>
 </div>
 </section>
 <section id="copying-a-list-of-files-putlist-to-the-nlds">
