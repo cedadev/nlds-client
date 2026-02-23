@@ -35,13 +35,10 @@ This document will take you through the necessary steps to access NLDS as a JASM
 #. Installing the NLDS client.
 #. Running the ``nlds init`` command.
 
-Gaining access to the NLDS Object Store
----------------------------------------
-
 .. _object_store:
 
-Access to the Object Store
---------------------------
+Gaining access to the NLDS Object Store
+---------------------------------------
 
 Before proceeding, please read the JASMIN help documentation on the Object Store:
 `JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_.
