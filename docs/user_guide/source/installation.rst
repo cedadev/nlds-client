@@ -42,13 +42,13 @@ Upgrading to v1.0.17
 #. Upgrade using the latest nlds-client package from GitHub: |br|
    ``pip install --upgrade nlds-client``
 
-#. If the above point produces an error, then you may need to uninstall your previous version of ``nlds-client`` and install the new one:
+#. If the above point produces an error, then you may need to uninstall your previous version of ``nlds-client`` and install the new one: |br|
    ``pip uninstall nlds-client`` |br|
    ``pip install nlds-client``
 
 #. Check if you have the right client by issuing the command: |br|
    ``nlds --version`` |br|
-   The output should start with: ``Near Line Data Store client 1.0.12``
+   The output should start with: ``Near Line Data Store client 1.0.17``
    
 #. You may need to update your NLDS client config.  This can be done using the ``init`` command:
    ``nlds init`` |br|
