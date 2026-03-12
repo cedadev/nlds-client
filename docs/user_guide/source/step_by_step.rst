@@ -35,27 +35,6 @@ This document will take you through the necessary steps to access NLDS as a JASM
 #. Installing the NLDS client.
 #. Running the ``nlds init`` command.
 
-.. _object_store:
-
-Gaining access to the NLDS Object Store
----------------------------------------
-
-Before proceeding, please read the JASMIN help documentation on the Object Store:
-`JASMIN : Docs : Object Store <https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/>`_.
-
-You will require access to the Object Store that is used by NLDS to store files before they are put to tape, and after they are retrieved from tape.  Getting access keys is now handled by the `nlds init` command, but access to the Object Store must still be requested by the user.  To do this:
-
-1. Log into the JASMIN accounts portal at `accounts.jasmin.ac.uk <https://accounts.jasmin.ac.uk>`_
-2. Click on ``My services`` and click on ``Object Store`` in the left-hand gray column.  You will see this screen:
-
-.. image:: ./_images/obj_store.png
-    :width: 50 %
-    :align: center
-
-
-3. Search for the tenancy ``nlds-cache-01-o``.  Click ``More information``, then ``Apply``.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.
-
-
 .. _installing_nlds_client:
 
 Installing the NLDS client on a JASMIN scientific analysis server
