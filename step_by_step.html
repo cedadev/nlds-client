@@ -54,7 +54,6 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Step-by-Step guide to setting up the NLDS client on JASMIN</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#gaining-access-to-the-nlds-object-store">Gaining access to the NLDS Object Store</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#installing-the-nlds-client-on-a-jasmin-scientific-analysis-server">Installing the NLDS client on a JASMIN scientific analysis server</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#configuring-the-nlds-client">Configuring the NLDS client</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#running-the-nlds-client-for-the-first-time">Running the NLDS client for the first time</a></li>
@@ -120,20 +119,6 @@ to reflect this.  The improved workflow includes:</p>
 <li><p>Getting access to the NLDS object storage.</p></li>
 <li><p>Installing the NLDS client.</p></li>
 <li><p>Running the <code class="docutils literal notranslate"><span class="pre">nlds</span> <span class="pre">init</span></code> command.</p></li>
-</ol>
-</section>
-<section id="gaining-access-to-the-nlds-object-store">
-<span id="object-store"></span><h2>Gaining access to the NLDS Object Store<a class="headerlink" href="#gaining-access-to-the-nlds-object-store" title="Permalink to this heading"></a></h2>
-<p>Before proceeding, please read the JASMIN help documentation on the Object Store:
-<a class="reference external" href="https://help.jasmin.ac.uk/docs/short-term-project-storage/using-the-jasmin-object-store/">JASMIN : Docs : Object Store</a>.</p>
-<p>You will require access to the Object Store that is used by NLDS to store files before they are put to tape, and after they are retrieved from tape.  Getting access keys is now handled by the <cite>nlds init</cite> command, but access to the Object Store must still be requested by the user.  To do this:</p>
-<ol class="arabic simple">
-<li><p>Log into the JASMIN accounts portal at <a class="reference external" href="https://accounts.jasmin.ac.uk">accounts.jasmin.ac.uk</a></p></li>
-<li><p>Click on <code class="docutils literal notranslate"><span class="pre">My</span> <span class="pre">services</span></code> and click on <code class="docutils literal notranslate"><span class="pre">Object</span> <span class="pre">Store</span></code> in the left-hand gray column.  You will see this screen:</p></li>
-</ol>
-<a class="reference internal image-reference" href="_images/obj_store.png"><img alt="_images/obj_store.png" class="align-center" src="_images/obj_store.png" style="width: 50%;" /></a>
-<ol class="arabic simple" start="3">
-<li><p>Search for the tenancy <code class="docutils literal notranslate"><span class="pre">nlds-cache-01-o</span></code>.  Click <code class="docutils literal notranslate"><span class="pre">More</span> <span class="pre">information</span></code>, then <code class="docutils literal notranslate"><span class="pre">Apply</span></code>.  This will make a request to the JASMIN team, who will inform you of their decision.  You need to await the outcome of this decision before proceeding to the next step.</p></li>
 </ol>
 </section>
 <section id="installing-the-nlds-client-on-a-jasmin-scientific-analysis-server">
