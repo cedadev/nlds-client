@@ -40,6 +40,7 @@ from nlds_client.clientlib.authentication import (
     fetch_oauth2_token,
     fetch_oauth2_token_from_refresh,
     fetch_s3_access_keys,
+    OAuthTokenUrlError,
 )
 from nlds_client.clientlib.exceptions import *
 
@@ -252,7 +253,14 @@ def main_loop(
             try:
                 # first loop fetch a new oauth token
                 if c_try < MAX_LOOPS:
-                    auth_token = fetch_oauth2_token_from_refresh(config)
+                    try:
+                        auth_token = fetch_oauth2_token_from_refresh(config)
+                    except OAuthTokenUrlError:
+                        raise AuthenticationError(
+                            f"Could not complete the request to the URL: {url}\n"
+                            "Authentication configuration is invalid (OAuth token URL).",
+                            response.status_code,
+                        )
                     continue
                 else:
                     raise ae

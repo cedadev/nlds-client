@@ -12,12 +12,15 @@ import getpass
 
 import requests
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import InvalidURL, MissingSchema
 from datetime import datetime, timedelta
 import random
 import string
 from nlds_client.clientlib.exceptions import *
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 
+class OAuthTokenUrlError(Exception):
+    pass
 
 def get_password(config):
     """Get the password interactively from the user.
@@ -203,9 +206,12 @@ def fetch_oauth2_token_from_refresh(config):
     }
     # contact the oauth_token_url to get a token, we expect a 200 status code to
     # be returned
-    response = requests.post(
-        auth_config["oauth_token_url"], data=token_data, headers=token_headers
-    )
+    try:
+        response = requests.post(
+            auth_config["oauth_token_url"], data=token_data, headers=token_headers
+        )
+    except (MissingSchema, InvalidURL):
+        raise OAuthTokenUrlError("Invalid OAuth token URL")
     # determine if any errors occurred
     process_fetch_oauth2_token_response(config, response)
     # save the token details after converting to JSON
