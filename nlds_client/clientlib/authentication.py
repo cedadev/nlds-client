@@ -12,11 +12,16 @@ import getpass
 
 import requests
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import InvalidURL, MissingSchema
 from datetime import datetime, timedelta
 import random
 import string
 from nlds_client.clientlib.exceptions import *
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
+
+
+class OAuthTokenUrlError(Exception):
+    pass
 
 
 def get_password(config):
@@ -31,7 +36,7 @@ def get_password(config):
 
     """
     auth_config = config["authentication"]
-    TOKEN_FILE_LOCATION = os.path.expanduser(auth_config['oauth_token_file_location'])
+    TOKEN_FILE_LOCATION = os.path.expanduser(auth_config["oauth_token_file_location"])
     print(
         "• This application uses OAuth2 to authenticate with the server on your behalf."
     )
@@ -70,10 +75,12 @@ def process_fetch_oauth2_token_response(config, response):
         raise RequestError(
             "Could not obtain an Oauth2 token from "
             f"{auth_config['oauth_token_url']}\n"
-            "Check your username and password and try again. "
+            "Check your user, group and password then try again. "
             f"(HTTP_{response.status_code})\n"
-            'Check the "default_user" and "default_group" entries in '
-            f"the configuration file: {CONFIG_FILE_LOCATION}, or the -u option.",
+            'If you are using a config file then check the "default_user" and '
+            f'"default_group" entries in the configuration file: {CONFIG_FILE_LOCATION}'
+            "\nIf you are using the -u and -g options, then ensure you are supplying "
+            "the user and group that matches the password.",
             response.status_code,
         )
     elif response.status_code == requests.codes.unauthorized:  # code 401
@@ -203,9 +210,12 @@ def fetch_oauth2_token_from_refresh(config):
     }
     # contact the oauth_token_url to get a token, we expect a 200 status code to
     # be returned
-    response = requests.post(
-        auth_config["oauth_token_url"], data=token_data, headers=token_headers
-    )
+    try:
+        response = requests.post(
+            auth_config["oauth_token_url"], data=token_data, headers=token_headers
+        )
+    except (MissingSchema, InvalidURL):
+        raise OAuthTokenUrlError("Invalid OAuth token URL")
     # determine if any errors occurred
     process_fetch_oauth2_token_response(config, response)
     # save the token details after converting to JSON
@@ -279,8 +289,10 @@ def process_fetch_s3_access_keys_response(tenancy, response):
     """
     fail_stub = f"Could not obtain S3 keys from {tenancy}"
 
-    if (response.status_code == requests.codes.ok or
-        response.status_code == requests.codes.created ):  # status code 200 or 201
+    if (
+        response.status_code == requests.codes.ok
+        or response.status_code == requests.codes.created
+    ):  # status code 200 or 201
         return response
     elif response.status_code == requests.codes.bad_request:  # code 400
         raise RequestError(

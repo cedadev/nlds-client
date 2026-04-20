@@ -134,7 +134,7 @@ def load_config():
         fh = open(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"))
     except FileNotFoundError:
         raise FileNotFoundError(
-            f"The config file cannot be found {CONFIG_FILE_LOCATION}"
+            f"The config file cannot be found at location: {CONFIG_FILE_LOCATION}"
         )
 
     # Load the JSON file, ensuring it is correctly formatted
@@ -152,6 +152,7 @@ def load_config():
 
     return json_config
 
+
 def get_user_config(user: str = None):
     # if the user is None then get the user
     if user is None:
@@ -163,12 +164,13 @@ def get_user_config(user: str = None):
         raise ConfigError(f"User {user} is not known.")
     return user
 
+
 def get_group_config(user: str = None, group: str = None):
     # Get the user and the group either from the string or from the OS if the strings
     # are None.  Error check either way.
     user = get_user_config(user)
     user_details = pwd.getpwnam(user)
-    # if the group is None then get the group    
+    # if the group is None then get the group
     if group is None:
         # get the primary group, then get its name
         gid = user_details.pw_gid
@@ -184,6 +186,7 @@ def get_group_config(user: str = None, group: str = None):
         except KeyError:
             raise ConfigError(f"Group {group} is not known.")
     return group
+
 
 def create_config(
     url: str, user: str = None, group: str = None, verify_certificates: bool = True
@@ -201,7 +204,7 @@ def create_config(
         user = get_user_config(user)
         group = get_group_config(user, group)
     except ConfigError as e:
-        raise(e)
+        raise (e)
 
     template_contents["user"]["default_user"] = user
     template_contents["user"]["default_group"] = group
@@ -211,10 +214,18 @@ def create_config(
     with open(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"), "x") as f:
         json.dump(template_contents, f, indent=4)
 
-    # Lastly, validate the config file to make sure we're not missing anyhting
+    # Lastly, validate the config file to make sure we're not missing anything
     validate_config_file(template_contents)
 
     return template_contents
+
+
+def delete_config():
+    try:
+        os.remove(os.path.expanduser(f"{CONFIG_FILE_LOCATION}"))
+    except FileNotFoundError:
+        # don't care if not found
+        pass
 
 
 def write_auth_section(config, auth_config):

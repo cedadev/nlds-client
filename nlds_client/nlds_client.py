@@ -1,5 +1,6 @@
 #! /usr/bin/env python
 """ """
+
 __author__ = "Neil Massey and Jack Leland"
 __date__ = "29 Jan 2024"
 __copyright__ = "Copyright 2026 United Kingdom Research and Innovation"
@@ -19,14 +20,14 @@ from nlds_client.clientlib.transactions import (
     get_transaction_state,
     change_metadata,
     init_client,
-    renew_keys
+    renew_keys,
 )
 from nlds_client.clientlib.exceptions import (
     ConnectionError,
     RequestError,
     AuthenticationError,
 )
-from nlds_client.clientlib.config import get_user, get_group, load_config
+from nlds_client.clientlib.config import get_user, get_group, load_config, ConfigError
 from nlds_client.clientlib.nlds_client_setup import CONFIG_FILE_LOCATION
 from nlds_client import __version__
 
@@ -485,11 +486,12 @@ user_help_text = (
     f"in the ``{CONFIG_FILE_LOCATION}``."
 )
 
+run_nlds_init_text = ".  Run ``nlds init`` to create the config file."
 
 """Put files command"""
 
 
-@nlds_client.command("put", help="Put a single file.")
+@nlds_client.command("put", help=f"Put a single file.{user_help_text}")
 @click.option(
     "-u", "--user", default=None, type=str, help="The username to put the file for."
 )
@@ -553,13 +555,11 @@ def put(filepath, user, group, label, job_label, holding_id, tag, json):
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
-
-user_help_text = (
-    " If no user or group is given then these values will "
-    "default to the ``user:default_user`` and ``user:default_group values`` "
-    "in the ``~/.nlds-config file``."
-)
 
 """Get files command"""
 
@@ -663,6 +663,10 @@ def get(
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 # """delete files command"""
@@ -808,6 +812,8 @@ def putlist(filelist, user, group, label, job_label, holding_id, tag, json):
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except FileNotFoundError as fe:
+        raise click.UsageError(fe)
 
 
 """Get filelist command"""
@@ -895,6 +901,10 @@ def getlist(
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 # """dellist files command"""
@@ -1102,6 +1112,10 @@ def list(
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 """Stat (monitoring) command"""
@@ -1313,6 +1327,10 @@ def stat(
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 """Find (files) command"""
@@ -1472,6 +1490,10 @@ def find(
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 """Meta command"""
@@ -1565,6 +1587,10 @@ def meta(user, group, label, holding_id, tag, new_label, new_tag, del_tag, json)
         raise click.UsageError(ae)
     except RequestError as re:
         raise click.UsageError(re)
+    except ConfigError as ce:
+        raise click.UsageError(ce)
+    except FileNotFoundError as fe:
+        raise click.UsageError(str(fe) + run_nlds_init_text)
 
 
 @nlds_client.command(
@@ -1648,7 +1674,7 @@ def renew():
     )
     try:
         response = renew_keys()
-        if ("success" not in response or not response["success"]):
+        if "success" not in response or not response["success"]:
             raise RequestError(
                 f"Could not renew access token and object store keys, something has "
                 "gone wrong."
@@ -1665,8 +1691,10 @@ def renew():
     except Exception as e:
         raise click.UsageError(e)
 
+
 def main():
     nlds_client(prog_name="nlds")
+
 
 if __name__ == "__main__":
     click.formatting.wrap_text = 80

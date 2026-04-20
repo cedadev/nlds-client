@@ -23,6 +23,7 @@ from requests.exceptions import JSONDecodeError
 from nlds_client.clientlib.config import (
     load_config,
     create_config,
+    delete_config,
     write_auth_section,
     write_os_section,
     get_user,
@@ -40,6 +41,7 @@ from nlds_client.clientlib.authentication import (
     fetch_oauth2_token,
     fetch_oauth2_token_from_refresh,
     fetch_s3_access_keys,
+    OAuthTokenUrlError,
 )
 from nlds_client.clientlib.exceptions import *
 
@@ -70,7 +72,10 @@ def construct_server_url(config: Dict, method=""):
 
 
 def process_transaction_response(
-    response: requests.models.Response, url: str, config: dict
+    response: requests.models.Response,
+    url: str,
+    config: dict,
+    authenticate_fl: bool = True,
 ):
     """Process the response to raise exceptions for errors or return the
     response result.
@@ -111,19 +116,30 @@ def process_transaction_response(
             )
         elif (
             response.status_code == requests.codes.unauthorized  # 401
-            or response.status_code == requests.codes.forbidden
-        ):  # 403
-            raise AuthenticationError(
-                f"Could not complete the request to the URL: {url} \n"
-                "Authentication failed.  Check that the token in the "
-                f"{config['authentication']['oauth_token_file_location']} file "
-                f"is a valid token (HTTP_{response.status_code})",
-                response.status_code,
-            )
+            or response.status_code == requests.codes.forbidden  # 403
+        ):
+            msg = f"Could not complete the request to the URL: {url}\n"
+            if authenticate_fl:
+                raise AuthenticationError(
+                    msg + f"Authentication failed.  Check that the token in the "
+                    f"{config['authentication']['oauth_token_file_location']} file "
+                    f"is a valid token (HTTP_{response.status_code})",
+                    response.status_code,
+                )
+            else:
+                raise RequestError(
+                    msg + f"(HTTP_{response.status_code})",
+                    response.status_code,
+                )
         else:
             try:
                 if "detail" in response.json():
-                    response_msg = response.json()["detail"]
+                    response_json = response.json()["detail"]
+                    response_dict = json.loads(response_json)
+                    if "msg" in response_dict:
+                        response_msg = response_dict["msg"]
+                    else:
+                        response_msg = response_json
                     raise RequestError(
                         f"Could not complete the request to the URL: {url} \n"
                         f"Response was: {response_msg} (HTTP_{response.status_code})",
@@ -191,6 +207,7 @@ def main_loop(
         body_params = {}
 
     config = load_config()
+
     c_try = 0
     MAX_LOOPS = 2
 
@@ -222,9 +239,7 @@ def main_loop(
                 # we need the username and password to get the OAuth2 token in
                 # the password flow
                 password = get_password(config)
-                auth_token = fetch_oauth2_token(
-                    config, config["user"], password
-                )
+                auth_token = fetch_oauth2_token(config, config["user"], password)
                 # we don't want to do the rest of the loop!
                 continue
             token_headers["Authorization"] = f"Bearer {auth_token['access_token']}"
@@ -246,14 +261,13 @@ def main_loop(
             )
         # process the returned response
         try:
-            process_transaction_response(response, url, config)
+            process_transaction_response(response, url, config, authenticate_fl)
         except AuthenticationError as ae:
             # try to get a new token via the refresh method
             try:
                 # first loop fetch a new oauth token
-                if c_try < MAX_LOOPS:
+                if c_try < MAX_LOOPS and authenticate_fl:
                     auth_token = fetch_oauth2_token_from_refresh(config)
-                    continue
                 else:
                     raise ae
             except (AuthenticationError, RequestError) as ae:
@@ -1093,33 +1107,35 @@ def init_client(
                 user = get_user_config(user)
                 config["user"]["default_user"] = user
             except ConfigError as e:
-                raise(e)
+                raise (e)
         if group is not None:
             try:
                 group = get_group_config(user, group)
                 config["user"]["default_group"] = group
             except ConfigError as e:
-                raise(e)
+                raise (e)
     except FileNotFoundError:
         # If the file doesn't exist then create it
         config = create_config(url, user, group, verify_certificates)
         cli_response["new_config"] = True
 
     responses = {}
-    input_params = {
-        "user": user,
-        "group": group
-    }
+    input_params = {"user": user, "group": group}
     for endpoint in ["init", "init/token"]:
         url = construct_server_url(config, endpoint)
-        response_dict = main_loop(
-            url=url,
-            input_params=input_params,
-            method=requests.get,
-            authenticate_fl=False,
-            allow_redirects=True,
-            verify=verify_certificates,
-        )
+        try:
+            response_dict = main_loop(
+                url=url,
+                input_params=input_params,
+                method=requests.get,
+                authenticate_fl=False,
+                allow_redirects=True,
+                verify=verify_certificates,
+            )
+        except Exception as e:
+            # any exception delete config file
+            delete_config()
+            raise e
 
         # If we get to this point then the transaction could not be processed
         if not response_dict:
@@ -1159,7 +1175,7 @@ def init_client(
             "be a mismatch in the client and server versions.  Client version is "
             f"{__version__}."
         )
-    
+
     if not "tenancy" in remote_config["object_storage"]:
         raise RequestError(
             "tenancy keyword not in returned config dictionary. There could "
