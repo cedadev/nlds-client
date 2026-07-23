@@ -268,6 +268,7 @@ def main_loop(
                 # first loop fetch a new oauth token
                 if c_try < MAX_LOOPS and authenticate_fl:
                     auth_token = fetch_oauth2_token_from_refresh(config)
+                    continue
                 else:
                     raise ae
             except (AuthenticationError, RequestError) as ae:
@@ -284,7 +285,6 @@ def main_loop(
                     continue
                 else:
                     raise ae
-
         response_dict = json.loads(response.json())
         response_dict["success"] = True
         return response_dict

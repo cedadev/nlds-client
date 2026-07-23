@@ -388,7 +388,7 @@ def get_location_letters(file):
     if file_type == "LINK":
         return "L"
     for l in locations:
-        if l["root"] != "":
+        if l["root"] != "" or l["path"] != "":
             if len(ll) > 0:
                 ll += "+"
             ll += l["storage_type"][:1]
