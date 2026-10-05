@@ -205,7 +205,7 @@ def print_failed_files(response: dict, req_details):
     can be appended to a list and retried."""
     for tr in response["data"]["records"]:
         for sr in tr["sub_records"]:
-            if len(sr["failed_files"]) > 0:
+            if "failed_files" in sr and len(sr["failed_files"]) > 0:
                 for ff in sr["failed_files"]:
                     click.echo(f"{ff['filepath']}")
 
@@ -257,7 +257,7 @@ def print_single_stat(response: dict, req_details, sub_records, errors):
         if errors:
             click.echo(f"{'':<4}{'errors in sub records':<20} ->")
             for sr in tr["sub_records"]:
-                if len(sr["failed_files"]) > 0:
+                if "failed_files" in sr and len(sr["failed_files"]) > 0:
                     click.echo(f"{'':4}{'+':<4} {'id':<13}: {sr['id']}")
                     click.echo(f"{'':<9}{'failed files':<13}->")
                     for ff in sr["failed_files"]:
@@ -348,7 +348,8 @@ def print_single_file(response, print_url=False):
                 if not f["path_type"] == "LINK":
                     stls = " "
                     for s in f["locations"]:
-                        stls += s["storage_type"] + ", "
+                        if s["root"] != "":
+                            stls += s["storage_type"] + ", "
                     click.echo(f"{'':<4}{'storage location':<16}:{stls[0:-2]}")
 
                 # url if requested
@@ -381,18 +382,17 @@ def print_simple_file(response, print_url=False):
 def get_location_letters(file):
     """Get the location letter for a file.
     This could be O(bject Storage) and/or T(ape) or L(ink)"""
-    ll = ""
+    ll = []
     file_type = file["path_type"]
     locations = file["locations"]
 
     if file_type == "LINK":
         return "L"
     for l in locations:
-        if l["root"] != "" or l["path"] != "":
-            if len(ll) > 0:
-                ll += "+"
-            ll += l["storage_type"][:1]
-    return ll
+        if l["root"] != "":
+            ll.append(l["storage_type"][:1])
+    ll.sort()
+    return "+".join(ll)
 
 
 def print_multi_file(response, print_url):
